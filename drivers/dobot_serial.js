@@ -31,7 +31,6 @@ var Dobot = function(COM, BAUD) {
     this._STREAM_CHUNK = new Buffer(0);  //buffer of size 0 octets
     this._STREAM_PARSED = false;
 
-
     // Open our port and register our stub handers
     this._PORT.open(function(error) {
         if (error) {
@@ -110,6 +109,16 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	var is_grab         = buffer.readFloatLE(34);
 
 	var tail	        = buffer.readUInt8(37);			//should register 0x5A
+
+	var dobot_state = {
+		header: header, 
+		x_pos: x_pos, y_pos: y_pos, z_pos: z_pos, head_rot: head_rot,
+		base_angle: base_angle, long_arm_angle: long_arm_angle, short_arm_angle: short_arm_angle, 
+		paw_arm_angle: paw_arm_angle, is_grab: is_grab,
+		tail: tail
+	};
+
+	console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
 
 };
 
