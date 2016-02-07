@@ -1,0 +1,8 @@
+{
+    "type"        : "usb",
+    "blackBox"    : false,
+    "description" : "Dobot SCARA Robot",
+    "VID"         :  10889,
+    "PID"         :  34953,
+    "driverPath"  : "./drivers/dobot"
+}
