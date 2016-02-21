@@ -14,45 +14,17 @@ try {
 var Dobot = function(COM, BAUD) {
     var that = this;
 
-  /*baudrate: Baud Rate, defaults to 9600. Must be one of: 115200, 57600, 38400, 19200, 9600, 4800, 2400, 1800, 1200, 600, 300, 200, 150, 134, 110, 75, or 50.
-	databits: Data Bits, defaults to 8. Must be one of: 8, 7, 6, or 5.
-	stopbits: Stop Bits, defaults to 1. Must be one of: 1 or 2.
-	parity: Parity, defaults to 'none'. Must be one of: 'none', 'even', 'mark', 'odd', 'space'
-	buffersize: Size of read buffer, defaults to 255. Must be an integer value.
-	parser: The parser engine to use with read data, defaults to rawPacket strategy which just 
-	emits the raw buffer as a "data" event. Can be any function that accepts EventEmitter as 
-	first parameter and the raw buffer as the second parameter
-	*/
-
-    var port_params = { baudrate : 256000, parser: SerialPort.parsers.byteDelimiter(0x5A) };
-
-    /*parser: The parser engine to use with read data, defaults to rawPacket 
-    strategy which just emits the raw buffer as a "data" event. 
-    Can be any function that accepts EventEmitter as first parameter 
-    and the raw buffer as the second parameter.
-	*/
+    var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
 
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
 
-    this._STATE = "OPENED";
+    //this._STATE = "OPENED";
+    this._STATE = "CONNECTED";
     this._WAIT = 2000;
     this._RETRIES = 5;
     this._HEART_BEAT_INTERVAL = 200;
 
-    /*
-    this._HEARTBEAT = new Heartbeat();
-    this._HEARTBEAT.interval(this._HEART_BEAT_INTERVAL);
-    this._HEARTBEAT.add(_.bind(this.heartbeat, this));
-    this._HEARTBEAT.start();
-	*/
-
-    //current response data stream
-    /*
-    this._STREAM_CHUNK = new Buffer(0);  //buffer of size 0 octets
-    this._STREAM_PARSED = false;
-	*/
-
-    // Open our port and register our stub handers
+    // Open port and define event handlers
     this._PORT.open(function(error) {
         if (error) {
 			console.log("unable to open port: " + error);
@@ -61,12 +33,13 @@ var Dobot = function(COM, BAUD) {
             that._PORT.on('data', function (data) {
 				data = new Buffer(data);
 				console.log("buffer rx length: " + data.length);
-				
-				if(data.length ===42){
-					that.receiveDobotState(data);
-				}
-
+				that.receiveDobotState(data);
 				that.next();
+				/*if(data.length == 42){
+					that.receiveDobotState(data);
+					that.next();
+				}*/
+				
             });
 
             that._PORT.on('close', function () {
@@ -77,8 +50,7 @@ var Dobot = function(COM, BAUD) {
 				console.log("port ended with error: " + error);
             });
 
-			//begin communication sequence by sending start command
-			that.start();
+            that.start();
         }
 
     });
@@ -97,7 +69,7 @@ Dobot.prototype.start = function() {
 
 
 Dobot.prototype.receiveDobotState = function(buffer) {
-	this._STATE = "DATA_RECEIVED";
+	//this._STATE = "DATA_RECEIVED";
 
 	//parse up the data buffer to extract Dobot state information
 	var header          = buffer.readUInt8(0);  		//should register 0xA5
@@ -117,11 +89,19 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 
 	var dobot_state = {
 		header: header, 
-		x_pos: x_pos, y_pos: y_pos, z_pos: z_pos, head_rot: head_rot,
-		base_angle: base_angle, long_arm_angle: long_arm_angle, short_arm_angle: short_arm_angle, 
-		paw_arm_angle: paw_arm_angle, is_grab: is_grab,
+		x_pos: x_pos, 
+		y_pos: y_pos, 
+		z_pos: z_pos, 
+		head_rot: head_rot,
+		base_angle: base_angle, 
+		long_arm_angle: long_arm_angle, 
+		short_arm_angle: short_arm_angle, 
+		paw_arm_angle: paw_arm_angle, 
+		is_grab: is_grab,
 		tail: tail
 	};
+
+	//that.next();
 
 	console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
 
