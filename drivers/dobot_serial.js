@@ -33,12 +33,13 @@ var Dobot = function(COM, BAUD) {
             that._PORT.on('data', function (data) {
 				data = new Buffer(data);
 				console.log("buffer rx length: " + data.length);
-				that.receiveDobotState(data);
-				that.next();
-				/*if(data.length == 42){
+								
+				if(data.length == 42){
 					that.receiveDobotState(data);
 					that.next();
-				}*/
+				}
+
+				//that.next();
 				
             });
 
