@@ -10,6 +10,14 @@ try {
     console.log('cannot find serialport module');
 }
 
+var test_command = new Buffer([0xA5,
+									0x00,0x00,0x80,0x3F,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0xC8,0x41,
+								  0x5A]);
+
 
 var Dobot = function(COM, BAUD) {
     var that = this;
@@ -19,10 +27,14 @@ var Dobot = function(COM, BAUD) {
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
 
     //this._STATE = "OPENED";
-    this._STATE = "CONNECTED";
-    this._WAIT = 2000;
-    this._RETRIES = 5;
-    this._HEART_BEAT_INTERVAL = 200;
+    this._STATE 				= "CONNECTED";
+    this._WAIT 					= 2000;
+    this._RETRIES 				= 5;
+    this._HEART_BEAT_INTERVAL 	= 200;
+
+    this._NEXT_COMMAND			= test_command;
+    this._COMMAND_QUEUE			= null;
+
 
     // Open port and define event handlers
     this._PORT.open(function(error) {
@@ -38,8 +50,6 @@ var Dobot = function(COM, BAUD) {
 					that.receiveDobotState(data);
 					that.next();
 				}
-
-				//that.next();
 				
             });
 
@@ -61,7 +71,13 @@ var Dobot = function(COM, BAUD) {
 Dobot.prototype.start = function() {
 	var that = this;
 	//create the start command per Dobot API
-	var command = new Buffer([0xA5,0x00,0x00,0x11,0x11,0x22,0x22,0x33,0x33,0x00,0x5A]);
+	var command = new Buffer([0xA5,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+							  	0x11,0x11,0x22,0x22,0x33,0x33,
+							  0x00,0x5A]);
 	
 	this.sendBuffer(command);
 	this._STATE = "CONNECTED";
@@ -108,47 +124,117 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 
 };
 
-
-Dobot.prototype.setDobotState = function(command) {
 	
+/*Take standard GCODE commands and convert into buffer structure per Dobot API
+  G1 X[$FLOAT] Y[$FLOAT] Z[$FLOAT] RH[$FLOAT] GRP[$FLOAT] LSR[$FLOAT] F[$FLOAT]
+*/
 
-	//take standard GCODE commands and convert into buffer structure per Dobot API
-	//parse out the X Y Z and the Other components (rotation, grip, laser, etc.)
+Dobot.prototype.sendDobotState = function(command) {
 
-	//G1 X[$FLOAT] Y[$FLOAT] Z[$FLOAT] 
+	//verify it is a G code
+	var regex_G 		= new RegExp('^G([\d]+)' , 'i');
+	var g_command 		= command.match(regex_G);
 
-	//extract x
+	if(regex_G == '1'){
 
-	//extract y
+		//extract x
+		var regex_X			= new RegExp('X([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var x_coordinate	= command.match(regex_X);
 
-	//extract z
+		//extract y
+		var regex_Y			= new RegExp('Y([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var y_coordinate	= command.match(regex_Y);
 
+		//extract z
+		var regex_Z			= new RegExp('Z([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var z_coordinate	= command.match(regex_Z);
 
-	//break up the desired command to generate the buffer and send
+		//extract rotation head
+		var regex_RH		= new RegExp('RH([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var rh_angle		= command.match(regex_RH);	
+
+		//extract grip head
+		var regex_GRP		= new RegExp('GRP([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var grp_angle	= command.match(regex_GRP);		
+
+		//extract laser power
+		var regex_LSR		= new RegExp('LSR([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var lsr_power		= command.match(regex_GRP);
+
+		//extract feed rate
+		var regex_FEED		= new RegExp('F([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
+		var feed_rate		= command.match(regex_FEED);		
+
+		//create an object with the selected dobot command parameters
+		var selected_state = {
+			x_pos 		: x_coordinate,
+			y_pos		: y_coordinate,
+			z_pos 		: z_coordinate,
+			head_rot 	: rh_angle,
+			is_grab 	: grp_angle,
+			laser_pwr 	: lsr_power,
+			feed_rate	: feed_rate
+		}
+
+		//call function to create command buffer
+		var command_buffer = this.generateCommandBuffer(selected_state);
+
+	}
+
+	else {
+		console.log("not a valid GCODE command");
+		//return some sort of buffer structure that keeps the robot in place
+	}
 
 
 	//if Access Byte = 2: this is an individual axis movement control
 
-
 	//if Access Byte = 7: this is like a jog mode for forward, rotate, and up down
 
-
+	return command_buffer;
 };
 
 
-Dobot.prototype.next = function () {
-	var test_command = new Buffer([0xA5, 0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-										0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 
-										0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-										0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x41, 0x5A]);
+Dobot.prototype.generateCommandBuffer = function(arguments) {
+	//break out the elements from "arguments"
+	var command_buffer = new Buffer(42);	//create 42 byte buffer
 
+	dobot_state
+
+
+}
+
+
+
+Dobot.prototype.next = function () {
+	/*
+	var test_command = new Buffer([0xA5,
+									0x00,0x00,0x80,0x3F,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+									0x00,0x00,0x00,0x00,0x00,0x00,0xC8,0x41,
+								  0x5A]);
+	*/
 	  console.log('sending next command now');
-	  this.sendBuffer(test_command);
+	  this.sendBuffer(this._NEXT_COMMAND);
+
+
+	  //update commandQueue and the next command
+	  this.updateCommandQueue();
+
 };
 
 
 Dobot.prototype.disconnect = function() {
-	var command = new Buffer([0xA5,0x44,0x44,0x55,0x55,0x66,0x66,0x77,0x77,0x00,0x5A]);
+	var command = new Buffer([0xA5,
+								0x44,0x44,0x55,0x55,0x66,0x66,0x77,0x77,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+								0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+							  0x5A]);
+
 	this.sendBuffer(command);
 
 };
@@ -182,6 +268,14 @@ Dobot.prototype.sendBuffer = function (buffer) {
     	console.log("error sending buffer: Dobot is not in state to receive buffer");
     }
 };
+
+
+Dobot.prototype.updateCommandQueue = function () {
+
+	//remove the first item of the command_queue and assign to next command
+	//this._NEXT_COMMAND = this._COMMAND_QUEUE.shift();
+
+}
 
 
 module.exports = Dobot;
