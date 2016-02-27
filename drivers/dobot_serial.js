@@ -21,6 +21,7 @@ var Dobot = function(COM, BAUD) {
     var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
 
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
+    this._heartbeater = new Heartbeat();
 
     this.test_command 		= new Buffer([0xA5,
 											0x00,0x00,0x80,0x3F,0x00,0x00,0x00,0x00,
@@ -46,16 +47,17 @@ var Dobot = function(COM, BAUD) {
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 										 0x5A]);
 
-    this._STATE 				= "OPENED";
+    this._STATE 				= "OPENED";   //"WAITING" is ready for next command, "RUNNING" is a current program
     this._WAIT 					= 2000;
     this._RETRIES 				= 5;
     this._HEART_BEAT_INTERVAL 	= 200;
 
+    this._CURRENT_COMMAND_INDEX = 0;
     this._NEXT_COMMAND			= this.test_command;
     this._COMMAND_QUEUE			= null;
 
     this._FILE_LOADED			= false;   //file containing gcode to run
-
+    this._GCODE_DATA			= null;	   //currently no data loaded to run
 
     // Open port and define event handlers
     this._PORT.open(function(error) {
@@ -63,6 +65,15 @@ var Dobot = function(COM, BAUD) {
 			console.log("unable to open port: " + error);
         } 
         else {
+        	//after opened start the heartbeat
+        	that._heartbeater.interval(this._HEART_BEAT_INTERVAL); 
+        	//add the callback for update command queue
+        	that._heartbeater.add(that.updateCommandQueue);
+        	//add the callback for calling next()??
+        	that._heartbeater.add(that.next);
+        	//start the heartbeat
+        	that._heartbeater.start();
+
             that._PORT.on('data', function (data) {
 			    that._STATE = "CONNECTED";
 
@@ -71,7 +82,8 @@ var Dobot = function(COM, BAUD) {
 						
 				if(data.length == 42) {
 					that.receiveDobotState(data);
-					that.next();
+					that._STATE = "RUNNING";
+					//that.next();
 				}
 				
             });
@@ -79,11 +91,15 @@ var Dobot = function(COM, BAUD) {
             that._PORT.on('close', function () {
                 that.disconnect();
                 that._STATE = "DISCONNECTED";
+
+                that._heartbeater.clear();
             });
 
             that._PORT.on('error', function (error) {
 				console.log("port ended with error: " + error);
 				that._STATE = "ERROR";
+
+				that._heartbeater.clear();
 
             });
 
@@ -100,6 +116,16 @@ Dobot.prototype.start = function() {
 	this._STATE = "CONNECTED";
 
 };
+
+
+Dobot.prototype.runProgram = function() {
+	if(this._FILE_LOADED) {
+		this._STATE	= "RUNNING";
+	else {
+		console.log("there is no program loaded");
+	}
+
+}
 
 
 Dobot.prototype.receiveDobotState = function(buffer) {
@@ -149,8 +175,8 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
-	var regex_G 		= new RegExp('^G([\d]+)' , 'i');
-	var g_command 		= command.match(regex_G);
+	var regex_G 			= new RegExp('^G([\d]+)' , 'i');
+	var g_command 			= command.match(regex_G);
 
 	if(regex_G == '1'){
 
@@ -234,12 +260,16 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 
 Dobot.prototype.next = function () {
 
-	  console.log('sending next command now');
-	  this.sendBuffer(this._NEXT_COMMAND);
-
-
-	  //update commandQueue and the next command
-	  this.updateCommandQueue();
+	if(this._NEXT_COMMAND) {
+		var buffer = sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+		this._NEXT_COMMAND = null;								//loaded command already, remove it
+	
+		console.log('sending buffer now');
+		this.sendBuffer(buffer);
+	}
+	else {
+		console.log('no buffer to send right now');
+	}
 
 };
 
@@ -248,6 +278,10 @@ Dobot.prototype.disconnect = function() {
 
 	this.sendBuffer(this.disconnect_command);
     this._STATE = "DISCONNECTED";
+
+    this._heartbeater.clear();
+
+    console.log("disconnected.")
 
 };
 
@@ -258,44 +292,95 @@ Dobot.prototype.close = function () {
             console.log("error closing the port: " + error);
         }
     });
+
+	this._heartbeater.clear();
+
+	console.log("closed.");
+
 };
 
 
 Dobot.prototype.pause = function() {
     this._STATE = "PAUSED";
-}
+    this._heartbeater.pause();
+
+  	console.log("paused.");
+
+};
+
+
+Dobot.prototype.resume = function() {
+    this._STATE = "CONNECTED";
+    this._heartbeater.resume();
+
+  	console.log("paused.");
+
+};
 
 
 //send the command buffered command over the serialport
 Dobot.prototype.sendBuffer = function (buffer) {
-    if (this._STATE === "CONNECTED") {
-        try {
-            this._PORT.write(buffer);
-        } 
-        catch (error) {
-            console.log("error sending buffer: " + error);
-        }
+    
+    try {
+        this._PORT.write(buffer);
+    } 
+    catch (error) {
+        console.log("error sending buffer: " + error);
     }
-    else {
-    	console.log("error sending buffer: Dobot is not in state to receive buffer");
-    }
+
 };
 
 
-Dobot.prototype.updateCommandQueue = function () {
+Dobot.prototype.updateCommandQueue = function () {	//updates next() if more commands to send
 
-	//remove the first item of the command_queue and assign to next command
-	//this._NEXT_COMMAND = this._COMMAND_QUEUE.shift();
+	if(this._FILE_LOADED) {
 
-}
+		if ( this_.STATUS == "RUNNING" && !this._NEXT_COMMAND) {
+
+			//remove the first item of the command_queue and assign to next command
+			this._NEXT_COMMAND = this._GCODE_DATA.shift();
+			
+			this._CURRENT_COMMAND_INDEX ++;
+			this._STATUS = "WAITING";  
+		}
+
+		else {
+			this._STATUS = "WAITING";
+
+			console.log("no current gcode commands to send!!")
+			//don't update, still waiting for system to want a new command
+			//send over standard ping command if necessary
+
+		}
+
+	}
+
+	else {  //no file is loaded, currently in stream mode
+
+		console.log("no file loaded, in stream mode awaiting command");
+
+	}
 
 
-Dobot.prototype.loadFile = function (path) {
+	
+};
 
 
+Dobot.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, newline delimited
 
+	var that = this;
 
-}
+	fs.readFile(path, 'utf8', function(error,data) {
+		if(error){
+			console.log("there was an error reading the file");
+		}
+		else {
+			that._GCODE_DATA			= data.split('\n');		//array of gcode commands
+			that._FILE_LOADED			= false;   	//file containing gcode to run
+		}
+	});
+
+};
 
 
 module.exports = Dobot;
