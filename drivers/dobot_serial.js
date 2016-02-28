@@ -63,7 +63,7 @@ var Dobot = function(COM, BAUD) {
 			console.log("unable to open port: " + error);
         } 
         else {
-        	//after opened start the heartbeat
+        	//after opened define all the callbacks and listeners
             that.start();
         }
 
@@ -85,7 +85,8 @@ Dobot.prototype.start = function() {
 				
 		if(data.length == 42) {
 			that.receiveDobotState(data);
-			that._STATE = "RUNNING";
+			//that._STATE = "RUNNING";
+			that._STATE = "WAITING";
 			//that.next();
 		}
 		
@@ -114,7 +115,7 @@ Dobot.prototype.start = function() {
 
 Dobot.prototype.runProgram = function() {
 	if(this._FILE_LOADED) {
-		this._STATE	= "RUNNING";
+		this._STATE	= "WAITING";
 	}
 	else {
 		console.log("there is no program loaded");
@@ -156,6 +157,8 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		tail: 				tail
 	};
 
+	this._STATE = "WAITING";
+
 	//that.next();
 
 	//console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
@@ -172,44 +175,44 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
 	var g_command 			= command.match(/^G([\d]+)/i)[1];
-	console.log("g_command type is: " + g_command);
+	//console.log("g_command type is: " + g_command);
 
 	if(g_command == '1'){
 
 		//extract x
 		var x_coordinate	= command.match(/X([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (x_coordinate) { x_coordinate = parseFloat(x_coordinate[1]); }
-			console.log("x_coordinate is: " + x_coordinate);
+			//console.log("x_coordinate is: " + x_coordinate);
 
 		//extract y
 		var y_coordinate	= command.match(/Y([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (y_coordinate) { y_coordinate = parseFloat(y_coordinate[1]); }
-			console.log("y_coordinate is: " + y_coordinate);
+			//console.log("y_coordinate is: " + y_coordinate);
 
 		//extract z
 		var z_coordinate	= command.match(/Z([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (z_coordinate) { z_coordinate = parseFloat(z_coordinate[1]); }
-			console.log("z_coordinate is: " + z_coordinate);
+			//console.log("z_coordinate is: " + z_coordinate);
 
 		//extract rotation head
 		var rh_angle		= command.match(/RH([+-]?[\d]+[\.]?[\d]+]?)/i);	
 			if (rh_angle) { rh_angle = parseFloat(rh_angle[1]); }
-			console.log("rh_angle is: " + rh_angle);
+			//console.log("rh_angle is: " + rh_angle);
 
 		//extract grip head
 		var grp_angle		= command.match(/GRP([+-]?[\d]+[\.]?[\d]+]?)/i);		
 			if (grp_angle) { grp_angle = parseFloat(grp_angle[1]); }
-			console.log("grp_angle is: " + grp_angle);
+			//console.log("grp_angle is: " + grp_angle);
 
 		//extract laser power
 		var lsr_power		= command.match(/LSR([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (lsr_power) { lsr_power = parseFloat(lsr_power[1]); }
-			console.log("lsr_power is: " + lsr_power);
+			//console.log("lsr_power is: " + lsr_power);
 
 		//extract feed rate
 		var feed_rate		= command.match(/F([+-]?[\d]+[\.]?[\d]+]?)/i);		
 			if (feed_rate) { feed_rate = parseFloat(feed_rate[1]); }
-			console.log("feed_rate is: " + feed_rate);
+			//console.log("feed_rate is: " + feed_rate);
 
 		//create an object with the selected dobot command parameters
 		var selected_state 	= {
@@ -221,6 +224,8 @@ Dobot.prototype.sendDobotState = function(command) {
 			laser_pwr 		: lsr_power,
 			feed_rate		: feed_rate
 		};
+
+		//console.log(selected_state);
 
 		//call function to create command buffer
 		command_buffer = this.generateCommandBuffer(selected_state);
@@ -264,14 +269,16 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 
 Dobot.prototype.next = function () {
 
-	//if(this._NEXT_COMMAND && this._WAITING) {
-	if(this._NEXT_COMMAND) {
+
+	if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
+
 		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
 	
 		console.log('sending buffer now');
 		this.sendBuffer(buffer);
 	}
+
 	else {
 		console.log('no buffer to send right now');
 		//console.log('STATE IS: ' + this._STATE);
@@ -287,7 +294,7 @@ Dobot.prototype.disconnect = function() {
 
     this._heartbeater.stop();
 
-    console.log("disconnected.")
+    console.log("disconnected.");
 
 };
 
@@ -340,31 +347,28 @@ Dobot.prototype.sendBuffer = function (buffer) {
 
 
 Dobot.prototype.updateCommandQueue = function () {	//updates next() if more commands to send
-	//var this = obj;
-	//this._STATE = "PEWP!";
 
-	console.log("this._STATE is:      " + this._STATE);
+	console.log("this._STATE is:       " + this._STATE);
 	console.log("this._NEXT_COMMAND is " + this._NEXT_COMMAND);
 
 	if(this._FILE_LOADED) {
 
-		console.log("in this file loaded");
-		if ( this._STATE == "RUNNING" && !this._NEXT_COMMAND) {
+		if ( this._STATE == "WAITING" && !this._NEXT_COMMAND) {
 
-			//remove the first item of the command_queue and assign to next command
-			//this._NEXT_COMMAND = this._GCODE_DATA.shift();
 			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
 			console.log("command added: " + this._NEXT_COMMAND);
 			
 			this._CURRENT_COMMAND_INDEX ++;
-			this._STATE = "WAITING";  
+			this._STATE = "RUNNING";  
+		}
+		
+		else if ( this._STATE == "WAITING" && this._NEXT_COMMAND) {
 
-			//this.next();		//send over the next buffer
+			this._STATE = "RUNNING";  
 		}
 
 		else {
-			this._STATE = "WAITING";
-
+			this._STATE = "RUNNING";
 			console.log("no current gcode commands to send!!");
 			//don't update, still waiting for system to want a new command
 			//send over standard ping command if necessary
@@ -376,11 +380,8 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 	else {  //no file is loaded, currently in stream mode
 		//this.next();
 		console.log("no file loaded, in stream mode awaiting command");
-
 	}
 
-
-	
 };
 
 
