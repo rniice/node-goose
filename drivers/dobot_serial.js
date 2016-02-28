@@ -168,6 +168,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 */
 
 Dobot.prototype.sendDobotState = function(command) {
+	var command_buffer = null;
 
 	//verify it is a G code
 	var g_command 			= command.match(/^G([\d]+)/i)[1];
@@ -219,10 +220,10 @@ Dobot.prototype.sendDobotState = function(command) {
 			is_grab 		: grp_angle,
 			laser_pwr 		: lsr_power,
 			feed_rate		: feed_rate
-		}
+		};
 
 		//call function to create command buffer
-		var command_buffer = this.generateCommandBuffer(selected_state);
+		command_buffer = this.generateCommandBuffer(selected_state);
 
 	}
 
@@ -239,24 +240,22 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 	//break out the elements from "data"
 	var command_buffer = new Buffer(42);					//create 42 byte buffer
 
-	command_buffer.writeFloatLE(0xA5, 0);					//write the header
-	
+	command_buffer[0] = 0xA5;								//write the header
+
 	//2 = single axis control; 7 = straight line control
 	command_buffer.writeFloatLE(7, 1);						//write the state
-	command_buffer.writeFloatLE(0xA5, 5);					//write the axis ??????
+	command_buffer.writeFloatLE(0, 5);						//write the axis ??????
 	command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
 	command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
 	command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
-	//console.log("made it to here!");
-	//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
-	
-	//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
-	//command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity
-	//command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
-	//command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
 
-	//command_buffer.writeFloatLE(0x5A, 41);					//write the tail
-	console.log("made it to here!");
+	//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
+	//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+	command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity
+	command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
+	command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+
+	command_buffer[41] = 0xA5;								//write the tail
 
 	return command_buffer;
 };
