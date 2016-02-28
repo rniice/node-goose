@@ -51,7 +51,7 @@ var Dobot = function(COM, BAUD) {
     this._HEART_BEAT_INTERVAL 	= 3000;
 
     this._CURRENT_COMMAND_INDEX = 0;
-    this._NEXT_COMMAND			= this.test_command;
+    this._NEXT_COMMAND			= null;
     this._COMMAND_QUEUE			= null;
 
     this._FILE_LOADED			= false;   //file containing gcode to run
@@ -71,7 +71,7 @@ var Dobot = function(COM, BAUD) {
 			    that._STATE = "CONNECTED";
 
 				data = new Buffer(data);
-				console.log("buffer rx length: " + data.length);
+				//console.log("buffer rx length: " + data.length);
 						
 				if(data.length == 42) {
 					that.receiveDobotState(data);
@@ -104,7 +104,7 @@ var Dobot = function(COM, BAUD) {
 
 
 Dobot.prototype.start = function() {
-	
+	console.log(this._STATE);
 	this.sendBuffer(this.start_command);
 	this._STATE = "CONNECTED";
 
@@ -316,6 +316,8 @@ Dobot.prototype.resume = function() {
 Dobot.prototype.sendBuffer = function (buffer) {
     
     try {
+    	console.log("sending: ");
+    	console.log(buffer);
         this._PORT.write(buffer);
     } 
     catch (error) {
@@ -327,21 +329,25 @@ Dobot.prototype.sendBuffer = function (buffer) {
 
 Dobot.prototype.updateCommandQueue = function () {	//updates next() if more commands to send
 
+	console.log("this._STATE is:      " + this._STATE);
+	console.log("this._NEXT_COMMAND is " + this._NEXT_COMMAND);
+
 	if(this._FILE_LOADED) {
 
-		if ( this_.STATUS == "RUNNING" && !this._NEXT_COMMAND) {
+		console.log("in this file loaded");
+		if ( this_.STATE == "RUNNING" && !this._NEXT_COMMAND) {
 
 			//remove the first item of the command_queue and assign to next command
 			this._NEXT_COMMAND = this._GCODE_DATA.shift();
 			
 			this._CURRENT_COMMAND_INDEX ++;
-			this._STATUS = "WAITING";  
+			this._STATE = "WAITING";  
 
 			//this.next();		//send over the next buffer
 		}
 
 		else {
-			this._STATUS = "WAITING";
+			this._STATE = "WAITING";
 
 			console.log("no current gcode commands to send!!");
 			//don't update, still waiting for system to want a new command
@@ -371,8 +377,9 @@ Dobot.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, n
 			console.log("there was an error reading the file");
 		}
 		else {
+			console.log("the program has been loaded!");
 			that._GCODE_DATA			= data.split('\n');		//array of gcode commands
-			that._FILE_LOADED			= false;   	//file containing gcode to run
+			that._FILE_LOADED			= true;   				//file containing gcode to run
 		}
 	});
 

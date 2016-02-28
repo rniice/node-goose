@@ -1,5 +1,5 @@
 var Dobot = require('./drivers/dobot_serial.js');
-
+var count = 10;
 
 var dobotInstance = new Dobot('COM11', 256000);
 
@@ -7,10 +7,12 @@ var dobotInstance = new Dobot('COM11', 256000);
 dobotInstance.start();
 
 //load a file to run instructions from
-//dobotInstance.loadProgram('./test/cube_2in.gcode');
+dobotInstance.loadProgram('./test/cube_2in.gcode');
 
+var countdown = setInterval(countdownFunction,1000);
 //run the program from the currently loaded file
-//setTimeout(dobotInstance.runProgram, 8000);
+setTimeout(dobotInstance.runProgram, 10000);
+
 
 
 
@@ -18,3 +20,16 @@ dobotInstance.start();
 
 
 //dobotInstance.computerVisionProgram();
+
+
+function countdownFunction() {
+	
+	console.log(count);
+	count--;
+
+	//console.log(dobotInstance._STATE);
+
+	if (count == 0) {
+		clearTimeout(countdown);
+	}
+}
