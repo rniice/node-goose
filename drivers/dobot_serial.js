@@ -1,8 +1,7 @@
 /***************** LOAD DEPENDENCIES ****************/
 
 var _ 			= require('underscore'),
-    Heartbeat 	= require('heartbeater'),
-    			  require('bufferjs'),		//extend the buffer library
+    			  //require('bufferjs'),		//extend the buffer library
     fs 			= require('fs');			//fs for loading files to run
 
 
@@ -21,7 +20,6 @@ var Dobot = function(COM, BAUD) {
     var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
 
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
-    this._heartbeater = new Heartbeat();
 
     this.test_command 		= new Buffer([0xA5,
 											0x00,0x00,0x80,0x3F,0x00,0x00,0x00,0x00,
@@ -50,7 +48,7 @@ var Dobot = function(COM, BAUD) {
     this._STATE 				= "OPENED";   //"WAITING" is ready for next command, "RUNNING" is a current program
     this._WAIT 					= 2000;
     this._RETRIES 				= 5;
-    this._HEART_BEAT_INTERVAL 	= 200;
+    this._HEART_BEAT_INTERVAL 	= 3000;
 
     this._CURRENT_COMMAND_INDEX = 0;
     this._NEXT_COMMAND			= this.test_command;
@@ -66,13 +64,8 @@ var Dobot = function(COM, BAUD) {
         } 
         else {
         	//after opened start the heartbeat
-        	that._heartbeater.interval(this._HEART_BEAT_INTERVAL); 
-        	//add the callback for update command queue
-        	that._heartbeater.add(that.updateCommandQueue);
-        	//add the callback for calling next()??
-        	that._heartbeater.add(that.next);
-        	//start the heartbeat
-        	that._heartbeater.start();
+        	that._heartbeater_update = setInterval(that.updateCommandQueue, that._HEART_BEAT_INTERVAL);
+        	that._heartbeater_next   = setInterval(that.next, that._HEART_BEAT_INTERVAL);
 
             that._PORT.on('data', function (data) {
 			    that._STATE = "CONNECTED";
@@ -92,14 +85,14 @@ var Dobot = function(COM, BAUD) {
                 that.disconnect();
                 that._STATE = "DISCONNECTED";
 
-                that._heartbeater.clear();
+               that._heartbeater.stop();
             });
 
             that._PORT.on('error', function (error) {
 				console.log("port ended with error: " + error);
 				that._STATE = "ERROR";
 
-				that._heartbeater.clear();
+				that._heartbeater.stop();
 
             });
 
@@ -121,11 +114,12 @@ Dobot.prototype.start = function() {
 Dobot.prototype.runProgram = function() {
 	if(this._FILE_LOADED) {
 		this._STATE	= "RUNNING";
+	}
 	else {
 		console.log("there is no program loaded");
 	}
 
-}
+};
 
 
 Dobot.prototype.receiveDobotState = function(buffer) {
@@ -163,7 +157,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 
 	//that.next();
 
-	console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
+	//console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
 
 };
 
@@ -279,7 +273,7 @@ Dobot.prototype.disconnect = function() {
 	this.sendBuffer(this.disconnect_command);
     this._STATE = "DISCONNECTED";
 
-    this._heartbeater.clear();
+    this._heartbeater.stop();
 
     console.log("disconnected.")
 
@@ -293,7 +287,7 @@ Dobot.prototype.close = function () {
         }
     });
 
-	this._heartbeater.clear();
+	this._heartbeater.stop();
 
 	console.log("closed.");
 
@@ -342,12 +336,14 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 			
 			this._CURRENT_COMMAND_INDEX ++;
 			this._STATUS = "WAITING";  
+
+			//this.next();		//send over the next buffer
 		}
 
 		else {
 			this._STATUS = "WAITING";
 
-			console.log("no current gcode commands to send!!")
+			console.log("no current gcode commands to send!!");
 			//don't update, still waiting for system to want a new command
 			//send over standard ping command if necessary
 
@@ -356,7 +352,7 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 	}
 
 	else {  //no file is loaded, currently in stream mode
-
+		//this.next();
 		console.log("no file loaded, in stream mode awaiting command");
 
 	}

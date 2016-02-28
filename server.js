@@ -7,10 +7,14 @@ var dobotInstance = new Dobot('COM11', 256000);
 dobotInstance.start();
 
 //load a file to run instructions from
-dobotInstance.loadProgram('./test/cube_2in.gcode');
+//dobotInstance.loadProgram('./test/cube_2in.gcode');
 
 //run the program from the currently loaded file
-dobotInstance.runProgram();
+//setTimeout(dobotInstance.runProgram, 8000);
 
 
 
+//dobotInstance.streamProgram();
+
+
+//dobotInstance.computerVisionProgram();
