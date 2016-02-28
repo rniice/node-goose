@@ -1,7 +1,6 @@
 /***************** LOAD DEPENDENCIES ****************/
 
 var _ 			= require('underscore'),
-    			  //require('bufferjs'),		//extend the buffer library
     fs 			= require('fs');			//fs for loading files to run
 
 
@@ -77,8 +76,8 @@ Dobot.prototype.start = function() {
 	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
 	//this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
 
+
     this._PORT.on('data', function (data) {
-	    that._STATE = "CONNECTED";
 
 		data = new Buffer(data);
 		//console.log("buffer rx length: " + data.length);
@@ -87,7 +86,7 @@ Dobot.prototype.start = function() {
 			that.receiveDobotState(data);
 			//that._STATE = "RUNNING";
 			that._STATE = "WAITING";
-			//that.next();
+			that.next();
 		}
 		
     });
@@ -271,19 +270,25 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 
 Dobot.prototype.next = function () {
 
+	var buffer = new Buffer([0xA5, 0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 
+									0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x41, 0x5A]);
 
-	if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
 
-		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+	//if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
+	if( this._NEXT_COMMAND) {
+		//var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+		
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
 	
-		console.log('sending buffer now');
+	//	console.log('sending buffer now');
 		this.sendBuffer(buffer);
 	}
 
 	else {
-		console.log('no buffer to send right now');
-		//console.log('STATE IS: ' + this._STATE);
+		//console.log('no buffer to send right now');
+		console.log('STATE IS: ' + this._STATE);
 	}
 
 };
@@ -359,14 +364,14 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 
 			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
 			console.log("command added: " + this._NEXT_COMMAND);
-			this.next();
+			//this.next();
 			
 			this._CURRENT_COMMAND_INDEX ++;
 			this._STATE = "RUNNING";  
 		}
 		
 		else if ( this._STATE == "WAITING" && this._NEXT_COMMAND) {
-			this.next();
+			//this.next();
 			this._STATE = "RUNNING";  
 		}
 
