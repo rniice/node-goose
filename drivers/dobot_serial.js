@@ -75,7 +75,7 @@ Dobot.prototype.start = function() {
 	var that = this;
 
 	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
-	this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
+	//this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
 
     this._PORT.on('data', function (data) {
 	    that._STATE = "CONNECTED";
@@ -115,6 +115,8 @@ Dobot.prototype.start = function() {
 
 Dobot.prototype.runProgram = function() {
 	if(this._FILE_LOADED) {
+		console.log("triggered due to file loaded");
+		this.next();
 		this._STATE	= "WAITING";
 	}
 	else {
@@ -157,7 +159,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		tail: 				tail
 	};
 
-	this._STATE = "WAITING";
+	//this._STATE = "WAITING";
 
 	//that.next();
 
@@ -357,13 +359,14 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 
 			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
 			console.log("command added: " + this._NEXT_COMMAND);
+			this.next();
 			
 			this._CURRENT_COMMAND_INDEX ++;
 			this._STATE = "RUNNING";  
 		}
 		
 		else if ( this._STATE == "WAITING" && this._NEXT_COMMAND) {
-
+			this.next();
 			this._STATE = "RUNNING";  
 		}
 

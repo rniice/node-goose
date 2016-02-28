@@ -14,8 +14,8 @@ var countdown = setInterval(countdownFunction,1000);
 //run the program from the currently loaded file
 setTimeout( function(){
 				console.log("made it into runProgram call");
-				dobotInstance._STATE = "WAITING"; }
-				//dobotInstance.runProgram(); }
+				//dobotInstance._STATE = "WAITING"; }
+				dobotInstance.runProgram(); }
 			, 5000);
 
 
