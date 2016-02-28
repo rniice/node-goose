@@ -7,7 +7,7 @@ var dobotInstance = new Dobot('COM11', 256000);
 dobotInstance.start();
 
 //load a file to run instructions from
-dobotInstance.loadProgram('./test/cube_2in.gcode');
+dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
 
 var countdown = setInterval(countdownFunction,1000);
 //run the program from the currently loaded file
@@ -26,8 +26,6 @@ function countdownFunction() {
 	
 	console.log(count);
 	count--;
-
-	//console.log(dobotInstance._STATE);
 
 	if (count == 0) {
 		clearTimeout(countdown);

@@ -64,38 +64,6 @@ var Dobot = function(COM, BAUD) {
         } 
         else {
         	//after opened start the heartbeat
-        	that._heartbeater_update = setInterval(that.updateCommandQueue, that._HEART_BEAT_INTERVAL);
-        	that._heartbeater_next   = setInterval(that.next, that._HEART_BEAT_INTERVAL);
-
-            that._PORT.on('data', function (data) {
-			    that._STATE = "CONNECTED";
-
-				data = new Buffer(data);
-				//console.log("buffer rx length: " + data.length);
-						
-				if(data.length == 42) {
-					that.receiveDobotState(data);
-					that._STATE = "RUNNING";
-					//that.next();
-				}
-				
-            });
-
-            that._PORT.on('close', function () {
-                that.disconnect();
-                that._STATE = "DISCONNECTED";
-
-               that._heartbeater.stop();
-            });
-
-            that._PORT.on('error', function (error) {
-				console.log("port ended with error: " + error);
-				that._STATE = "ERROR";
-
-				that._heartbeater.stop();
-
-            });
-
             that.start();
         }
 
@@ -104,7 +72,40 @@ var Dobot = function(COM, BAUD) {
 
 
 Dobot.prototype.start = function() {
-	console.log(this._STATE);
+	var that = this;
+
+	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
+	this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
+
+    this._PORT.on('data', function (data) {
+	    that._STATE = "CONNECTED";
+
+		data = new Buffer(data);
+		//console.log("buffer rx length: " + data.length);
+				
+		if(data.length == 42) {
+			that.receiveDobotState(data);
+			that._STATE = "RUNNING";
+			//that.next();
+		}
+		
+    });
+
+    this._PORT.on('close', function () {
+        that.disconnect();
+        that._STATE = "DISCONNECTED";
+
+       	that._heartbeater.stop();
+    });
+
+    this._PORT.on('error', function (error) {
+		console.log("port ended with error: " + error);
+		that._STATE = "ERROR";
+
+		that._heartbeater.stop();
+
+    });
+
 	this.sendBuffer(this.start_command);
 	this._STATE = "CONNECTED";
 
@@ -169,38 +170,45 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
-	var regex_G 			= new RegExp('^G([\d]+)' , 'i');
-	var g_command 			= command.match(regex_G);
+	var g_command 			= command.match(/^G([\d]+)/i)[1];
+	console.log("g_command type is: " + g_command);
 
-	if(regex_G == '1'){
+	if(g_command == '1'){
 
 		//extract x
-		var regex_X			= new RegExp('X([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var x_coordinate	= command.match(regex_X);
+		var x_coordinate	= command.match(/X([+-]?[\d]+[\.]?[\d]+]?)/i);
+			if (x_coordinate) { x_coordinate = parseFloat(x_coordinate[1]); }
+			console.log("x_coordinate is: " + x_coordinate);
 
 		//extract y
-		var regex_Y			= new RegExp('Y([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var y_coordinate	= command.match(regex_Y);
+		var y_coordinate	= command.match(/Y([+-]?[\d]+[\.]?[\d]+]?)/i);
+			if (y_coordinate) { y_coordinate = parseFloat(y_coordinate[1]); }
+			console.log("y_coordinate is: " + y_coordinate);
 
 		//extract z
-		var regex_Z			= new RegExp('Z([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var z_coordinate	= command.match(regex_Z);
+		var z_coordinate	= command.match(/Z([+-]?[\d]+[\.]?[\d]+]?)/i);
+			if (z_coordinate) { z_coordinate = parseFloat(z_coordinate[1]); }
+			console.log("z_coordinate is: " + z_coordinate);
 
 		//extract rotation head
-		var regex_RH		= new RegExp('RH([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var rh_angle		= command.match(regex_RH);	
+		var rh_angle		= command.match(/RH([+-]?[\d]+[\.]?[\d]+]?)/i);	
+			if (rh_angle) { rh_angle = parseFloat(rh_angle[1]); }
+			console.log("rh_angle is: " + rh_angle);
 
 		//extract grip head
-		var regex_GRP		= new RegExp('GRP([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var grp_angle		= command.match(regex_GRP);		
+		var grp_angle		= command.match(/GRP([+-]?[\d]+[\.]?[\d]+]?)/i);		
+			if (grp_angle) { grp_angle = parseFloat(grp_angle[1]); }
+			console.log("grp_angle is: " + grp_angle);
 
 		//extract laser power
-		var regex_LSR		= new RegExp('LSR([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var lsr_power		= command.match(regex_GRP);
+		var lsr_power		= command.match(/LSR([+-]?[\d]+[\.]?[\d]+]?)/i);
+			if (lsr_power) { lsr_power = parseFloat(lsr_power[1]); }
+			console.log("lsr_power is: " + lsr_power);
 
 		//extract feed rate
-		var regex_FEED		= new RegExp('F([+-]?[\d]+[\.]?[\d]+]?)' , 'i');
-		var feed_rate		= command.match(regex_FEED);		
+		var feed_rate		= command.match(/F([+-]?[\d]+[\.]?[\d]+]?)/i);		
+			if (feed_rate) { feed_rate = parseFloat(feed_rate[1]); }
+			console.log("feed_rate is: " + feed_rate);
 
 		//create an object with the selected dobot command parameters
 		var selected_state 	= {
@@ -239,13 +247,16 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 	command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
 	command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
 	command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
-	command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
-	command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
-	command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity
-	command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
-	command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+	//console.log("made it to here!");
+	//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
+	
+	//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+	//command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity
+	//command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
+	//command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
 
-	command_buffer.writeFloatLE(0x5A, 41);					//write the tail
+	//command_buffer.writeFloatLE(0x5A, 41);					//write the tail
+	console.log("made it to here!");
 
 	return command_buffer;
 };
@@ -254,8 +265,9 @@ Dobot.prototype.generateCommandBuffer = function(data) {
 
 Dobot.prototype.next = function () {
 
+	//if(this._NEXT_COMMAND && this._WAITING) {
 	if(this._NEXT_COMMAND) {
-		var buffer = sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
 	
 		console.log('sending buffer now');
@@ -263,6 +275,7 @@ Dobot.prototype.next = function () {
 	}
 	else {
 		console.log('no buffer to send right now');
+		//console.log('STATE IS: ' + this._STATE);
 	}
 
 };
@@ -328,6 +341,8 @@ Dobot.prototype.sendBuffer = function (buffer) {
 
 
 Dobot.prototype.updateCommandQueue = function () {	//updates next() if more commands to send
+	//var this = obj;
+	//this._STATE = "PEWP!";
 
 	console.log("this._STATE is:      " + this._STATE);
 	console.log("this._NEXT_COMMAND is " + this._NEXT_COMMAND);
@@ -335,10 +350,12 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 	if(this._FILE_LOADED) {
 
 		console.log("in this file loaded");
-		if ( this_.STATE == "RUNNING" && !this._NEXT_COMMAND) {
+		if ( this._STATE == "RUNNING" && !this._NEXT_COMMAND) {
 
 			//remove the first item of the command_queue and assign to next command
-			this._NEXT_COMMAND = this._GCODE_DATA.shift();
+			//this._NEXT_COMMAND = this._GCODE_DATA.shift();
+			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
+			console.log("command added: " + this._NEXT_COMMAND);
 			
 			this._CURRENT_COMMAND_INDEX ++;
 			this._STATE = "WAITING";  
