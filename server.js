@@ -1,10 +1,8 @@
-var Dobot = require('./drivers/dobot_serial.js');
-var count = 5;
-
-var dobotInstance = new Dobot('COM11', 256000);
+var Dobot = require('./private/drivers/dobot_serial.js');
+var count = 8;
 
 //open the connection and take control of the machine
-//dobotInstance.start();
+var dobotInstance = new Dobot('COM11', 256000);
 
 //load a file to run instructions from
 dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
@@ -16,7 +14,7 @@ setTimeout( function(){
 				console.log("made it into runProgram call");
 				//dobotInstance._STATE = "WAITING"; }
 				dobotInstance.runProgram(); }
-			, 5000);
+			, 8000);
 
 
 
@@ -32,7 +30,13 @@ function countdownFunction() {
 	console.log(count);
 	count--;
 
-	if (count == 0) {
+	if (count == 1) {
 		clearTimeout(countdown);
 	}
 }
+
+
+
+//use express to return a index.html that is used to communicate with the server
+
+

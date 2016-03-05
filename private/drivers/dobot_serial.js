@@ -44,10 +44,11 @@ var Dobot = function(COM, BAUD) {
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 										 0x5A]);
 
-    this._STATE 				= "OPENED";   //"WAITING" is ready for next command, "RUNNING" is a current program
+    this._STATE 				= "OPENED";   	//"WAITING" is ready for next command, "RUNNING" is a current program
+    this._PROGRAM_STATE			= "NONE";		//NONE, STARTED, PAUSED, STOPPED
     this._WAIT 					= 2000;
     this._RETRIES 				= 5;
-    this._HEART_BEAT_INTERVAL 	= 3000;
+    this._HEART_BEAT_INTERVAL 	= 200;
 
     this._CURRENT_COMMAND_INDEX = 0;
     this._NEXT_COMMAND			= null;
@@ -84,9 +85,7 @@ Dobot.prototype.start = function() {
 				
 		if(data.length == 42) {
 			that.receiveDobotState(data);
-			//that._STATE = "RUNNING";
 			that._STATE = "WAITING";
-			that.next();
 		}
 		
     });
@@ -107,16 +106,16 @@ Dobot.prototype.start = function() {
     });
 
 	this.sendBuffer(this.start_command);
-	this._STATE = "CONNECTED";
+	//this._STATE = "CONNECTED";
 
 };
 
 
 Dobot.prototype.runProgram = function() {
 	if(this._FILE_LOADED) {
-		console.log("triggered due to file loaded");
+		this._PROGRAM_STATE = "STARTED";
 		this.next();
-		this._STATE	= "WAITING";
+		//this._STATE	= "WAITING";
 	}
 	else {
 		console.log("there is no program loaded");
@@ -158,11 +157,8 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		tail: 				tail
 	};
 
-	//this._STATE = "WAITING";
-
-	//that.next();
-
 	//console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
+	this.next();	//send the next command if one is available
 
 };
 
@@ -176,7 +172,6 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
 	var g_command 			= command.match(/^G([\d]+)/i)[1];
-	//console.log("g_command type is: " + g_command);
 
 	if(g_command == '1'){
 
@@ -235,15 +230,14 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	else {
 		console.log("not a valid GCODE command");
-		//return some sort of buffer structure that keeps the robot in place
 	}
 
 	return command_buffer;
 };
 
 
-Dobot.prototype.generateCommandBuffer = function(data) {
-	//break out the elements from "data"
+Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send to dobot from desired values from sendDobotState
+	
 	var command_buffer = new Buffer(42);					//create 42 byte buffer
 
 	command_buffer[0] = 0xA5;								//write the header
@@ -276,8 +270,8 @@ Dobot.prototype.next = function () {
 									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x41, 0x5A]);
 
 
-	//if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
-	if( this._NEXT_COMMAND) {
+	if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
+	//if( this._NEXT_COMMAND) {
 		//var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
 		
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
@@ -288,7 +282,7 @@ Dobot.prototype.next = function () {
 
 	else {
 		//console.log('no buffer to send right now');
-		console.log('STATE IS: ' + this._STATE);
+		//console.log('STATE IS: ' + this._STATE);
 	}
 
 };
@@ -360,23 +354,24 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 
 	if(this._FILE_LOADED) {
 
-		if ( this._STATE == "WAITING" && !this._NEXT_COMMAND) {
+		if ( this._STATE == "WAITING" && !this._NEXT_COMMAND && (this._PROGRAM_STATE == "STARTED") ) {
 
 			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
 			console.log("command added: " + this._NEXT_COMMAND);
 			//this.next();
 			
 			this._CURRENT_COMMAND_INDEX ++;
-			this._STATE = "RUNNING";  
+			//this._STATE = "RUNNING";  
 		}
 		
 		else if ( this._STATE == "WAITING" && this._NEXT_COMMAND) {
 			//this.next();
-			this._STATE = "RUNNING";  
+			//this._STATE = "RUNNING";  
 		}
 
 		else {
-			this._STATE = "RUNNING";
+			//this._STATE = "RUNNING";
+			console.log("program state is: " + this._PROGRAM_STATE);
 			console.log("no current gcode commands to send!!");
 			//don't update, still waiting for system to want a new command
 			//send over standard ping command if necessary
