@@ -1,5 +1,5 @@
 var Dobot = require('./private/drivers/dobot_serial.js');
-var count = 8;
+var count = 4;
 
 //open the connection and take control of the machine
 var dobotInstance = new Dobot('COM11', 256000);
@@ -14,7 +14,7 @@ setTimeout( function(){
 				console.log("made it into runProgram call");
 				//dobotInstance._STATE = "WAITING"; }
 				dobotInstance.runProgram(); }
-			, 8000);
+			, 4000);
 
 
 

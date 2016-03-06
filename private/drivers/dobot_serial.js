@@ -20,13 +20,30 @@ var Dobot = function(COM, BAUD) {
 
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
 
-    this.test_command 		= new Buffer([0xA5,
+    /*this.test_command 		= new Buffer([0xA5,
 											0x00,0x00,0x80,0x3F,0x00,0x00,0x00,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0xC8,0x41,
-										0x5A]);
+										0x5A]); 
+	*/
+
+	//x-
+	//this.test_command 		= new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+
+	//y+
+	//this.test_command 		= new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x40,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+
+	//y-
+	//this.test_command 		= new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x80,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+
+	//z-
+	//this.test_command 		= new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0xa0,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+
+
+	//this.test_command 		= new Buffer([]);
+
 
 	this.start_command 		= new Buffer([0xA5,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -48,14 +65,14 @@ var Dobot = function(COM, BAUD) {
     this._PROGRAM_STATE			= "NONE";		//NONE, STARTED, PAUSED, STOPPED
     this._WAIT 					= 2000;
     this._RETRIES 				= 5;
-    this._HEART_BEAT_INTERVAL 	= 200;
+    this._HEART_BEAT_INTERVAL 	= 60;			//60ms is expected/default by controller
 
     this._CURRENT_COMMAND_INDEX = 0;
     this._NEXT_COMMAND			= null;
     this._COMMAND_QUEUE			= null;
 
-    this._FILE_LOADED			= false;   //file containing gcode to run
-    this._GCODE_DATA			= null;	   //currently no data loaded to run
+    this._FILE_LOADED			= false;   		//file containing gcode to run
+    this._GCODE_DATA			= null;	   		//currently no data loaded to run
 
     // Open port and define event handlers
     this._PORT.open(function(error) {
@@ -84,8 +101,8 @@ Dobot.prototype.start = function() {
 		//console.log("buffer rx length: " + data.length);
 				
 		if(data.length == 42) {
-			that.receiveDobotState(data);
 			that._STATE = "WAITING";
+			that.receiveDobotState(data);
 		}
 		
     });
@@ -241,10 +258,9 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 	var command_buffer = new Buffer(42);					//create 42 byte buffer
 
 	command_buffer[0] = 0xA5;								//write the header
-
 	//2 = single axis control; 7 = straight line control
-	command_buffer.writeFloatLE(7, 1);						//write the state
-	command_buffer.writeFloatLE(0, 5);						//write the axis ??????
+	command_buffer.writeFloatLE(1, 1);	//32831					//write the state
+	command_buffer.writeFloatLE(7, 5);						//write the axis ??????
 	command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
 	command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
 	command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
@@ -255,7 +271,7 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 	command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
 	command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
 
-	command_buffer[41] = 0xA5;								//write the tail
+	command_buffer[41] = 0x5A;								//write the tail
 
 	return command_buffer;
 };
@@ -264,20 +280,12 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 
 Dobot.prototype.next = function () {
 
-	var buffer = new Buffer([0xA5, 0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 
-									0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x41, 0x5A]);
-
-
 	if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
-	//if( this._NEXT_COMMAND) {
-		//var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
 		
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
-	
-	//	console.log('sending buffer now');
 		this.sendBuffer(buffer);
+		//this.sendBuffer(this.test_command);
 	}
 
 	else {
@@ -337,7 +345,7 @@ Dobot.prototype.sendBuffer = function (buffer) {
     
     try {
     	console.log("sending: ");
-    	console.log(buffer);
+    	console.log(buffer.toString('hex'));
         this._PORT.write(buffer);
     } 
     catch (error) {
@@ -349,30 +357,29 @@ Dobot.prototype.sendBuffer = function (buffer) {
 
 Dobot.prototype.updateCommandQueue = function () {	//updates next() if more commands to send
 
-	console.log("this._STATE is:       " + this._STATE);
-	console.log("this._NEXT_COMMAND is " + this._NEXT_COMMAND);
+	//console.log("this._STATE is:       " + this._STATE);
+	//console.log("this._NEXT_COMMAND is " + this._NEXT_COMMAND);
 
 	if(this._FILE_LOADED) {
 
 		if ( this._STATE == "WAITING" && !this._NEXT_COMMAND && (this._PROGRAM_STATE == "STARTED") ) {
 
 			this._NEXT_COMMAND = this._GCODE_DATA[this._CURRENT_COMMAND_INDEX];
-			console.log("command added: " + this._NEXT_COMMAND);
-			//this.next();
+			//console.log("command added: " + this._NEXT_COMMAND);
 			
 			this._CURRENT_COMMAND_INDEX ++;
-			//this._STATE = "RUNNING";  
+			this._STATE = "RUNNING";  
 		}
 		
 		else if ( this._STATE == "WAITING" && this._NEXT_COMMAND) {
 			//this.next();
-			//this._STATE = "RUNNING";  
+			this._STATE = "RUNNING";  
 		}
 
 		else {
 			//this._STATE = "RUNNING";
-			console.log("program state is: " + this._PROGRAM_STATE);
-			console.log("no current gcode commands to send!!");
+			//console.log("program state is: " + this._PROGRAM_STATE);
+			//console.log("no current gcode commands to send!!");
 			//don't update, still waiting for system to want a new command
 			//send over standard ping command if necessary
 
