@@ -11,15 +11,16 @@ var countdown = setInterval(countdownFunction,1000);
 
 //run the program from the currently loaded file
 setTimeout( function(){
-				console.log("made it into runProgram call");
-				//dobotInstance._STATE = "WAITING"; }
-				dobotInstance.runProgram(); }
-			, 4000);
+				//console.log("made it into runProgram call");
+				dobotInstance._STATE = "WAITING"; 
+				dobotInstance.runProgram(); 
 
+			}, 4000);
 
 
 
 //dobotInstance.streamProgram();
+//dobotInstance.jogMoveCartesian( {axis: "X", direction: "1"} );
 
 
 //dobotInstance.computerVisionProgram();
