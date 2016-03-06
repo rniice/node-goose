@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title itemprop='name'>FilaFind | 3D Printer Materials | Filament Search Engine | Discover</title>
+    <title itemprop='name'>NodeGoose | Dobot JavaScript Control | SCARA Robot</title>
     <meta charset="utf-8">
-    <meta name="description" content="Use FilaFind to filter through the vast array of emerging 3D consumer 3D printer materials to discover what your project needs.">
-    <meta name="keywords" content="FilaFind, 3D Printer, filament, material, diy">
+    <meta name="description" content="Use NodeGoose to control your Dobot SCARA Robot.">
+    <meta name="keywords" content="NodeGoose, Dobot, SCARA, Robot, DIY">
     <meta name="robots" content="index, nofollow">
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +19,7 @@
     <link rel="icon" href="./favicon.ico">
     <link rel="canonical" href="http://filafind.com" itemprop="url">
 
-    <title>Consumer 3D Printing Materials Database - FilaFind </title>
+    <title>NodeGoose - Dobot JavaScript Control - SCARA Robot</title>
 
     <!-- Angular Color Picker Styling s inject 'mp.colorPicker' -->
     <link rel="stylesheet" href="./css/bootstrap.min.css" >   
@@ -61,7 +61,7 @@
             
           </ul>
         </nav>
-        <h3 class="text-muted">Consumer FDM Materials Database - FilaFind [BETA]</h3>
+        <h3 class="text-muted">NodeGoose - Dobot JavaScript Control - SCARA Robot</h3>
         <br>
       </div>
 
@@ -114,55 +114,43 @@
               <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
                 rz-slider-options="slider_nozzle_temp.options"></rzslider>
             </span>
-            
-          <br>
-          <br>
-          <h4>Absolute Position Controls:</h4>
-
 
         </div>
 
 
         <div class="col-lg-3">
 
-          <h4>Load Program:</h4>
+          <h4>Absolute Position Controls:</h4>
 
 
           <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
           </color-picker>
 
           <input type="text" ng-model="color_temp" ng-init="" hidden="true"> 
-
-          <div class="centered-buttons">
-            <button ng-click="disableColorFiltering()">Reset Color</button>
-            <button ng-click="resetFiltering()">Reset All</button>
-          </div>
-
-          <br>
-
-          <div class="3d-render">
-              <!--<button ng-click="addScript()">addScript</button>-->
-              <script ng-repeat="script in scripts" ng-src="{{script.src}}"></script>
-
-              <br>
-              <br>
-              <canvas id="threeJS-Canvas" width="180" height="180" style="background-color: #000000">
-            
-              <!--Placeholder for 3JS Rendered Area-->
-              <script id="threeJS-Script"></script> 
-
-              <script id="initialize-render">
-                render_object_instance = new RenderObject("33CC33", 0xFFFFFF );
-                render_object_instance.render();
-              </script>
-          </div>
-          
+    
         </div>
 
 
         <div class="col-lg-4">
           <h4>Dobot State Rendering: </h4>
-          <!--<div class="field-log" ng-repeat="material in server_response track by $index">-->
+            <br>
+
+            <div class="3d-render">
+                <!--<button ng-click="addScript()">addScript</button>-->
+                <script ng-repeat="script in scripts" ng-src="{{script.src}}"></script>
+
+                <br>
+                <br>
+                <canvas id="threeJS-Canvas" width="180" height="180" style="background-color: #000000">
+              
+                <!--Placeholder for 3JS Rendered Area-->
+                <script id="threeJS-Script"></script> 
+
+                <script id="initialize-render">
+                  render_object_instance = new RenderObject("33CC33", 0xFFFFFF );
+                  render_object_instance.render();
+                </script>
+            </div>
 
         </div>
       </div>
@@ -174,11 +162,12 @@
         <br>
         <br>
 
-        <p><strong>DISCLAIMER:</strong> Properties are automatically generated from data provided from manufacturer or supplier website.  These properties are subject to change without notice.  Always check with the supplier or source for the latest available information on the product you are seeking to use.</p>
+        <p><strong>DISCLAIMER:</strong><br>THIS WORK IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE SOFTWARE OR DOCUMENT WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+        COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE SOFTWARE OR DOCUMENT.</p>
 
-        <p><strong>CONTACT:</strong> If you are a supplier and would like to have your materials added to the database, please reach out to us via email at <a href="mailto:contact@markedmethod.com">contact@markedmethod.com</a> and I will share instructions for verifying and adding you as a supplier.
+        <p><strong>CONTACT:</strong><br>If you are a developer or user who would like to help or submit a bug, please reach out to us via email at <a href="mailto:contact@markedmethod.com">contact@markedmethod.com</a>.
 
-        <p><strong>CREDIT:</strong> Materials Database is made possible using components of the <a href="https://github.com/spark3dp/print-manager" target="_blank">Spark 3D Printing Platform.</a>  Spark is an open platform for building better 3D printing software, hardware, materials and services.
+        <p><strong>CREDIT:</strong><br>NodeGoose was developed to support the open robotics platform kickstarted by <a href="http://dobot.cc/" target="_blank">Dobot CC</a>.
 
         <br>
       
