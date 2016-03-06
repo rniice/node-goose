@@ -63,6 +63,14 @@ app.get('/run/streamProgram', function(req, res) {
 });
 
 
+//NEED TO CONVERT TO POST AND UPLOAD LATER
+app.get('/load/program', function(req, res) {
+	//load a file to run instructions from
+	dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
+	res.send('Program Loaded');
+});
+
+
 app.get('/run/runProgram', function(req, res) {
 
 	dobotInstance._STATE = "WAITING"; 
@@ -74,17 +82,16 @@ app.get('/run/runProgram', function(req, res) {
 
 app.get('/run/jog', function(req, res) {
 	//res.send('returning all materials');
-	//materials.getMaterials(req, res);
 	dobotInstance.jogMoveCartesian( {axis: "X", direction: 1} );
+	res.send('Jog Command Sent');
+});
+
+
+app.get('/status/state', function(req, res) {
+	res.send(dobotInstance._dobot_state);
 
 });
 
-//NEED TO CONVERT TO POST AND UPLOAD LATER
-app.get('/load/program', function(req, res) {
-	//load a file to run instructions from
-	dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
-	res.send('Program Loaded');
-});
 
 
 //starts the server listening
@@ -94,37 +101,9 @@ app.listen(port, function() {
 
 
 /*
-var countdown = setInterval(countdownFunction,1000);
-
-//run the program from the currently loaded file
-setTimeout( function(){
-				//console.log("made it into runProgram call");
-				dobotInstance._STATE = "WAITING"; 
-				dobotInstance.runProgram(); 
-
-			}, 4000);
-
-*/
-
-//dobotInstance.streamProgram();
-//dobotInstance.jogMoveCartesian( {axis: "X", direction: "1"} );
-
 
 //dobotInstance.computerVisionProgram();
 
-
-function countdownFunction() {
-	//console.log("file loaded state: " + dobotInstance._FILE_LOADED);
-	console.log(count);
-	count--;
-
-	if (count == 1) {
-		clearTimeout(countdown);
-	}
-}
-
-
-
-//use express to return a index.html that is used to communicate with the server
+*/
 
 
