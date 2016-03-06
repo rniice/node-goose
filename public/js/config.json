@@ -1,0 +1,5 @@
+{
+    "PORT" : 9995,
+    "material_data_files" : "/data/",
+    "localhost_only" : true
+}

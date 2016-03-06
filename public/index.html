@@ -1,31 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title itemprop='name'>FilaFind | 3D Printer Materials | Filament Search Engine | Discover</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Use FilaFind to filter through the vast array of emerging 3D consumer 3D printer materials to discover what your project needs.">
+    <meta name="keywords" content="FilaFind, 3D Printer, filament, material, diy">
+    <meta name="robots" content="index, nofollow">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=320, height=device-height, target-densitydpi=medium-dpi">-->
+
+    <meta name="author" content="Michael Crockett">
+    <meta name="marked method llc" content="markedmethod.com">
+
+    <!--this is the image that shows up on facebook/linkedIn-->
+    <meta property="og:image" content="./img/og_image.jpg" />   
+
+    <link rel="icon" href="./favicon.ico">
+    <link rel="canonical" href="http://filafind.com" itemprop="url">
+
+    <title>Consumer 3D Printing Materials Database - FilaFind </title>
+
+    <!-- Angular Color Picker Styling s inject 'mp.colorPicker' -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css" >   
+    <link rel="stylesheet" href="./css/angular-color-picker.css">
+    <link rel="stylesheet" href="./css/rzslider.min.css" >
+    <link rel="stylesheet" href="./css/style.css" >
+
+    <!-- INCLUDE THE NG-APP CONTROLLER FOR ANGULAR JS -->
+    <script src= "./js/angular.min.js"></script>
+    <script src="./js/angular-color-picker.js"></script>
+    <script src= "./js/rzslider.min.js"></script>
+    <script src= "./js/angular-touch.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
+    <script src= "./js/control.min.js"></script>
+
+    <!--INCLUDE 3JS RENDERING STUFF-->
+    <!--<script src="js/three.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r74/three.min.js"></script>
+    <script src="js/RenderObject.js"></script>    <!--basic render object setup -->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+
+  <body ng-app="myApp" ng-controller="userCtrl">
+
+    <div class="container">
+
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            
+          </ul>
+        </nav>
+        <h3 class="text-muted">Consumer FDM Materials Database - FilaFind [BETA]</h3>
+        <br>
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-2" id="#sidebar">
+
+          <br>
+          <div class = "list-group">
+            <a href = "/howto" class = "list-group-item" target = "_blank">
+              <h4 class = "list-group-item-heading">How To</h4>
+              <p class = "list-group-item-text">1. Filter Properties</p>
+              <p class = "list-group-item-text">2. Select Color</p>
+              <p class = "list-group-item-text">3. Filter Price</p>
+              <p class = "list-group-item-text">4. Select Material</p>
+              <p class = "list-group-item-text">5. Evaluate Results</p>
+            </a>
+          </div>
+
+
+        </div>
+
+        <div class="col-lg-3">
+          <h4>Mechanical Properties:</h4>
+
+            <br>
+
+            <!--<h4>Cost Properties:</h4>-->
+
+            <span class="pull-down-heading" aria-hidden="true"><strong>Supplier:</strong>
+              <select ng-model="manufacturer" ng-change="changeManufacturer(manufacturer)">
+                <option value="">ANY</option>-->
+                <option value="3DFilamenta">3DFilamenta</option>
+
+              </select>
+            </span> 
+
+            <br>
+            <br>
+
+            <span class="slider-heading" aria-hidden="true"><strong>Ideal Bed Temp [C]:</strong>
+              <rzslider class="bed-temp-slider" rz-slider-model="slider_bed_temp.value"
+                rz-slider-options="slider_bed_temp.options"></rzslider>
+            </span>
+            
+            <span class="slider-heading" aria-hidden="true"><strong>Ideal Nozzle Temp [C]:</strong>
+              <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
+                rz-slider-options="slider_nozzle_temp.options"></rzslider>
+            </span>
+
+            <span class=""slider-heading aria-hidden="true"><strong>Price [$/kg]:</strong>
+              <rzslider class="cost-slider" rz-slider-model="slider_cost.minValue"
+                rz-slider-high="slider_cost.maxValue"
+                rz-slider-options="slider_cost.options"></rzslider>
+            </span>
+
+        </div>
+
+
+        <div class="col-lg-3">
+
+          <h4>Color Properties:</h4>
+
+
+          <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
+          </color-picker>
+
+          <input type="text" ng-model="color_temp" ng-init="" hidden="true"> 
+
+          <div class="centered-buttons">
+            <button ng-click="disableColorFiltering()">Reset Color</button>
+            <button ng-click="resetFiltering()">Reset All</button>
+          </div>
+
+          <br>
+
+          <div class="3d-render">
+              <!--<button ng-click="addScript()">addScript</button>-->
+              <script ng-repeat="script in scripts" ng-src="{{script.src}}"></script>
+
+              <br>
+              <br>
+              <canvas id="threeJS-Canvas" width="180" height="180" style="background-color: #000000">
+            
+              <!--Placeholder for 3JS Rendered Area-->
+              <script id="threeJS-Script"></script> 
+
+              <script id="initialize-render">
+                render_object_instance = new RenderObject("33CC33", 0xFFFFFF );
+                render_object_instance.render();
+              </script>
+          </div>
+          
+        </div>
+
+
+        <div class="col-lg-4">
+          <h4>Available Materials: </h4>
+          <!--<div class="field-log" ng-repeat="material in server_response track by $index">-->
+          <div class="field-log" ng-repeat="material in server_response">
+            <button class="available-filament" ng-click="showMaterialDetails(material)" ng-style="{'background-color': '#{{material.color}}', 'opacity' : '{{render_opacity}}' }">{{material.name}}</button>
+          </div>
+
+        </div>
+      </div>
+      <!--<div class="col-lg-2">
+      </div> -->
+
+      <div class="row col-lg-12">
+
+        <br>
+        <br>
+
+        <p><strong>DISCLAIMER:</strong> Properties are automatically generated from data provided from manufacturer or supplier website.  These properties are subject to change without notice.  Always check with the supplier or source for the latest available information on the product you are seeking to use.</p>
+
+        <p><strong>CONTACT:</strong> If you are a supplier and would like to have your materials added to the database, please reach out to us via email at <a href="mailto:contact@markedmethod.com">contact@markedmethod.com</a> and I will share instructions for verifying and adding you as a supplier.
+
+        <p><strong>CREDIT:</strong> Materials Database is made possible using components of the <a href="https://github.com/spark3dp/print-manager" target="_blank">Spark 3D Printing Platform.</a>  Spark is an open platform for building better 3D printing software, hardware, materials and services.
+
+        <br>
+      
+        <footer class="footer">
+          <!--<div class="col-lg-2">
+          </div>-->
+
+          <!--<div class="col-lg-12"> -->
+          <br>
+            <p>&copy; Marked Method LLC, 2016.  <strong>All Rights Reserved.</strong></p>
+          <!--</div>-->
+
+        </footer>
+
+      </div>
+
+    </div> 
+
+  </body>
+
+</html>
+
+
+
 
 <!-- CONTROL: LEFT SIDE OF WINDOW -->
 
 <!-- XY Control:
 
-	X-Y Controller - Absolute Position - Use Canvas Picker 
+  X-Y Controller - Absolute Position - Use Canvas Picker 
 
-	X-Y Controller - Jog Mode - Use Jelly/Touch Thing
+  X-Y Controller - Jog Mode - Use Jelly/Touch Thing
 
 -->
 
 
 <!-- Z Control:
 
-	Z Controller - Absolute Position - Use a Angular Vertical Slider Bar [0-150 mm]
+  Z Controller - Absolute Position - Use a Angular Vertical Slider Bar [0-150 mm]
 
-	Z Controller - Jog Mode - Use Springy/Slider Angular Vertical
+  Z Controller - Jog Mode - Use Springy/Slider Angular Vertical
 
 -->
 
 
 <!--
 
-	Upload File Button: GCODE FILE
+  Upload File Button: GCODE FILE
 
-	Start Program Button: Run from GCODE
+  Start Program Button: Run from GCODE
 
-	Start STREAM Button: track using camera
+  Start STREAM Button: track using camera
 
 -->
 
@@ -35,18 +240,18 @@
 
 <!-- 
 
-	Text Area Logging Status Responses
+  Text Area Logging Status Responses
 
 -->
 
 <!--
 
-	GCODE Viewer Area - Line By Line Render/Scan of File Loaded
+  GCODE Viewer Area - Line By Line Render/Scan of File Loaded
 
 -->
 
 <!-- 
 
-	ThreeJS Canvas Rendering Showing Robot Linkage Positioning
+  ThreeJS Canvas Rendering Showing Robot Linkage Positioning
 
 -->

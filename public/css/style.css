@@ -1,0 +1,106 @@
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+}
+
+textarea {
+  font-size: 15px;
+
+}
+
+.field-log {
+	height: 800;
+	/*max-height: 400px;*/
+	display: inline-block;
+	float: right;
+
+	overflow:hidden;
+}
+
+.available-filament {
+	color: black;
+	-webkit-text-fill-color: white;
+	-webkit-text-stroke-width: 1px;
+	-webkit-text-stroke-color: black;
+	font-weight: bold;
+	font-size: 20px;
+	border-radius: 16px;
+	width: 170px;
+	height: 100px;
+}
+
+
+.centered-buttons {
+	float: right;
+	position: relative;
+	left: -15%; /* or right 50% */
+	/*text-align: left;*/
+}
+
+span.pull-down-heading {
+	/*font-weight: bold; */
+}
+
+select {
+	float: right;
+    text-align:right;
+    width: 160px;
+    direction: rtl;
+}
+
+option {
+	float: right;
+    text-align:right;
+    width: 160px;
+    direction: rtl;
+}
+
+
+/*
+h4.configure-title {
+	text-align: center;
+}
+*/
+
+table.processing-parameters {
+	border: 2px solid black;
+	text-align: center;
+	table-layout: fixed;
+
+}
+
+th.processing-parameters {
+	border: 1px solid gray;
+}
+
+td {
+	border: 1px solid gray;
+	width: 56px;
+	height: 15px;
+	overflow: hidden;
+}
+
+td.processing-data {
+	width: 56px;
+	height: 50px;
+	overflow: hidden;
+}
+
+
+.filtering-elements {
+	border-radius: 25px;
+    border: 2px solid #73AD21;
+    height: auto;
+    /*padding: 20px; */
+}
+
+
+/*#threeJSCanvas { */
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
