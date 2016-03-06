@@ -88,9 +88,7 @@
         </div>
 
         <div class="col-lg-3">
-          <h4>Jog Controls:</h4>
-
-            <br>
+          <h4>Motion Control:</h4>
 
             <table class="processing-parameters" style="width:100%">
               <tr>
@@ -114,6 +112,38 @@
                 <td ng-click="jogX_pos()"><strong>X+</strong></td>
                 <td><strong></strong></td>
               </tr>
+              
+            </table>
+
+          <br>
+          <h4>Effector Control:</h4>
+
+            <table class="processing-parameters" style="width:100%">
+
+              <tr>
+                <td><strong>Rotation</strong></td>
+                <td><strong></strong></td>    
+                <td><strong>R-</strong></td>
+                <td><strong>R+</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Gripper</strong></td>
+                <td><strong></strong></td>    
+                <td><strong>OPEN</strong></td>
+                <td><strong>CLOSE</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Pump</strong></td>
+                <td><strong></strong></td>    
+                <td><strong>OFF</strong></td>
+                <td><strong>ON</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Laser</strong></td>
+                <td><strong></strong></td>    
+                <td><strong>OFF</strong></td>
+                <td><strong>ON</strong></td>
+              </tr>
 
             </table>
 
@@ -123,9 +153,10 @@
 
             <!--<h4>Cost Properties:</h4>-->
 
+            <!--
             <span class="pull-down-heading" aria-hidden="true"><strong>Supplier:</strong>
               <select ng-model="manufacturer" ng-change="changeManufacturer(manufacturer)">
-                <option value="">ANY</option>-->
+                <option value="">ANY</option>
                 <option value="3DFilamenta">3DFilamenta</option>
 
               </select>
@@ -143,6 +174,8 @@
               <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
                 rz-slider-options="slider_nozzle_temp.options"></rzslider>
             </span>
+
+            -->
 
         </div>
 
