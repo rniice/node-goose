@@ -57,7 +57,7 @@ app.get('/run/streamProgram', function(req, res) {
 app.get('/run/jog', function(req, res) {
 	//res.send('returning all materials');
 	//materials.getMaterials(req, res);
-	dobotInstance.jogMoveCartesian( {"axis": "X", "direction": 1} );
+	dobotInstance.jogMoveCartesian( {axis: "X", direction: 1} );
 
 });
 
