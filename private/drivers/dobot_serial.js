@@ -51,6 +51,8 @@ var Dobot = function(COM, BAUD) {
     this._FILE_LOADED			= false;   		//file containing gcode to run
     this._GCODE_DATA			= null;	   		//currently no data loaded to run
 
+	this._dobot_state			= null;			//status/position response from dobot
+
     // Open port and define event handlers
     this._PORT.open(function(error) {
         if (error) {
@@ -147,7 +149,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 
 	var tail	        = buffer.readUInt8(37);			//should register 0x5A
 
-	var dobot_state = {
+	this._dobot_state = {
 		header: 			header, 
 		x_pos: 				x_pos, 
 		y_pos: 				y_pos, 
@@ -161,7 +163,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		tail: 				tail
 	};
 
-	//console.log("current robot state is: \n" + JSON.stringify(dobot_state, null, 2));
+	//console.log("current robot state is: \n" + JSON.stringify(this._dobot_state, null, 2));
 	this.next();	//send the next command if one is available
 
 };

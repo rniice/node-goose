@@ -36,14 +36,23 @@ app.get('/run/connect', function(req, res) {
 	res.send('Connected to Dobot');
 });
 
+app.get('/run/disconnect', function(req, res) {
+	//open the connection and take control of the machine
+	dobotInstance.disconnect();
+	res.send('Disconnected Dobot');
+});
 
-app.get('/run/runProgram', function(req, res) {
-	//load a file to run instructions from
-	dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
+app.get('/run/pause', function(req, res) {
+	//open the connection and take control of the machine
+	dobotInstance.pause();
+	res.send('Pausing Dobot');
+});
 
-	dobotInstance._STATE = "WAITING"; 
-	dobotInstance.runProgram(); 
-	res.send('Connected to Dobot');
+
+app.get('/run/resume', function(req, res) {
+	//open the connection and take control of the machine
+	dobotInstance.resume();
+	res.send('Resuming Dobot');
 });
 
 
@@ -54,11 +63,27 @@ app.get('/run/streamProgram', function(req, res) {
 });
 
 
+app.get('/run/runProgram', function(req, res) {
+
+	dobotInstance._STATE = "WAITING"; 
+	dobotInstance.runProgram(); 
+	res.send('Connected to Dobot');
+});
+
+
+
 app.get('/run/jog', function(req, res) {
 	//res.send('returning all materials');
 	//materials.getMaterials(req, res);
 	dobotInstance.jogMoveCartesian( {axis: "X", direction: 1} );
 
+});
+
+//NEED TO CONVERT TO POST AND UPLOAD LATER
+app.get('/load/program', function(req, res) {
+	//load a file to run instructions from
+	dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
+	res.send('Program Loaded');
 });
 
 

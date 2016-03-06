@@ -33,7 +33,8 @@
     <script src= "./js/rzslider.min.js"></script>
     <script src= "./js/angular-touch.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
-    <script src= "./js/control.min.js"></script>
+    <!--<script src= "./js/control.min.js"></script> -->
+    <script src= "./js/control.js"></script>
 
     <!--INCLUDE 3JS RENDERING STUFF-->
     <!--<script src="js/three.min.js"></script>-->
@@ -68,23 +69,26 @@
 
         <div class="col-lg-2" id="#sidebar">
 
-          <br>
-          <div class = "list-group">
-            <a href = "/howto" class = "list-group-item" target = "_blank">
-              <h4 class = "list-group-item-heading">How To</h4>
-              <p class = "list-group-item-text">1. Filter Properties</p>
-              <p class = "list-group-item-text">2. Select Color</p>
-              <p class = "list-group-item-text">3. Filter Price</p>
-              <p class = "list-group-item-text">4. Select Material</p>
-              <p class = "list-group-item-text">5. Evaluate Results</p>
-            </a>
-          </div>
-
+          <br><br>
+          <button ng-click="connectDobot()">Connect</button>
+          <br><br>
+          <button ng-click="disconnectDobot()">Disconnect</button>
+          <br><br>
+          <button ng-click="pauseDobot()">Pause</button>
+          <br><br>
+          <button ng-click="resumeDobot()">Resume</button>
+          <br><br>
+          <button ng-click="runStreamDobot()">Stream Data</button>
+          <br><br>
+          <button ng-click="loadProgramDobot()">Load Program</button>
+          <br><br>
+          <button ng-click="runProgramDobot()">Run Program</button>
+          <br><br>
 
         </div>
 
         <div class="col-lg-3">
-          <h4>Mechanical Properties:</h4>
+          <h4>Jog Controls:</h4>
 
             <br>
 
@@ -110,19 +114,18 @@
               <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
                 rz-slider-options="slider_nozzle_temp.options"></rzslider>
             </span>
+            
+          <br>
+          <br>
+          <h4>Absolute Position Controls:</h4>
 
-            <span class=""slider-heading aria-hidden="true"><strong>Price [$/kg]:</strong>
-              <rzslider class="cost-slider" rz-slider-model="slider_cost.minValue"
-                rz-slider-high="slider_cost.maxValue"
-                rz-slider-options="slider_cost.options"></rzslider>
-            </span>
 
         </div>
 
 
         <div class="col-lg-3">
 
-          <h4>Color Properties:</h4>
+          <h4>Load Program:</h4>
 
 
           <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
@@ -158,11 +161,8 @@
 
 
         <div class="col-lg-4">
-          <h4>Available Materials: </h4>
+          <h4>Dobot State Rendering: </h4>
           <!--<div class="field-log" ng-repeat="material in server_response track by $index">-->
-          <div class="field-log" ng-repeat="material in server_response">
-            <button class="available-filament" ng-click="showMaterialDetails(material)" ng-style="{'background-color': '#{{material.color}}', 'opacity' : '{{render_opacity}}' }">{{material.name}}</button>
-          </div>
 
         </div>
       </div>
