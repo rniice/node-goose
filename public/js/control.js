@@ -88,6 +88,41 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   /*********************************************/
 
+  
+  /*********JOG MOVEMENT CONTROL BUTTONS********/
+  
+  $scope.jogX_pos = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogX_neg = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogY_pos = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogY_neg = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogZ_pos = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogZ_neg = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  /*********************************************/
+
 
   //USER CONFIGURATION CHANGE DETECTION
 
