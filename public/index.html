@@ -38,10 +38,11 @@
 
     <!--INCLUDE 3JS RENDERING STUFF-->
     <!--<script src="js/three.min.js"></script>-->
+    <!--
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r74/three.min.js"></script>
-    <script src="js/RenderObject.js"></script>    <!--basic render object setup -->
-
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>-->
+    <script src="js/RenderObject.js"></script>    
+    -->
+    <!--basic render object setup -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -116,26 +117,26 @@
             <table class="processing-parameters" style="width:100%">
 
               <tr>
-                <td colspan = "2"><strong>Rotation</strong></td>
-                <!--<td><strong></strong></td>   --> 
+                <td><strong>Rotation</strong></td>
+                <td><strong></strong></td>
                 <td ng-click="jogRneg()"><strong>R-</strong></td>
                 <td ng-click="jogRpos()"><strong>R+</strong></td>
               </tr>
               <tr>
-                <td colspan = "2"><strong>Gripper</strong></td>
-                <!--<td><strong></strong></td>   --> 
+                <td><strong>Gripper</strong></td>
+                <td><strong></strong></td>
                 <td ng-click="jogGRPopen()"><strong>OPEN</strong></td>
                 <td ng-click="jogGRPclose()"><strong>CLOSE</strong></td>
               </tr>
               <tr>
-                <td colspan = "2"><strong>Pump</strong></td>
-                <!--<td><strong></strong></td>   --> 
+                <td><strong>Pump</strong></td>
+                <td><strong></strong></td>
                 <td ng-click="jogPUMPoff()"><strong>OFF</strong></td>
                 <td ng-click="jogPUMPon()"><strong>ON</strong></td>
               </tr>
               <tr>
-                <td colspan = "2"><strong>Laser</strong></td>
-                <!--<td><strong></strong></td>   --> 
+                <td><strong>Laser</strong></td>
+                <td><strong></strong></td>
                 <td ng-click="jogLSRoff()"><strong>OFF</strong></td>
                 <td ng-click="jogLSRon()"><strong>ON</strong></td>
               </tr>
@@ -201,11 +202,6 @@
           <h4>Dobot State: </h4>
             <br>
 
-            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="49%">
-            <img src="/img/dobot_coordinate_system_angular.jpeg" width="49%">
-
-            <br><br>
-
             <table class="processing-parameters" style="width:100%">
               <tr>
                 <td><strong>x_pos</strong></td>
@@ -242,17 +238,22 @@
 
             </table>
 
+            <br><br>
+            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="49%">
+            <img src="/img/dobot_coordinate_system_angular.jpeg" width="49%">
 
+            <br><br>
 
+            <!--
             <div class="3d-render">
-                <!--<button ng-click="addScript()">addScript</button>-->
+                <button ng-click="addScript()">addScript</button>
                 <script ng-repeat="script in scripts" ng-src="{{script.src}}"></script>
 
                 <br>
                 <br>
                 <canvas id="threeJS-Canvas" width="180" height="180" style="background-color: #000000">
               
-                <!--Placeholder for 3JS Rendered Area-->
+                Placeholder for 3JS Rendered Area
                 <script id="threeJS-Script"></script> 
 
                 <script id="initialize-render">
@@ -260,6 +261,7 @@
                   render_object_instance.render();
                 </script>
             </div>
+            -->
 
         </div>
       </div>

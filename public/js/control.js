@@ -94,33 +94,27 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   /*********JOG MOVEMENT CONTROL BUTTONS********/
   
   $scope.jogXpos = function(){
-    //alert("you have tried to jog z up!");
     getQuery(base_query + "/run/jog?axis=X&direction=1" );
   };
 
   $scope.jogXneg = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=X&direction=-1" );
   };
 
   $scope.jogYpos = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=Y&direction=1" );
   };
 
   $scope.jogYneg = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=Y&direction=-1" );
   };
 
   $scope.jogZpos = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=Z&direction=1" );
   };
 
   $scope.jogZneg = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=Z&direction=-1" );
   };
 
   /*********************************************/
