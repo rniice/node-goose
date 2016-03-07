@@ -58,7 +58,8 @@ app.get('/run/resume', function(req, res) {
 
 
 app.get('/run/streamProgram', function(req, res) {
-	//dobotInstance._STATE = "WAITING"; 
+	//dobotInstance._STATE = "WAITING";
+	console.log("triggering stream Mode"); 
 	dobotInstance.streamProgram(); 
 	res.send('Streaming to Dobot');
 });
