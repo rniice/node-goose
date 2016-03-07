@@ -82,6 +82,10 @@ app.get('/run/runProgram', function(req, res) {
 
 app.get('/run/jog', function(req, res) {
 	//res.send('returning all materials');
+
+	//var command = req.data.command;
+	//dobotInstance.jogMoveCartesian(command);
+
 	dobotInstance.jogMoveCartesian( {axis: "X", direction: 1} );
 	res.send('Jog Command Sent');
 });

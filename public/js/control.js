@@ -91,32 +91,76 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   
   /*********JOG MOVEMENT CONTROL BUTTONS********/
   
-  $scope.jogX_pos = function(){
+  $scope.jogXpos = function(){
     //alert("you have tried to jog z up!");
 
   };
 
-  $scope.jogX_neg = function(){
+  $scope.jogXneg = function(){
     //alert("you have tried to jog z up!");
 
   };
 
-  $scope.jogY_pos = function(){
+  $scope.jogYpos = function(){
     //alert("you have tried to jog z up!");
 
   };
 
-  $scope.jogY_neg = function(){
+  $scope.jogYneg = function(){
     //alert("you have tried to jog z up!");
 
   };
 
-  $scope.jogZ_pos = function(){
+  $scope.jogZpos = function(){
     //alert("you have tried to jog z up!");
 
   };
 
-  $scope.jogZ_neg = function(){
+  $scope.jogZneg = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  /*********************************************/
+
+  /*********EFFECTOR CONTROL BUTTONS********/
+  
+  $scope.jogRpos = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogRneg = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogGRPopen = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogGRPclose = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogPUMPon = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogPUMPoff = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogLSRon = function(){
+    //alert("you have tried to jog z up!");
+
+  };
+
+  $scope.jogLSRoff = function(){
     //alert("you have tried to jog z up!");
 
   };
@@ -124,15 +168,18 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   /*********************************************/
 
 
+
   //USER CONFIGURATION CHANGE DETECTION
 
+/*
   $scope.changeJogMode = function(manufacturer) {
     $scope.manufacturer = manufacturer;
     scope_struct.manufacturer = manufacturer; //update the scope_struct
     generateFullQuery(scope_struct);
   };
+*/
 
-
+/*
   $scope.slider_nozzle_temp = {
     value: 220,
     options: {
@@ -165,7 +212,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
     }
   };
 
-
+*/
 
 	//for each value in the component,value array, run generate query
 	function generateFullQuery(obj){

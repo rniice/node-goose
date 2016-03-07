@@ -68,22 +68,17 @@
       <div class="row">
 
         <div class="col-lg-2" id="#sidebar">
-
-          <br><br>
-          <button ng-click="connectDobot()">Connect</button>
-          <br><br>
-          <button ng-click="disconnectDobot()">Disconnect</button>
-          <br><br>
-          <button ng-click="pauseDobot()">Pause</button>
-          <br><br>
-          <button ng-click="resumeDobot()">Resume</button>
-          <br><br>
-          <button ng-click="runStreamDobot()">Stream Data</button>
-          <br><br>
-          <button ng-click="loadProgramDobot()">Load Program</button>
-          <br><br>
-          <button ng-click="runProgramDobot()">Run Program</button>
-          <br><br>
+          <h4>System Control:</h4>
+            <button ng-click="connectDobot()">Connect</button>
+            <br><br>
+            <button ng-click="disconnectDobot()">Disconnect</button>
+            <br><br>
+            <button ng-click="pauseDobot()">Pause</button>
+            <br><br>
+            <button ng-click="resumeDobot()">Resume</button>
+            <br><br>
+            <button ng-click="runStreamDobot()">Stream Data</button>
+            <br><br>
 
         </div>
 
@@ -92,24 +87,24 @@
 
             <table class="processing-parameters" style="width:100%">
               <tr>
-                <td ng-click="jogZ_pos()"><strong>Z+</strong></td>
+                <td ng-click="jogZpos()"><strong>Z+</strong></td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-click="jogX_neg()"><strong>X-</strong></td>
+                <td ng-click="jogXneg()"><strong>X-</strong></td>
                 <td><strong></strong></td>
               </tr>
               <tr>
                 <td><strong></strong></td>
                 <td><strong></strong></td>    
-                <td ng-click="jogY_neg()"><strong>Y-</strong></td>
+                <td ng-click="jogYneg()"><strong>Y-</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogY_pos()"><strong>Y+</strong></td>
+                <td ng-click="jogYpos()"><strong>Y+</strong></td>
               </tr>
               <tr>
-                <td ng-click="jogZ_neg()"><strong>Z-</strong></td>
+                <td ng-click="jogZneg()"><strong>Z-</strong></td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-click="jogX_pos()"><strong>X+</strong></td>
+                <td ng-click="jogXpos()"><strong>X+</strong></td>
                 <td><strong></strong></td>
               </tr>
               
@@ -121,35 +116,39 @@
             <table class="processing-parameters" style="width:100%">
 
               <tr>
-                <td><strong>Rotation</strong></td>
-                <td><strong></strong></td>    
-                <td><strong>R-</strong></td>
-                <td><strong>R+</strong></td>
+                <td colspan = "2"><strong>Rotation</strong></td>
+                <!--<td><strong></strong></td>   --> 
+                <td ng-click="jogRneg()"><strong>R-</strong></td>
+                <td ng-click="jogRpos()"><strong>R+</strong></td>
               </tr>
               <tr>
-                <td><strong>Gripper</strong></td>
-                <td><strong></strong></td>    
-                <td><strong>OPEN</strong></td>
-                <td><strong>CLOSE</strong></td>
+                <td colspan = "2"><strong>Gripper</strong></td>
+                <!--<td><strong></strong></td>   --> 
+                <td ng-click="jogGRPopen()"><strong>OPEN</strong></td>
+                <td ng-click="jogGRPclose()"><strong>CLOSE</strong></td>
               </tr>
               <tr>
-                <td><strong>Pump</strong></td>
-                <td><strong></strong></td>    
-                <td><strong>OFF</strong></td>
-                <td><strong>ON</strong></td>
+                <td colspan = "2"><strong>Pump</strong></td>
+                <!--<td><strong></strong></td>   --> 
+                <td ng-click="jogPUMPoff()"><strong>OFF</strong></td>
+                <td ng-click="jogPUMPon()"><strong>ON</strong></td>
               </tr>
               <tr>
-                <td><strong>Laser</strong></td>
-                <td><strong></strong></td>    
-                <td><strong>OFF</strong></td>
-                <td><strong>ON</strong></td>
+                <td colspan = "2"><strong>Laser</strong></td>
+                <!--<td><strong></strong></td>   --> 
+                <td ng-click="jogLSRoff()"><strong>OFF</strong></td>
+                <td ng-click="jogLSRon()"><strong>ON</strong></td>
               </tr>
 
             </table>
 
-            <br>
-            <br>
+          <br>
 
+          <h4>Upload Program:</h4>
+
+            <button ng-click="loadProgramDobot()">Load Program</button>
+            <button ng-click="runProgramDobot()">Run Program</button>
+            <br><br>
 
             <!--<h4>Cost Properties:</h4>-->
 
@@ -182,14 +181,16 @@
 
         <div class="col-lg-3">
 
+
           <h4>Absolute Position Controls:</h4>
 
+          <br><p>///Not Yet Implemented</p>
+            <!--
+            <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
+            </color-picker>
 
-          <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
-          </color-picker>
-
-          <input type="text" ng-model="color_temp" ng-init="" hidden="true"> 
-    
+            <input type="text" ng-model="color_temp" ng-init="" hidden="true"> 
+            -->
         </div>
 
 
