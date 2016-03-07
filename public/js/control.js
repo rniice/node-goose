@@ -74,16 +74,13 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
     getQuery(base_query + "/run/streamProgram");
   };
 
-  $scope.loadProgramDobot = function(){
-    getQuery(base_query + "/load/program");
-  };
-
-  $scope.runProgramDobot = function(){
-    getQuery(base_query + "/run/runProgram");
-  };
-
   $scope.checkDobotState = function(){
-    getState(base_query + "/status/state'");
+    getState(base_query + "/status/state");
+
+    //alert(state.data);
+
+
+
   };
 
   /*********************************************/
@@ -93,7 +90,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   
   $scope.jogXpos = function(){
     //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=X&direction=1" );
   };
 
   $scope.jogXneg = function(){
@@ -167,6 +164,18 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   /*********************************************/
 
+
+  /************** UPLOAD PROGRAM ***************/
+
+  $scope.loadProgramDobot = function(){
+    getQuery(base_query + "/load/program");
+  };
+
+  $scope.runProgramDobot = function(){
+    getQuery(base_query + "/run/runProgram");
+  };
+
+  /*********************************************/
 
 
   //USER CONFIGURATION CHANGE DETECTION
@@ -272,16 +281,25 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   function getState(address){
 
-    //alert("new query is: " + filtered_query);
-
-    // Simple GET request example:
     $http({
       method: 'GET',
       url: address,
       config: "",
       }).then(function success(response) {
 
-        $scope.dobot_state = response;
+        alert(JSON.stringify(response,null,2));
+
+        $scope.state_x_pos            = response.data.x_pos;
+        $scope.state_y_pos            = response.data.y_pos;
+        $scope.state_z_pos            = response.data.z_pos;
+        $scope.state_head_rot         = response.data.head_rot;
+        $scope.state_base_angle       = response.data.base_angle;
+        $scope.state_long_arm_angle   = response.data.long_arm_angle;
+        $scope.state_short_arm_angle  = response.data.short_arm_angle;
+        $scope.state_paw_arm_angle    = response.data.paw_arm_angle;
+        $scope.state_is_grab          = response.data.is_grab;
+
+        //$scope.dobot_state = response;
 
         }, function error(response) {
           alert("there was an error with your request");

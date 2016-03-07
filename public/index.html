@@ -149,6 +149,8 @@
             <button ng-click="loadProgramDobot()">Load Program</button>
             <button ng-click="runProgramDobot()">Run Program</button>
             <br><br>
+            <button ng-click="checkDobotState()">Get State</button>
+            <br><br>
 
             <!--<h4>Cost Properties:</h4>-->
 
@@ -195,8 +197,46 @@
 
 
         <div class="col-lg-4">
-          <h4>Dobot State Rendering: </h4>
+          <h4>Dobot State: </h4>
             <br>
+
+            <table>
+              <tr>
+                <td><strong>x_pos</strong></td>
+                <td><strong>{{state_x_pos}}</strong></td> 
+              </tr>
+              <tr>
+                <td><strong>y_pos</strong></td>
+                <td><strong>{{state_y_pos}}</strong></td> 
+              </tr>
+              <tr>
+                <td><strong>z_pos</strong></td>
+                <td><strong>{{state_z_pos}}</strong></td> 
+              </tr>
+              <tr>
+                <td><strong>head_rot</strong></td>
+                <td><strong>{{state_head_rot}}</strong></td> 
+              </tr>
+              <tr>
+                <td><strong>base_angle</strong></td>
+                <td><strong>{{state_base_angle}}</strong></td> 
+              </tr>
+              <tr>
+                <td><strong>long_arm_angle</strong></td>
+                <td><strong>{{state_long_arm_angle}}</strong></td> 
+              </tr>
+                <td><strong>short_arm_angle</strong></td>
+                <td><strong>{{state_short_arm_angle}}</strong></td> 
+              </tr>
+                <td><strong>paw_arm_angle</strong></td>
+                <td><strong>{{state_paw_arm_angle}}</strong></td> 
+              </tr>
+                <td><strong>is_grab</strong></td>
+                <td><strong>{{state_is_grab}}</strong></td> 
+
+            </table>
+
+
 
             <div class="3d-render">
                 <!--<button ng-click="addScript()">addScript</button>-->

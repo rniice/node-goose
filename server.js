@@ -1,5 +1,6 @@
 var express = require('express');
 var http = require('http');
+var url = require('url');
 var app = express();
 var path = require('path');
 var fs = require('fs');
@@ -57,7 +58,7 @@ app.get('/run/resume', function(req, res) {
 
 
 app.get('/run/streamProgram', function(req, res) {
-	dobotInstance._STATE = "WAITING"; 
+	//dobotInstance._STATE = "WAITING"; 
 	dobotInstance.streamProgram(); 
 	res.send('Streaming to Dobot');
 });
@@ -65,15 +66,12 @@ app.get('/run/streamProgram', function(req, res) {
 
 //NEED TO CONVERT TO POST AND UPLOAD LATER
 app.get('/load/program', function(req, res) {
-	//load a file to run instructions from
 	dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
 	res.send('Program Loaded');
 });
 
 
 app.get('/run/runProgram', function(req, res) {
-
-	dobotInstance._STATE = "WAITING"; 
 	dobotInstance.runProgram(); 
 	res.send('Connected to Dobot');
 });
@@ -81,12 +79,10 @@ app.get('/run/runProgram', function(req, res) {
 
 
 app.get('/run/jog', function(req, res) {
-	//res.send('returning all materials');
+	
+	var query = url.parse(req.url,true).query;  
 
-	//var command = req.data.command;
-	//dobotInstance.jogMoveCartesian(command);
-
-	dobotInstance.jogMoveCartesian( {axis: "X", direction: 1} );
+	dobotInstance.jogMoveCartesian( query );
 	res.send('Jog Command Sent');
 });
 

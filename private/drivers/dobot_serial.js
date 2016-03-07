@@ -134,7 +134,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	//this._STATE = "DATA_RECEIVED";
 
 	//parse up the data buffer to extract Dobot state information
-	var header          = buffer.readUInt8(0);  		//should register 0xA5
+	//var header          = buffer.readUInt8(0);  		//should register 0xA5
 
 	var x_pos           = buffer.readFloatLE(1);		//effector coordinate system
 	var y_pos           = buffer.readFloatLE(5);
@@ -147,10 +147,10 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	var paw_arm_angle   = buffer.readFloatLE(29);
 	var is_grab         = buffer.readFloatLE(34);		//should be a boolean
 
-	var tail	        = buffer.readUInt8(37);			//should register 0x5A
+	//var tail	        = buffer.readUInt8(37);			//should register 0x5A
 
 	this._dobot_state = {
-		header: 			header, 
+		//header: 			header, 
 		x_pos: 				x_pos, 
 		y_pos: 				y_pos, 
 		z_pos: 				z_pos, 
@@ -160,7 +160,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		short_arm_angle: 	short_arm_angle, 
 		paw_arm_angle: 		paw_arm_angle, 
 		is_grab: 			is_grab,
-		tail: 				tail
+		//tail: 				tail
 	};
 
 	//console.log("current robot state is: \n" + JSON.stringify(this._dobot_state, null, 2));
@@ -420,10 +420,13 @@ Dobot.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, n
 Dobot.prototype.jogMoveCartesian = function (args) {
 
 	var selection = args.axis;
-	var direction = args.direction;
+	var direction = parseInt(args.direction);
+
+	console.log("jog query received by server:\n" + "selection: " + selection + "\n" + "direction: " + direction);
 
 	switch(selection) {
 		case "X":
+
 			if(direction>0) {   //positive direction
 				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x80,0x3f,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
 			}
