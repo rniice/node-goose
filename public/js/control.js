@@ -56,6 +56,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   $scope.connectDobot = function(){
     getQuery(base_query + "/run/connect");
+
+    setTimeout(function(){
+      getState(base_query + "/status/state");
+      },3000);
+
   };
 
   $scope.disconnectDobot = function(){
