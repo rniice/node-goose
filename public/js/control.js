@@ -286,20 +286,16 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
       url: address,
       config: "",
       }).then(function success(response) {
-
-        alert(JSON.stringify(response,null,2));
-
-        $scope.state_x_pos            = response.data.x_pos;
-        $scope.state_y_pos            = response.data.y_pos;
-        $scope.state_z_pos            = response.data.z_pos;
-        $scope.state_head_rot         = response.data.head_rot;
-        $scope.state_base_angle       = response.data.base_angle;
-        $scope.state_long_arm_angle   = response.data.long_arm_angle;
-        $scope.state_short_arm_angle  = response.data.short_arm_angle;
-        $scope.state_paw_arm_angle    = response.data.paw_arm_angle;
-        $scope.state_is_grab          = response.data.is_grab;
-
-        //$scope.dobot_state = response;
+        //alert(JSON.stringify(response,null,2));
+        $scope.state_x_pos            = response.data.x_pos.toFixed(1);
+        $scope.state_y_pos            = response.data.y_pos.toFixed(1);
+        $scope.state_z_pos            = response.data.z_pos.toFixed(1);
+        $scope.state_head_rot         = response.data.head_rot.toFixed(1);
+        $scope.state_base_angle       = response.data.base_angle.toFixed(1);
+        $scope.state_long_arm_angle   = response.data.long_arm_angle.toFixed(1);
+        $scope.state_short_arm_angle  = response.data.short_arm_angle.toFixed(1);
+        $scope.state_paw_arm_angle    = response.data.paw_arm_angle.toFixed(1);
+        $scope.state_is_grab          = response.data.is_grab.toFixed(1);
 
         }, function error(response) {
           alert("there was an error with your request");
