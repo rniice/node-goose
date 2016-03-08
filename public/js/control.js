@@ -122,13 +122,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   /*********EFFECTOR CONTROL BUTTONS********/
   
   $scope.jogRpos = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=R&direction=1" );
   };
 
   $scope.jogRneg = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=R&direction=1-li" );
   };
 
   $scope.jogGRPopen = function(){
@@ -142,13 +140,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   };
 
   $scope.jogPUMPon = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=P&direction=1" );
   };
 
   $scope.jogPUMPoff = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=P&direction=-1" );
   };
 
   $scope.jogLSRon = function(){
