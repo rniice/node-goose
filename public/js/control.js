@@ -57,7 +57,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   $scope.connectDobot = function(){
     getQuery(base_query + "/run/connect");
 
-    var updateStateResponse = setInterval(function(){
+    $window.updateStateResponseInterval = setInterval(function(){
       getState(base_query + "/status/state");
       },2000);
 
@@ -65,6 +65,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   $scope.disconnectDobot = function(){
     getQuery(base_query + "/run/disconnect");
+    clearInterval($window.updateStateResponseInterval);
   };
 
   $scope.pauseDobot = function(){
@@ -81,11 +82,6 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   $scope.checkDobotState = function(){
     getState(base_query + "/status/state");
-
-    //alert(state.data);
-
-
-
   };
 
   /*********************************************/
