@@ -255,26 +255,45 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 		var axis = data.axis;
 		var speed = data.speed;
 
-		command_buffer.writeFloatLE(7, 1);	//32831					//write the state
+		command_buffer.writeFloatLE(state, 1);	//32831				//write the state
 		command_buffer.writeFloatLE(axis, 5);						//write the axis
 		command_buffer.writeFloatLE(speed, 29);						//write the start velocity  //moving mode
 
 	}
-
-	else {
+	/*
+	else if { //write mode state = 4; defined jog movement modes
 		//2 = single axis control; 7 = straight line control
-		command_buffer.writeFloatLE(1, 1);	//32831					//write the state
+		command_buffer.writeFloatLE(4, 1);	//32831					//write the state
 		command_buffer.writeFloatLE(0, 5);						//write the axis ??????
 		command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
 		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
 		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
 
-		command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
-		command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+		//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
+		//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
 		//command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
+		command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity  //moving mode
+		command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
+		command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+	}
+	*/
+
+	else { //
+		var state = 3;	//cartesian target move mode
+
+		//2 = single axis control; 3 = straight line control
+		command_buffer.writeFloatLE(state, 1);	//32831					//write the state
+		command_buffer.writeFloatLE(0, 5);						//write the axis ??????
+		command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
+		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
+		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
+
+		//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
+		//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+		command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
 		//command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity  //moving mode
 		//command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
-		//command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+		command_buffer.writeFloatLE(1, 37);						//write the pause time after action (units: sec)
 
 	}
 
