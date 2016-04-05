@@ -282,17 +282,15 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 		var state = 3;	//cartesian target move mode
 
 		//2 = single axis control; 3 = straight line control
-		command_buffer.writeFloatLE(state, 1);	//32831					//write the state
-		command_buffer.writeFloatLE(0, 5);						//write the axis ??????
+		command_buffer.writeFloatLE(state, 1);	//32831			//write the state
+		command_buffer.writeFloatLE(0, 5);						//reserved, set to 0
 		command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
 		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
 		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
-
-		//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
-		//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+		command_buffer.writeFloatLE(0, 21);						//write the rotation_head [data.head_rot]
+		command_buffer.writeFloatLE(0, 25);						//write the grabber state (boolean) [data.is_grab]
 		command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
-		//command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity  //moving mode
-		//command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
+		command_buffer.writeFloatLE(0, 33);						//write the gripper value [90 to -90]
 		command_buffer.writeFloatLE(1, 37);						//write the pause time after action (units: sec)
 
 	}
