@@ -444,17 +444,17 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 	switch(selection) {
 		case "STOP":    //when button click is ended
-			var jog_command = this.generateCommandBuffer({"jog": true, "axis": 0, "speed": 20});
+			var jog_command = this.generateCommandBuffer({"jog": true, "axis": 0, "speed": 40});
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			break;
 
 		case "X":
 
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 1, "speed": 20});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 1, "speed": 40});
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 2, "speed": 20});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 2, "speed": 40});
 			}
 
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
@@ -462,10 +462,10 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "Y":
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 3, "speed": 20});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 3, "speed": 40});
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 4, "speed": 20});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 4, "speed": 40});
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			
@@ -473,10 +473,10 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "Z":
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 20});  	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 40});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 20});	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 40});	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 
@@ -484,10 +484,10 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "R":
 			if(direction>0) {   //positive direction
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0xe0,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 7, "speed": 60});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x00,0x41,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 8, "speed": 60});  	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 
@@ -495,14 +495,36 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "P":
 			if(direction>0) {   //positive direction
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x10,0x41,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 9, "speed": 0});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x20,0x41,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 10, "speed": 0});  	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 
-			break;		
+			break;	
+
+		case "GRP":
+			if(direction>0) {   //positive direction
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 12, "speed": 50});  	//currently 1.1 firmware has this inverted
+			}
+			else {
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 11, "speed": 50});  	//currently 1.1 firmware has this inverted
+			}
+			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
+
+			break;	
+
+		case "LSR":
+			if(direction>0) {   //positive direction
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 13, "speed": 0});  	//currently 1.1 firmware has this inverted
+			}
+			else {
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 14, "speed": 0});  	//currently 1.1 firmware has this inverted
+			}
+			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
+
+			break;	
 
 		default: 
 			console.log("not a valid jog command");

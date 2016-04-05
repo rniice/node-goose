@@ -129,17 +129,15 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   };
 
   $scope.jogRneg = function(){
-    getQuery(base_query + "/run/jog?axis=R&direction=1-li" );
+    getQuery(base_query + "/run/jog?axis=R&direction=-1" );
   };
 
   $scope.jogGRPopen = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=GRP&direction=1" );
   };
 
   $scope.jogGRPclose = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=GRP&direction=-1" );
   };
 
   $scope.jogPUMPon = function(){
@@ -151,13 +149,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   };
 
   $scope.jogLSRon = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=LSR&direction=1" );
   };
 
   $scope.jogLSRoff = function(){
-    //alert("you have tried to jog z up!");
-
+    getQuery(base_query + "/run/jog?axis=LSR&direction=-1" );
   };
 
   /*********************************************/
