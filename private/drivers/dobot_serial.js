@@ -247,18 +247,36 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 	var command_buffer = new Buffer(42);					//create 42 byte buffer
 
 	command_buffer[0] = 0xA5;								//write the header
-	//2 = single axis control; 7 = straight line control
-	command_buffer.writeFloatLE(1, 1);	//32831					//write the state
-	command_buffer.writeFloatLE(7, 5);						//write the axis ??????
-	command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
-	command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
-	command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
 
-	//command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
-	//command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
-	command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity
-	command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
-	command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+
+	if(data.jog == true) {									
+		var state = 7;										//assume linear jog (state = 7)
+
+		var axis = data.axis;
+		var speed = data.speed;
+
+		command_buffer.writeFloatLE(7, 1);	//32831					//write the state
+		command_buffer.writeFloatLE(axis, 5);						//write the axis
+		command_buffer.writeFloatLE(speed, 29);						//write the start velocity  //moving mode
+
+	}
+
+	else {
+		//2 = single axis control; 7 = straight line control
+		command_buffer.writeFloatLE(1, 1);	//32831					//write the state
+		command_buffer.writeFloatLE(0, 5);						//write the axis ??????
+		command_buffer.writeFloatLE(data.x_pos, 9);				//write the x
+		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y
+		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z
+
+		command_buffer.writeFloatLE(data.head_rot, 21);			//write the rotation_head
+		command_buffer.writeFloatLE(data.is_grab, 25);			//write the grabber state (boolean)
+		//command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
+		//command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the start velocity  //moving mode
+		//command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the end velocity
+		//command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity
+
+	}
 
 	command_buffer[41] = 0x5A;								//write the tail
 
@@ -425,23 +443,29 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 	console.log("jog query received by server:\n" + "selection: " + selection + "\n" + "direction: " + direction);
 
 	switch(selection) {
+		case "STOP":    //when button click is ended
+			var jog_command = this.generateCommandBuffer({"jog": true, "axis": 0, "speed": 20});
+			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
+			break;
+
 		case "X":
 
 			if(direction>0) {   //positive direction
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x80,0x3f,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 1, "speed": 20});
 			}
 			else {
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 2, "speed": 20});
 			}
+
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			break;
 
 		case "Y":
 			if(direction>0) {   //positive direction
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x40,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 3, "speed": 20});
 			}
 			else {
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0x80,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 4, "speed": 20});
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			
@@ -449,10 +473,10 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "Z":
 			if(direction>0) {   //positive direction
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0xc0,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 20});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = new Buffer([0xa5,0x00,0x00,0xe0,0x40,0x00,0x00,0xa0,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5a]);
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 20});	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 

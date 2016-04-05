@@ -92,7 +92,10 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   
   /*********JOG MOVEMENT CONTROL BUTTONS********/
-  
+  $scope.jogStop = function(){
+    getQuery(base_query + "/run/jog?axis=STOP" );
+  }; 
+
   $scope.jogXpos = function(){
     getQuery(base_query + "/run/jog?axis=X&direction=1" );
   };

@@ -88,24 +88,24 @@
 
             <table class="processing-parameters" style="width:100%">
               <tr>
-                <td ng-click="jogZpos()"><strong>Z+</strong></td>
+                <td ng-mousedown="jogZpos()" ng-mouseup="jogStop()"><strong>Z+</strong></td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-click="jogXneg()"><strong>X-</strong></td>
+                <td ng-mousedown="jogXneg()" ng-mouseup="jogStop()"><strong>X-</strong></td>
                 <td><strong></strong></td>
               </tr>
               <tr>
                 <td><strong></strong></td>
                 <td><strong></strong></td>    
-                <td ng-click="jogYneg()"><strong>Y-</strong></td>
+                <td ng-mousedown="jogYneg()" ng-mouseup="jogStop()"><strong>Y-</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogYpos()"><strong>Y+</strong></td>
+                <td ng-mousedown="jogYpos()" ng-mouseup="jogStop()"><strong>Y+</strong></td>
               </tr>
               <tr>
-                <td ng-click="jogZneg()"><strong>Z-</strong></td>
+                <td ng-mousedown="jogZneg()" ng-mouseup="jogStop()"><strong>Z-</strong></td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-click="jogXpos()"><strong>X+</strong></td>
+                <td ng-mousedown="jogXpos()" ng-mouseup="jogStop()"><strong>X+</strong></td>
                 <td><strong></strong></td>
               </tr>
               
@@ -119,14 +119,14 @@
               <tr>
                 <td><strong>Rotation</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogRneg()"><strong>R-</strong></td>
-                <td ng-click="jogRpos()"><strong>R+</strong></td>
+                <td ng-mousedown="jogRneg()" ng-mouseup="jogStop()"><strong>R-</strong></td>
+                <td ng-mousedown="jogRpos()" ng-mouseup="jogStop()"><strong>R+</strong></td>
               </tr>
               <tr>
                 <td><strong>Gripper</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogGRPopen()"><strong>OPEN</strong></td>
-                <td ng-click="jogGRPclose()"><strong>CLOSE</strong></td>
+                <td ng-mousedown="jogGRPopen()" ng-mouseup="jogStop()"><strong>OPEN</strong></td>
+                <td ng-mousedown="jogGRPclose()" ng-mouseup="jogStop()"><strong>CLOSE</strong></td>
               </tr>
               <tr>
                 <td><strong>Pump</strong></td>

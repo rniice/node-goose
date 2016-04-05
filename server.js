@@ -33,7 +33,8 @@ app.get('/', function(req, res) {
 
 app.get('/run/connect', function(req, res) {
 	//open the connection and take control of the machine
-	dobotInstance = new Dobot('COM11', 256000);
+	//dobotInstance = new Dobot('COM11', 256000); 	//V1.0 Firmware
+	dobotInstance = new Dobot('COM11', 9600); 		//V1.1 Firmware
 	res.send('Connected to Dobot');
 });
 
