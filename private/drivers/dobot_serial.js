@@ -134,9 +134,9 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	//this._STATE = "DATA_RECEIVED";
 
 	//parse up the data buffer to extract Dobot state information
-	//var header          = buffer.readUInt8(0);  		//should register 0xA5
+	//var header          = buffer.readUInt8(0);  					//should register 0xA5
 
-	var x_pos           = buffer.readFloatLE(1);		//effector coordinate system
+	var x_pos           = buffer.readFloatLE(1);					//effector coordinate system
 	var y_pos           = buffer.readFloatLE(5);
 	var z_pos           = buffer.readFloatLE(9);
 	var head_rot        = buffer.readFloatLE(13);
@@ -145,9 +145,10 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	var long_arm_angle  = buffer.readFloatLE(21);
 	var short_arm_angle = buffer.readFloatLE(25);
 	var paw_arm_angle   = buffer.readFloatLE(29);
-	var is_grab         = buffer.readFloatLE(34);		//should be a boolean
+	var is_grab         = parseBool(buffer.readFloatLE(33));		//should be a boolean
+	var gripper_angle	= buffer.readFloatLE(37)
 
-	//var tail	        = buffer.readUInt8(37);			//should register 0x5A
+	//var tail	        = buffer.readUInt8(41);						//should register 0x5A
 
 	this._dobot_state = {
 		//header: 			header, 
@@ -160,6 +161,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 		short_arm_angle: 	short_arm_angle, 
 		paw_arm_angle: 		paw_arm_angle, 
 		is_grab: 			is_grab,
+		gripper_angle:  	gripper_angle
 		//tail: 				tail
 	};
 
@@ -178,7 +180,6 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
 	var g_command 			= command.match(/^G([\d]+)/i)[1];
-
 	var write_mode			= false;
 
 	if(g_command == '1') {
@@ -216,6 +217,14 @@ Dobot.prototype.sendDobotState = function(command) {
 			}
 			//console.log("lsr_power is: " + lsr_power);
 
+		var pen_state		= null;		//put a condition here that checks for writing, but not laser
+			if (pen_state) { 
+				pen_state = parseFloat(pen_state[1]); 
+				write_mode = true;
+			}
+			//console.log("lsr_power is: " + lsr_power);
+
+
 		//extract feed rate
 		var feed_rate		= command.match(/F([+-]?[\d]+[\.]?[\d]+]?)/i);		
 			if (feed_rate) { feed_rate = parseFloat(feed_rate[1]); }
@@ -230,7 +239,8 @@ Dobot.prototype.sendDobotState = function(command) {
 			head_rot 		: rh_angle,
 			is_grab 		: grp_angle,
 			laser_pwr 		: lsr_power,
-			feed_rate		: feed_rate
+			feed_rate		: feed_rate,
+			settings		: false					//need to detect settings values from G code, break out of G1 loop
 		};
 
 		//console.log(selected_state);
@@ -240,6 +250,13 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	}
 
+
+	else if(g_command == '999') {					//trigger the configuration setting mode
+
+
+	}
+
+
 	else {
 		console.log("not a valid GCODE command");
 	}
@@ -248,21 +265,21 @@ Dobot.prototype.sendDobotState = function(command) {
 };
 
 
-Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send to dobot from desired values from sendDobotState
+Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to send to dobot from desired values from sendDobotState
 	
-	var command_buffer = new Buffer(42);					//create 42 byte buffer
+	var command_buffer = new Buffer(42);						//create 42 byte buffer
 
-	command_buffer[0] = 0xA5;								//write the header
+	command_buffer[0] = 0xA5;									//write the header
 
 
-	if(data.jog === true) {									//Jog Mode: linear or angular jog mode
-		var state = 7;										//assume linear jog (state = 7)
+	if(data.jog === true) {										//Jog Mode: Incremental, Linear (state = 7) or Angular (state = 2)
+		var state = 7;											//assume linear jog (state = 7)
 		var axis = data.axis;
 		var speed = data.speed;
 
-		command_buffer.writeFloatLE(state, 1);				//write the state
-		command_buffer.writeFloatLE(axis, 5);				//write the axis
-		command_buffer.writeFloatLE(speed, 29);				//write the start velocity  //moving mode
+		command_buffer.writeFloatLE(state, 1);					//write the state
+		command_buffer.writeFloatLE(axis, 5);					//write the axis
+		command_buffer.writeFloatLE(speed, 29);					//write the start velocity  //moving mode
 
 	}
 
@@ -276,7 +293,7 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 			is_laser = 1;
 		}
 
-		command_buffer.writeFloatLE(state, 1);	//32831			//write the state
+		command_buffer.writeFloatLE(state, 1);					//write the state
 		command_buffer.writeFloatLE(1, 5);						//mode: 0 = writing, 1 = laser
 
 		command_buffer.writeFloatLE(data.x_pos, 9);				//write the x (additive value)
@@ -288,14 +305,14 @@ Dobot.prototype.generateCommandBuffer = function(data) {	//create buffer to send
 		command_buffer.writeFloatLE(is_laser, 25);				//write isLaser: 0 = laser OFF; 1 = laser ON
 
 		command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the initial velocity 
-		command_buffer.writeFloatLE(data.feed_rate/10, 34);		//write the final velocity
+		command_buffer.writeFloatLE(data.feed_rate/10, 33);		//write the final velocity
 		command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity 
 
 
 	}
 
 
-	else if (data.settings === true) {							//configure the dobot settings
+	else if (data.settings === true) {							//configure the dobot settings per Dobot API
 
 
 	} 
@@ -387,7 +404,6 @@ Dobot.prototype.resume = function() {
     this._heartbeater.resume();
 
   	console.log("paused.");
-
 };
 
 
@@ -395,8 +411,7 @@ Dobot.prototype.resume = function() {
 Dobot.prototype.sendBuffer = function (buffer) {
     
     try {
-    	console.log("sending: ");
-    	console.log(buffer.toString('hex'));
+    	//console.log("sending: " + buffer.toString('hex'));
         this._PORT.write(buffer);
     } 
     catch (error) {
@@ -473,7 +488,7 @@ Dobot.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, n
 };
 
 
-//Temporary Reverse Engineered Methods for Jog X-Y-Z
+//CARTESIAN JOG MODE COMMAND PARSING AND GENERATING BUFFER FROM SERVER
 Dobot.prototype.jogMoveCartesian = function (args) {
 
 	var selection = args.axis;

@@ -286,6 +286,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
         $scope.state_short_arm_angle  = response.data.short_arm_angle.toFixed(1);
         $scope.state_paw_arm_angle    = response.data.paw_arm_angle.toFixed(1);
         $scope.state_is_grab          = response.data.is_grab.toFixed(1);
+        $scope.state_gripper_angle    = response.data.gripper_angle.toFixed(1);
 
         }, function error(response) {
           alert("there was an error with your request");
