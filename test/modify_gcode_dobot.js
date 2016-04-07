@@ -46,6 +46,10 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + y_value.toFixed(2).toString());
 		}
 
+	//add laser power element
+	
+
+	
 
 	//replace any instances of double spaces
 	stripped_gcode_array[i] = stripped_gcode_array[i].replace(/([\s][\s])/i, " ");

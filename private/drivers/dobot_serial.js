@@ -145,7 +145,7 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	var long_arm_angle  = buffer.readFloatLE(21);
 	var short_arm_angle = buffer.readFloatLE(25);
 	var paw_arm_angle   = buffer.readFloatLE(29);
-	var is_grab         = parseBool(buffer.readFloatLE(33));		//should be a boolean
+	var is_grab         = Boolean(buffer.readFloatLE(33));		//should be a boolean
 	var gripper_angle	= buffer.readFloatLE(37)
 
 	//var tail	        = buffer.readUInt8(41);						//should register 0x5A
@@ -327,7 +327,7 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y (absolute value)
 		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z (absolute value)
 		command_buffer.writeFloatLE(0, 21);						//write the rotation_head [data.head_rot] 
-		command_buffer.writeFloatLE(0, 25);						//write the grabber state (boolean) [data.is_grab]
+		//command_buffer.writeFloatLE(0, 25);						//write the grabber state (boolean) [data.is_grab]
 		command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
 		command_buffer.writeFloatLE(0, 33);						//write the gripper value [90 to -90]
 		command_buffer.writeFloatLE(1, 37);						//write the pause time after action (units: sec)
