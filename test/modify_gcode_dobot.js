@@ -39,7 +39,7 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(X[+-]?[\d]+[\.]?[\d]+]?)/i, "X" + x_value.toFixed(2).toString());
 	}
 	else {	//use the previously set value for x
-		x_value = parseFloat(prev_x) + offsetX; 			//apply the offset change
+		x_value = parseFloat(prev_x); 			
 		//append the x command anywhere, make cleaner later
 		stripped_gcode_array[i] = stripped_gcode_array[i] + " X" + x_value.toFixed(2).toString();
 	}
@@ -49,7 +49,7 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + y_value.toFixed(2).toString());
 	}
 	else {  //use the previously set value for y
-		y_value = parseFloat(prev_y) + offsetY; 			//apply the offset change
+		y_value = parseFloat(prev_y);
 		//append the y command anywhere, make cleaner later
 		stripped_gcode_array[i] = stripped_gcode_array[i] + " Y" + y_value.toFixed(2).toString();
 	}
@@ -59,7 +59,7 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Z[+-]?[\d]+[\.]?[\d]+]?)/i, "Z" + z_value.toFixed(2).toString());
 	}
 	else {  //use the previously set value for z
-		z_value = parseFloat(prev_z) + offsetZ; 			//apply the offset change
+		z_value = parseFloat(prev_z);
 		//append the y command anywhere, make cleaner later
 		stripped_gcode_array[i] = stripped_gcode_array[i] + " Z" + z_value.toFixed(2).toString();
 	}
