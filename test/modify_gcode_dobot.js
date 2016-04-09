@@ -7,7 +7,7 @@ var output_string = "";
 
 var relative = true;			//if true, all x y z for "write" processing are additive (relative moves)
 
-var travel_speed = 100.00;
+var travel_speed = 10.00;
 var offsetX = 250.00 - 75.00;
 var offsetY = -75.00;
 var offsetZ = 0.00;
