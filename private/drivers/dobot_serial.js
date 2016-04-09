@@ -51,6 +51,7 @@ var Dobot = function(COM, BAUD) {
     this._FILE_LOADED			= false;   		//file containing gcode to run
     this._GCODE_DATA			= null;	   		//currently no data loaded to run
 
+    this._MODE 					= null;			//MOVE, CUT, ETC. 				
 	this._dobot_state			= null;			//status/position response from dobot
 
     // Open port and define event handlers
@@ -182,6 +183,8 @@ Dobot.prototype.sendDobotState = function(command) {
 	var g_command 			= command.match(/^G([\d]+)/i)[1];
 	var write_mode			= false;
 
+	//make G2 write mode?  G1 jog mode?
+
 	if(g_command == '1') {
 
 		//extract x
@@ -211,7 +214,7 @@ Dobot.prototype.sendDobotState = function(command) {
 
 		//extract laser power
 		var lsr_power		= command.match(/LSR([+-]?[\d]+[\.]?[\d]+]?)/i);
-			if (lsr_power) { 
+			if ( (lsr_power) || (lsr_power==0) ) { 
 				lsr_power = parseFloat(lsr_power[1]); 
 				write_mode = true;
 			}
@@ -247,6 +250,8 @@ Dobot.prototype.sendDobotState = function(command) {
 
 		//call function to create command buffer
 		command_buffer = this.generateCommandBuffer(selected_state);
+		console.log("sending gcode: " + command);
+
 
 	}
 
@@ -304,8 +309,8 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 		
 		command_buffer.writeFloatLE(is_laser, 25);				//write isLaser: 0 = laser OFF; 1 = laser ON
 
-		command_buffer.writeFloatLE(data.feed_rate/10, 29);		//write the initial velocity 
-		command_buffer.writeFloatLE(data.feed_rate/10, 33);		//write the final velocity
+		command_buffer.writeFloatLE(data.feed_rate/4, 29);		//write the initial velocity 
+		command_buffer.writeFloatLE(data.feed_rate/4, 33);		//write the final velocity
 		command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity 
 
 

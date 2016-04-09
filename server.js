@@ -11,9 +11,6 @@ var Dobot = require('./private/drivers/dobot_serial.js');
 
 var dobotInstance = null; //placeholder
 
-var count = 4;
-
-
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
