@@ -68,7 +68,8 @@ app.get('/load/program', function(req, res) {
 	//dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
 	//dobotInstance.loadProgram('./test/test_move_jog.gcode');
 	//dobotInstance.loadProgram('./test/test_move_target.gcode');
-	dobotInstance.loadProgram('./test/bernie_gcode_dobot.gcode');
+	//dobotInstance.loadProgram('./test/bernie_gcode_dobot.gcode');
+	dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot.gcode');
 	res.send('Program Loaded');
 });
 

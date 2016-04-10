@@ -309,8 +309,8 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 		
 		command_buffer.writeFloatLE(is_laser, 25);				//write isLaser: 0 = laser OFF; 1 = laser ON
 
-		command_buffer.writeFloatLE(data.feed_rate/4, 29);		//write the initial velocity 
-		command_buffer.writeFloatLE(data.feed_rate/4, 33);		//write the final velocity
+		command_buffer.writeFloatLE(data.feed_rate/2, 29);		//write the initial velocity 
+		command_buffer.writeFloatLE(data.feed_rate/2, 33);		//write the final velocity
 		command_buffer.writeFloatLE(data.feed_rate, 37);		//write the max velocity 
 
 
@@ -532,10 +532,10 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 		case "Z":
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 40});  	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 40});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 40});	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 40});	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 

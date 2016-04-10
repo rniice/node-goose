@@ -1,17 +1,17 @@
 var fs = require('fs');
 
 
-var input_gcode = "bernie_gcode_stripped.gcode";
-var output_gcode = "bernie_gcode_dobot.gcode"
+var input_gcode = "bernie_outline_print.gcode";
+var output_gcode = "bernie_outline_gcode_dobot.gcode"
 var output_string = "";
 
 var relative = true;			//if true, all x y z for "write" processing are additive (relative moves)
 
-var travel_speed = 10.00;
+var travel_speed = 0.50;
 var offsetX = 250.00 - 75.00;
 var offsetY = -75.00;
 var offsetZ = 0.00;
-
+var precision = 2;
 
 var stripped_gcode_array = fs.readFileSync(input_gcode, 'utf8').split("\n");
 stripped_gcode_array = stripped_gcode_array.slice(0, stripped_gcode_array.length-1); //drop the last entry
@@ -26,7 +26,7 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 	stripped_gcode_array[i] = stripped_gcode_array[i].replace(/( F[+-]?[\d]+[\.]?[\d]+]?)/i, "");
 
 	//insert new F value for each command after the G1
-	stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(G1[\s])/i, "G1 F" + travel_speed.toFixed(2).toString() + " ");
+	stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(G1[\s])/i, "G1 F" + travel_speed.toFixed(precision).toString() + " ");
 
 	//find the existing X and Y values for each line
 	var x_value = stripped_gcode_array[i].match(/X([+-]?[\d]+[\.]?[\d]+]?)/i);
@@ -36,41 +36,41 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 
 	if (x_value) { 
 		x_value = parseFloat(x_value[1]) + offsetX; 			//apply the offset change
-		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(X[+-]?[\d]+[\.]?[\d]+]?)/i, "X" + x_value.toFixed(2).toString());
+		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(X[+-]?[\d]+[\.]?[\d]+]?)/i, "X" + x_value.toFixed(precision).toString());
 	}
 	else {	//use the previously set value for x
 		x_value = parseFloat(prev_x); 			
 		//append the x command anywhere, make cleaner later
-		stripped_gcode_array[i] = stripped_gcode_array[i] + " X" + x_value.toFixed(2).toString();
+		stripped_gcode_array[i] = stripped_gcode_array[i] + " X" + x_value.toFixed(precision).toString();
 	}
 
 	if (y_value) { 
 		y_value = parseFloat(y_value[1]) + offsetY; 			//apply the offset change
-		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + y_value.toFixed(2).toString());
+		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + y_value.toFixed(precision).toString());
 	}
 	else {  //use the previously set value for y
 		y_value = parseFloat(prev_y);
 		//append the y command anywhere, make cleaner later
-		stripped_gcode_array[i] = stripped_gcode_array[i] + " Y" + y_value.toFixed(2).toString();
+		stripped_gcode_array[i] = stripped_gcode_array[i] + " Y" + y_value.toFixed(precision).toString();
 	}
 
 	if (z_value) { 
 		z_value = parseFloat(z_value[1]) + offsetZ; 			//apply the offset change
-		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Z[+-]?[\d]+[\.]?[\d]+]?)/i, "Z" + z_value.toFixed(2).toString());
+		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Z[+-]?[\d]+[\.]?[\d]+]?)/i, "Z" + z_value.toFixed(precision).toString());
 	}
 	else {  //use the previously set value for z
 		z_value = parseFloat(prev_z);
 		//append the y command anywhere, make cleaner later
-		stripped_gcode_array[i] = stripped_gcode_array[i] + " Z" + z_value.toFixed(2).toString();
+		stripped_gcode_array[i] = stripped_gcode_array[i] + "Z" + z_value.toFixed(precision).toString();
 	}
 
 	//remove e value
 	if (e_value) { 
 		stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(E[+-]?[\d]+[\.]?[\d]+]?)/i, "");
-		stripped_gcode_array[i] = stripped_gcode_array[i] + " LSR" + (1.00).toFixed(2).toString();
+		stripped_gcode_array[i] = stripped_gcode_array[i] + " LSR" + (1.00).toFixed(precision).toString();
 	}
 	else {  //turn the laser off 
-		stripped_gcode_array[i] = stripped_gcode_array[i] + " LSR" + (0.00).toFixed(2).toString();
+		stripped_gcode_array[i] = stripped_gcode_array[i] + " LSR" + (0.00).toFixed(precision).toString();
 	}
 
 	//replace any instances of double spaces
@@ -90,9 +90,9 @@ for (var i = 0; i < stripped_gcode_array.length; i++) {
 			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(LSR[+-]?[\d]+[\.]?[\d]+]?)/i, "LSR1.00");
 		}
 		else {
-			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(X[+-]?[\d]+[\.]?[\d]+]?)/i, "X" + new_x.toFixed(2).toString());
-			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + new_y.toFixed(2).toString());
-			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Z[+-]?[\d]+[\.]?[\d]+]?)/i, "Z" + new_z.toFixed(2).toString());	
+			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(X[+-]?[\d]+[\.]?[\d]+]?)/i, "X" + new_x.toFixed(precision).toString());
+			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Y[+-]?[\d]+[\.]?[\d]+]?)/i, "Y" + new_y.toFixed(precision).toString());
+			stripped_gcode_array[i] = stripped_gcode_array[i].replace(/(Z[+-]?[\d]+[\.]?[\d]+]?)/i, "Z" + new_z.toFixed(precision).toString());	
 		}
 
 	}
