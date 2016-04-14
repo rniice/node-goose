@@ -2,12 +2,12 @@ var fs = require('fs');
 
 
 var input_gcode = "bernie_outline_print.gcode";
-var output_gcode = "bernie_outline_gcode_dobot.gcode"
+var output_gcode = "bernie_outline_gcode_dobot_targets.gcode"
 var output_string = "";
 
-var relative = true;			//if true, all x y z for "write" processing are additive (relative moves)
+var relative = false;			//if true, all x y z for "write" processing are additive (relative moves)
 
-var travel_speed = 0.50;
+var travel_speed = 2;
 var offsetX = 250.00 - 75.00;
 var offsetY = -75.00;
 var offsetZ = 0.00;

@@ -143,8 +143,9 @@ Dobot.prototype.receiveDobotState = function(buffer) {
 	var head_rot        = buffer.readFloatLE(13);
 
 	var base_angle      = buffer.readFloatLE(17);
-	var long_arm_angle  = buffer.readFloatLE(21);
-	var short_arm_angle = buffer.readFloatLE(25);
+	var long_arm_angle  = buffer.readFloatLE(21);					//long and short arm switched in 1.1 firmware
+	var short_arm_angle = buffer.readFloatLE(25);					//long and short arm switched in 1.1 firmware
+
 	var paw_arm_angle   = buffer.readFloatLE(29);
 	var is_grab         = Boolean(buffer.readFloatLE(33));		//should be a boolean
 	var gripper_angle	= buffer.readFloatLE(37)
@@ -180,12 +181,26 @@ Dobot.prototype.sendDobotState = function(command) {
 	var command_buffer = null;
 
 	//verify it is a G code
-	var g_command 			= command.match(/^G([\d]+)/i)[1];
-	var write_mode			= false;
+	if(command.indexOf('G') > -1 ) {
+		console.log("command contains G");
+		var g_command 			= command.match(/^G([\d]+)/i)[1];
+		var write_mode			= false;		
+	}
+	//see if it is a C configuration code
+	else if(command.indexOf('C') > -1){
+		console.log("command contains C");
+		var c_command 			= command.match(/^C([\d]+)/i)[1];
+		var config_mode			= false;
+	}
+
+	else {
+		console.log("not a G or C command");
+	}
+
 
 	//make G2 write mode?  G1 jog mode?
 
-	if(g_command == '1') {
+	if(g_command === '1') {
 
 		//extract x
 		var x_coordinate	= command.match(/X([+-]?[\d]+[\.]?[\d]+]?)/i);
@@ -255,8 +270,60 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	}
 
+	else if ( c_command === '9' ) {
 
-	else if(g_command == '999') {					//trigger the configuration setting mode
+		//currently setting to fixed values for laser etching
+		var state 						= 9;		//config state 9
+		var playback_config 			= 1;		//config playback setting
+		var max_joint_move_speed		= 1;	
+		var max_joint_move_accel		= 1;
+		var max_servo_speed				= 1;
+		var max_servo_accel				= 1;
+		var max_linear_move_speed		= 0.5;
+		var max_linear_move_accel		= 0.5;
+		var default_pause_time			= 0;		//sec
+		var default_jump_height	       	= 0;	    //mm
+
+		//extract selected configuration settings [implement later]
+
+		//create an object with the selected dobot command parameters
+		var selected_state 	= {
+			settings				: true,							//toggle the settings mode
+			state           		: state,
+			playback_config			: playback_config,
+			max_joint_move_speed	: max_joint_move_speed,
+			max_joint_move_accel 	: max_joint_move_accel,
+			max_servo_speed 		: max_servo_speed,
+			max_servo_accel 		: max_servo_accel,
+			max_linear_move_speed 	: max_linear_move_speed,
+			max_linear_move_accel	: max_linear_move_accel,
+			default_pause_time		: default_pause_time,		
+			default_jump_height		: default_jump_height
+		};
+
+
+		//call function to create command buffer
+		command_buffer = this.generateCommandBuffer(selected_state);
+		console.log("sending gcode: " + command);	
+
+	}
+
+
+	else if ( c_command === '10' ) {
+
+
+
+		/*
+		state              = 10    float1
+		playback speed adj = 0     float2
+		playbackmove accel %       float3
+		playbackmovspeed %         float4
+		teachmodemovspeed %        float5
+
+
+		//all other cells to 0
+
+		*/
 
 
 	}
@@ -297,6 +364,7 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 		if(data.laser_pwr > 0) {
 			is_laser = 1;
 		}
+		
 
 		command_buffer.writeFloatLE(state, 1);					//write the state
 		command_buffer.writeFloatLE(1, 5);						//mode: 0 = writing, 1 = laser
@@ -319,6 +387,16 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 
 	else if (data.settings === true) {							//configure the dobot settings per Dobot API
 
+		command_buffer.writeFloatLE(data.state, 1);					
+		command_buffer.writeFloatLE(data.playback_config, 5);		
+		command_buffer.writeFloatLE(data.max_joint_move_speed, 9);	
+		command_buffer.writeFloatLE(data.max_joint_move_accel, 13);	
+		command_buffer.writeFloatLE(data.max_servo_speed, 17);	
+		command_buffer.writeFloatLE(data.max_servo_accel, 21);	
+		command_buffer.writeFloatLE(data.max_linear_move_speed, 25);
+		command_buffer.writeFloatLE(data.max_linear_move_accel, 29);
+		command_buffer.writeFloatLE(data.default_pause_time, 33);
+		command_buffer.writeFloatLE(data.default_jump_height, 37);
 
 	} 
 
@@ -332,10 +410,10 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 		command_buffer.writeFloatLE(data.y_pos, 13);			//write the y (absolute value)
 		command_buffer.writeFloatLE(data.z_pos, 17);			//write the z (absolute value)
 		command_buffer.writeFloatLE(0, 21);						//write the rotation_head [data.head_rot] 
-		//command_buffer.writeFloatLE(0, 25);						//write the grabber state (boolean) [data.is_grab]
+		command_buffer.writeFloatLE(0, 25);						//write the grabber state (boolean) [data.is_grab]
 		command_buffer.writeFloatLE(1, 29);						//moving mode [ 0 = jump, 1 = moveL, 2 = movelJ ]
 		command_buffer.writeFloatLE(0, 33);						//write the gripper value [90 to -90]
-		command_buffer.writeFloatLE(1, 37);						//write the pause time after action (units: sec)
+		command_buffer.writeFloatLE(0, 37);						//write the pause time after action (units: sec)
 
 	}
 
