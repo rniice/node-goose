@@ -182,13 +182,11 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	//verify it is a G code
 	if(command.indexOf('G') > -1 ) {
-		console.log("command contains G");
 		var g_command 			= command.match(/^G([\d]+)/i)[1];
 		var write_mode			= false;		
 	}
 	//see if it is a C configuration code
 	else if(command.indexOf('C') > -1){
-		console.log("command contains C");
 		var c_command 			= command.match(/^C([\d]+)/i)[1];
 		var config_mode			= false;
 	}
@@ -277,29 +275,50 @@ Dobot.prototype.sendDobotState = function(command) {
 		var playback_config 			= 1;		//config playback setting
 		var max_joint_move_speed		= 1;	
 		var max_joint_move_accel		= 1;
-		var max_servo_speed				= 1;
-		var max_servo_accel				= 1;
-		var max_linear_move_speed		= 0.5;
-		var max_linear_move_accel		= 0.5;
+		var max_servo_speed				= 2;
+		var max_servo_accel				= 2;
+		var max_linear_move_speed		= 8;
+		var max_linear_move_accel		= 2;
 		var default_pause_time			= 0;		//sec
 		var default_jump_height	       	= 0;	    //mm
 
-		//extract selected configuration settings [implement later]
+		var selected_state;							//create an object with the selected dobot command parameters
 
-		//create an object with the selected dobot command parameters
-		var selected_state 	= {
-			settings				: true,							//toggle the settings mode
-			state           		: state,
-			playback_config			: playback_config,
-			max_joint_move_speed	: max_joint_move_speed,
-			max_joint_move_accel 	: max_joint_move_accel,
-			max_servo_speed 		: max_servo_speed,
-			max_servo_accel 		: max_servo_accel,
-			max_linear_move_speed 	: max_linear_move_speed,
-			max_linear_move_accel	: max_linear_move_accel,
-			default_pause_time		: default_pause_time,		
-			default_jump_height		: default_jump_height
-		};
+		if(command.indexOf('JUMP') > -1) {			//for the hacked jump mode without turning off lazer
+			selected_state = {
+				jog: true, 
+				axis: 14, 
+				speed: 0
+			};
+		}
+
+		else if(command.indexOf('WRITE') > -1) {
+			selected_state = {
+				jog: true, 
+				axis: 13, 
+				speed: 0
+			};
+		}
+
+		else {
+			selected_state 	= {
+				settings				: true,							//toggle the settings mode
+				state           		: state,
+				playback_config			: playback_config,
+				max_joint_move_speed	: max_joint_move_speed,
+				max_joint_move_accel 	: max_joint_move_accel,
+				max_servo_speed 		: max_servo_speed,
+				max_servo_accel 		: max_servo_accel,
+				max_linear_move_speed 	: max_linear_move_speed,
+				max_linear_move_accel	: max_linear_move_accel,
+				default_pause_time		: default_pause_time,		
+				default_jump_height		: default_jump_height
+			};
+
+		}
+
+
+		//extract selected configuration settings [implement later]
 
 
 		//call function to create command buffer
