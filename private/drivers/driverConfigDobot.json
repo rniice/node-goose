@@ -1,5 +1,5 @@
 {
-    "type"        : "usb",
+    "type"        : "serial",
     "blackBox"    : false,
     "description" : "Dobot SCARA Robot",
     "VID"         :  10889,

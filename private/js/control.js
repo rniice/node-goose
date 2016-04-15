@@ -1,171 +1,142 @@
-var myApp = angular.module('myApp', ['ngTouch','mp.colorPicker', 'rzModule', 'ui.bootstrap']);
+var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap']);
 
-//var base_query = "http://localhost:8080/materials";
-var base_query = "https://stark-tundra-90514.herokuapp.com/materials";
-
-var filtered_query = "";      
-
-var scope_struct = {
-	technology: "FDM", 
-	composition: "", 
-	filament_diameter: "1.75", 
-	color: "",
-	opacity: "",                           //opacity is broken for some reason
-	location: "",
-  manufacturer: "", 
-	cost: "",
-	tags: "",
-	bed_material: "",
-	temp_bed: "",
-	min_nozzle_diameter: ""
-};
-
-var scope_struct_reset = (JSON.parse(JSON.stringify(scope_struct)));   //make a deep clone of the scope struct
-
+var base_query = "http://localhost:8080";
+//var base_query = "https://stark-tundra-XXYYZZ.herokuapp.com/";
 
 myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$http,$window) {
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
 
-	$scope.server_response = "Available Materials: ";
-
-  //initialize values to these settings
-  $scope.technology = "FDM";
-  $scope.composition = "";
-  $scope.filament_diameter = "1.75";
-  $scope.color = ""; 
-  $scope.opacity = "";                   
-
-  //non-initialized settings values:
-  $scope.location = "";
-  $scope.manufacturer = "";
-  $scope.cost = ["",""];
-  $scope.tags = "";
-  $scope.bed_material = "";
-  $scope.temp_bed = "";
-  $scope.min_nozzle_diameter = "";
-  $scope.temp_extrude_default = "";
+	$scope.server_response = null;
+  $scope.dobot_state     = null;
 
 
-    /*STUFF FOR THREEJS SCRIPTS*/
-  $scope.scripts = [];
+  /*********LEFT COLUMN CONTROL BUTTONS********/
 
-  $scope.addScript = function() {
-    //$scope.scripts.push({src: 'js/render_application.js'});
-    //$scope.scripts.push({src: 'js/RenderObject.js'});
-    $scope.scripts[0] = ({src: 'js/update_render.js'});
-  }
+  $scope.connectDobot = function(){
+    getQuery(base_query + "/run/connect");
+
+    $window.updateStateResponseInterval = setInterval(function(){
+      getState(base_query + "/status/state");
+      },2000);
+
+  };
+
+  $scope.disconnectDobot = function(){
+    getQuery(base_query + "/run/disconnect");
+    clearInterval($window.updateStateResponseInterval);
+  };
+
+  $scope.pauseDobot = function(){
+    getQuery(base_query + "/run/pause");
+  };
+
+  $scope.resumeDobot = function(){
+    getQuery(base_query + "/run/resume");
+  };
+
+  $scope.runStreamDobot = function(){
+    getQuery(base_query + "/run/streamProgram");
+  };
+
+  $scope.checkDobotState = function(){
+    getState(base_query + "/status/state");
+  };
+
+  /*********************************************/
+
+  
+  /*********JOG MOVEMENT CONTROL BUTTONS********/
+  $scope.jogStop = function(){
+    getQuery(base_query + "/run/jog?axis=STOP" );
+  }; 
+
+  $scope.jogXpos = function(){
+    getQuery(base_query + "/run/jog?axis=X&direction=1" );
+  };
+
+  $scope.jogXneg = function(){
+    getQuery(base_query + "/run/jog?axis=X&direction=-1" );
+  };
+
+  $scope.jogYpos = function(){
+    getQuery(base_query + "/run/jog?axis=Y&direction=1" );
+  };
+
+  $scope.jogYneg = function(){
+    getQuery(base_query + "/run/jog?axis=Y&direction=-1" );
+  };
+
+  $scope.jogZpos = function(){
+    getQuery(base_query + "/run/jog?axis=Z&direction=1" );
+  };
+
+  $scope.jogZneg = function(){
+    getQuery(base_query + "/run/jog?axis=Z&direction=-1" );
+  };
+
+  /*********************************************/
+
+  /*********EFFECTOR CONTROL BUTTONS********/
+  
+  $scope.jogRpos = function(){
+    getQuery(base_query + "/run/jog?axis=R&direction=1" );
+  };
+
+  $scope.jogRneg = function(){
+    getQuery(base_query + "/run/jog?axis=R&direction=-1" );
+  };
+
+  $scope.jogGRPopen = function(){
+    getQuery(base_query + "/run/jog?axis=GRP&direction=1" );
+  };
+
+  $scope.jogGRPclose = function(){
+    getQuery(base_query + "/run/jog?axis=GRP&direction=-1" );
+  };
+
+  $scope.jogPUMPon = function(){
+    getQuery(base_query + "/run/jog?axis=P&direction=1" );
+  };
+
+  $scope.jogPUMPoff = function(){
+    getQuery(base_query + "/run/jog?axis=P&direction=-1" );
+  };
+
+  $scope.jogLSRon = function(){
+    getQuery(base_query + "/run/jog?axis=LSR&direction=1" );
+  };
+
+  $scope.jogLSRoff = function(){
+    getQuery(base_query + "/run/jog?axis=LSR&direction=-1" );
+  };
+
+  /*********************************************/
 
 
-  //initialize the first query to send out with the presets
- 	generateFullQuery(scope_struct);
+  /************** UPLOAD PROGRAM ***************/
+
+  $scope.loadProgramDobot = function(){
+    getQuery(base_query + "/load/program");
+  };
+
+  $scope.runProgramDobot = function(){
+    getQuery(base_query + "/run/runProgram");
+  };
+
+  /*********************************************/
+
 
   //USER CONFIGURATION CHANGE DETECTION
-  $scope.changeTechnology = function(technology) {
-    $scope.technology = technology;
-    scope_struct.technology = technology; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
 
-  $scope.changeComposition = function(composition) {
-    $scope.composition = composition;  //assigning last to preserve old value
-    scope_struct.composition = composition; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeFilamentDiameter = function(filament_diameter) {
-    $scope.filament_diameter = filament_diameter;
-    scope_struct.filament_diameter = filament_diameter; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeManufacturer = function(manufacturer) {
+/*
+  $scope.changeJogMode = function(manufacturer) {
     $scope.manufacturer = manufacturer;
     scope_struct.manufacturer = manufacturer; //update the scope_struct
     generateFullQuery(scope_struct);
   };
+*/
 
-
-  $scope.changeLocation = function(location) {
-    $scope.location = location;
-    scope_struct.location = location; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  
-  $scope.changeCost = function(lowValue, highValue) {
-    $scope.cost = [lowValue, highValue];
-    scope_struct.cost = [lowValue, highValue]; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-  
- 
-  $scope.changeColor = function(color_temp) {
-  	var color_parsed = color_temp.substring(1);
-    
-    $scope.color = color_parsed;
-    scope_struct.color = color_parsed; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-
-  $scope.disableColorFiltering = function(){
-    $scope.color = "";
-    scope_struct.color = ""; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-
-  $scope.resetFiltering = function(){
-    $scope.server_response = "Available Materials: ";
-    //initialize values to these settings
-    $scope.technology = "FDM";
-    $scope.composition = "";
-    $scope.filament_diameter = "1.75";
-    $scope.color = ""; 
-    $scope.opacity = "";                   
-
-    //non-initialized settings values:
-    $scope.location = "";
-    $scope.manufacturer = "";   
-    $scope.cost = ["",""];
-    $scope.slider_cost.minValue = 10;
-    $scope.slider_cost.maxValue = 60;
-    $scope.tags = "";
-    $scope.bed_material = "";
-    $scope.slider_bed_temp.value = 25;
-    $scope.min_nozzle_diameter = "";
-    $scope.slider_nozzle_temp.value = 220;
-
-    scope_struct = (JSON.parse(JSON.stringify(scope_struct_reset)));
-    generateFullQuery(scope_struct);
-  };
-
-
-  $scope.changeOpacity = function(opacity) {
-    $scope.opacity = opacity;
-    scope_struct.opacity = opacity; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeTags = function(tags) {
-    $scope.tags = tags;
-    scope_struct.tags = tags; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeBedMtl = function(bed_material) {
-    $scope.bed_material = bed_material;
-    scope_struct.bed_material = bed_material; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeBedTemp = function(temp_bed) {
-    $scope.temp_bed = temp_bed;
-    scope_struct.temp_bed = temp_bed; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-
+/*
   $scope.slider_nozzle_temp = {
     value: 220,
     options: {
@@ -182,135 +153,9 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
     }
   };
 
-  $scope.slider_bed_temp = {
-    value: 25,
-    options: {
-      id: 'bed-temp',
-      floor: 25,
-      ceil: 150,
-      onChange: function(sliderId, temp_bed) {
-        $scope.changeBedTemp(temp_bed);
-        //alert("bed temp value is: " + temp_bed);
-      },
-      translate: function(temp_bed) {
-        return temp_bed + '\u00B0' + 'C';
-      }
-    }
-  };
-
-
-  $scope.slider_cost = {
-    minValue: 10,
-    maxValue: 60,
-    options: {
-      id: 'cost',
-      floor: 0,
-      ceil: 150,
-      onChange: function(sliderId, lowValue, highValue) {
-        $scope.changeCost(lowValue, highValue);
-        //alert("lowValue is: " + lowValue);
-        //alert("highValue is: " + highValue);
-      },
-      translate: function(value) {
-        return '$' + value;
-      }
-    }
-  };
-
-
-  $scope.changeNozzleDiameter = function(min_nozzle_diameter) {
-    $scope.min_nozzle_diameter = min_nozzle_diameter;
-    scope_struct.min_nozzle_diameter = min_nozzle_diameter; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.changeTempExtrudeDefault = function(temp_extrude_default) {
-    $scope.temp_extrude_default = temp_extrude_default;
-    scope_struct.temp_extrude_default = temp_extrude_default; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-
-  $scope.showMaterialDetails = function(material) {           //set all the properties shown in suggested processing parameters area
-
-    $scope.processing_name                        = material.name;
-    $scope.processing_technology                  = material.technology;
-    $scope.processing_composition                 = material.composition;
-    $scope.processing_filament_diameter           = material.filament_diameter;
-    $scope.processing_location                    = material.location;
-    $scope.processing_manufacturer                = material.manufacturer;
-    $scope.processing_cost                        = material.cost;
-    $scope.processing_temp_extrude_default        = material.temp_extrude_default;
-    $scope.processing_temp_min_extrude            = material.temp_min_extrude;
-    $scope.processing_temp_max_extrude            = material.temp_max_extrude;
-    $scope.processing_temp_bed                    = material.temp_bed;
-    $scope.processing_extruder_fan_speed          = material.extruder_fan_speed;
-    $scope.processing_bed_material                = material.bed_material;
-    $scope.processing_extrusion_to_flow_multiplier= material.filament_extrusion_to_flow_multiplier;
-
-    $scope.processing_color                       = material.color;
-    $window.reserved_color_variable               = material.color;
-    //logic to decompose the integer for opacity into a string
-    if(material.opacity == 1){
-      $scope.processing_opacity                   = "Opaque";
-      $window.reserved_opacity_variable           = 1.0;
-    }
-    else if (material.opacity == 2){
-      $scope.processing_opacity                   = "Translucent";
-      $window.reserved_opacity_variable           = 0.50;
-    }
-    else {
-      $scope.processing_opacity                   = "Transparent";
-      $window.reserved_opacity_variable           = 0.10;
-    }
-
-    $scope.processing_website                     = material.website;
-    $scope.processing_buy_now                     = material.buy_now;
-
-    $scope.addScript();                           //call addScript to update the render color
-  };
-
-
-	//for each value in the component,value array, run generate query
-	function generateFullQuery(obj){
-		
-		filtered_query = base_query;
-
-		for (var key in obj) {
-		  generateQueryItem(key, obj[key]);    //component = key; value = obj[key]
-		}
-
-		getQuery(filtered_query);
-	}
-
-
-	function generateQueryItem(component, value){
-	  component = component.toString();               //make sure value is made into a string
-	  value = value.toString();                       //make sure value is made into a string
-	  
-	  if(value!=""){              										//the user has entered content in filter
-	    if(filtered_query.indexOf('?')>-1){  					//if there already is a filter in place
-	      filtered_query = filtered_query + "&" + component + "=" + value;
-	    }
-	    else{
-	      filtered_query = filtered_query + "?" + component + "=" + value;
-	    }
-	  }
-
-	  else {                      										//the user is trying to remove content in filter
-	    if(filtered_query.indexOf('&')>-1){  					//if there is more than one filter in place      
-	      filtered_query = filtered_query.replace("&" + component + "=", "");
-
-	    }
-	    else{
-	      filtered_query = filtered_query.replace("?" + component + "=", "");
-	    }
-	  }
-	}
-
+*/
 
 	function getQuery(address){
-
-	  //alert("new query is: " + filtered_query);
 
 		// Simple GET request example:
 		$http({
@@ -318,44 +163,38 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 		  url: address,
 		  config: "",
 			}).then(function success(response) {
-			    styleResponse(response);
+
+        $scope.server_response = response;
+
 			  }, function error(response) {
 			    alert("there was an error with your request");
 			});
 		}
 
 
-	function styleResponse(response) {  //takes the response from server and styles
+  function getState(address){
 
-    response = demangleJSON(response.data);  //decode the encoded buffer
+    $http({
+      method: 'GET',
+      url: address,
+      config: "",
+      }).then(function success(response) {
+        //alert(JSON.stringify(response,null,2));
+        $scope.state_x_pos            = response.data.x_pos.toFixed(1);
+        $scope.state_y_pos            = response.data.y_pos.toFixed(1);
+        $scope.state_z_pos            = response.data.z_pos.toFixed(1);
+        $scope.state_head_rot         = response.data.head_rot.toFixed(1);
+        $scope.state_base_angle       = response.data.base_angle.toFixed(1);
+        $scope.state_long_arm_angle   = response.data.long_arm_angle.toFixed(1);
+        $scope.state_short_arm_angle  = response.data.short_arm_angle.toFixed(1);
+        $scope.state_paw_arm_angle    = response.data.paw_arm_angle.toFixed(1);
+        $scope.state_is_grab          = response.data.is_grab;
+        $scope.state_gripper_angle    = response.data.gripper_angle.toFixed(1);
 
-    var sorted_by_cost = sortByKey(response, "cost");
-    var lower_10 = sorted_by_cost.slice(0,10);
-
-    $scope.server_response = lower_10;
-	}
-
-  function demangleJSON(data_json_mangled) {
-    var data_json;
-    //var encoding = "base64";
-    //var encoding = "utf-8";
-
-    //data_json = JSON.parse(JSON.stringify(data_json_mangled));
-    data_json = data_json_mangled;
-
-    //alert("data_json_mangled.data" + " = " + data_json_mangled['data']);
-
-    return data_json;
-  }
-
-  /*http://jsfiddle.net/6Dgbu/ */
-  function sortByKey(array, key) {
-    return array.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
-  }
-
+        }, function error(response) {
+          alert("there was an error with your request");
+      });
+    }
 
 }]);
 

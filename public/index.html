@@ -23,26 +23,15 @@
 
     <!-- Angular Color Picker Styling s inject 'mp.colorPicker' -->
     <link rel="stylesheet" href="./css/bootstrap.min.css" >   
-    <link rel="stylesheet" href="./css/angular-color-picker.css">
     <link rel="stylesheet" href="./css/rzslider.min.css" >
     <link rel="stylesheet" href="./css/style.css" >
 
     <!-- INCLUDE THE NG-APP CONTROLLER FOR ANGULAR JS -->
     <script src= "./js/angular.min.js"></script>
-    <script src="./js/angular-color-picker.js"></script>
     <script src= "./js/rzslider.min.js"></script>
     <script src= "./js/angular-touch.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
-    <!--<script src= "./js/control.min.js"></script> -->
-    <script src= "./js/control.js"></script>
-
-    <!--INCLUDE 3JS RENDERING STUFF-->
-    <!--<script src="js/three.min.js"></script>-->
-    <!--
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r74/three.min.js"></script>
-    <script src="js/RenderObject.js"></script>    
-    -->
-    <!--basic render object setup -->
+    <script src= "./js/control.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -154,24 +143,7 @@
             <button ng-click="runVisualTracking()">Visual Tracking</button>
             <br><br>
 
-            <!--<h4>Cost Properties:</h4>-->
-
             <!--
-            <span class="pull-down-heading" aria-hidden="true"><strong>Supplier:</strong>
-              <select ng-model="manufacturer" ng-change="changeManufacturer(manufacturer)">
-                <option value="">ANY</option>
-                <option value="3DFilamenta">3DFilamenta</option>
-
-              </select>
-            </span> 
-
-            <br>
-            <br>
-
-            <span class="slider-heading" aria-hidden="true"><strong>Ideal Bed Temp [C]:</strong>
-              <rzslider class="bed-temp-slider" rz-slider-model="slider_bed_temp.value"
-                rz-slider-options="slider_bed_temp.options"></rzslider>
-            </span>
             
             <span class="slider-heading" aria-hidden="true"><strong>Ideal Nozzle Temp [C]:</strong>
               <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
@@ -189,12 +161,8 @@
           <h4>Absolute Position Controls:</h4>
 
           <br><p>///Not Yet Implemented</p>
-            <!--
-            <color-picker ng-model="color_temp" ng-click="changeColor(color_temp)" ng-init="">
-            </color-picker>
 
-            <input type="text" ng-model="color_temp" ng-init="" hidden="true"> 
-            -->
+
         </div>
 
 
@@ -246,29 +214,10 @@
             </table>
 
             <br><br>
-            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="49%">
-            <img src="/img/dobot_coordinate_system_angular.jpeg" width="49%">
+            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="80%">
+            <!--<img src="/img/dobot_coordinate_system_angular.jpeg" width="49%">-->
 
             <br><br>
-
-            <!--
-            <div class="3d-render">
-                <button ng-click="addScript()">addScript</button>
-                <script ng-repeat="script in scripts" ng-src="{{script.src}}"></script>
-
-                <br>
-                <br>
-                <canvas id="threeJS-Canvas" width="180" height="180" style="background-color: #000000">
-              
-                Placeholder for 3JS Rendered Area
-                <script id="threeJS-Script"></script> 
-
-                <script id="initialize-render">
-                  render_object_instance = new RenderObject("33CC33", 0xFFFFFF );
-                  render_object_instance.render();
-                </script>
-            </div>
-            -->
 
         </div>
       </div>
