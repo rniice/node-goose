@@ -270,49 +270,37 @@ Dobot.prototype.sendDobotState = function(command) {
 
 	else if ( c_command === '9' ) {
 
-		//currently setting to fixed values for laser etching
-		var state 						= 9;		//config state 9
-		var playback_config 			= 1;		//config playback setting
-		var max_joint_move_speed		= 1;	
-		var max_joint_move_accel		= 1;
-		var max_servo_speed				= 2;
-		var max_servo_accel				= 2;
-		var max_linear_move_speed		= 8;
-		var max_linear_move_accel		= 2;
-		var default_pause_time			= 0;		//sec
-		var default_jump_height	       	= 0;	    //mm
-
 		var selected_state;							//create an object with the selected dobot command parameters
 
 		if(command.indexOf('JUMP') > -1) {			//for the hacked jump mode without turning off lazer
-			selected_state = {
-				jog: true, 
-				axis: 14, 
-				speed: 0
+			selected_state 	= {
+				settings				: true,							//toggle the settings mode
+				state           		: 9,
+				playback_config			: 1,
+				max_joint_move_speed	: 100,
+				max_joint_move_accel 	: 200,
+				max_servo_speed 		: 100,
+				max_servo_accel 		: 200,
+				max_linear_move_speed 	: 100,
+				max_linear_move_accel	: 200,
+				default_pause_time		: 1,		
+				default_jump_height		: 0
 			};
 		}
 
 		else if(command.indexOf('WRITE') > -1) {
-			selected_state = {
-				jog: true, 
-				axis: 13, 
-				speed: 0
-			};
-		}
-
-		else {
 			selected_state 	= {
 				settings				: true,							//toggle the settings mode
-				state           		: state,
-				playback_config			: playback_config,
-				max_joint_move_speed	: max_joint_move_speed,
-				max_joint_move_accel 	: max_joint_move_accel,
-				max_servo_speed 		: max_servo_speed,
-				max_servo_accel 		: max_servo_accel,
-				max_linear_move_speed 	: max_linear_move_speed,
-				max_linear_move_accel	: max_linear_move_accel,
-				default_pause_time		: default_pause_time,		
-				default_jump_height		: default_jump_height
+				state           		: 9,
+				playback_config			: 1,
+				max_joint_move_speed	: 1,
+				max_joint_move_accel 	: 1,
+				max_servo_speed 		: 2,
+				max_servo_accel 		: 2,
+				max_linear_move_speed 	: 8,
+				max_linear_move_accel	: 2,
+				default_pause_time		: 0,		
+				default_jump_height		: 0
 			};
 
 		}
@@ -445,7 +433,12 @@ Dobot.prototype.generateCommandBuffer = function(data) {		//create buffer to sen
 
 Dobot.prototype.next = function () {
 
-	if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
+	if ( this._COMMAND_JOG ) {
+		this.sendBuffer(this._COMMAND_JOG);
+		this._COMMAND_JOG = null;
+	}
+
+	else if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
 		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
 		
 		this._NEXT_COMMAND = null;								//loaded command already, remove it
@@ -453,10 +446,11 @@ Dobot.prototype.next = function () {
 		//this.sendBuffer(this.test_command);
 	}
 
-	else if ( this._COMMAND_JOG && (this._STATE == "STREAMING") ) {
+
+	/*else if ( this._COMMAND_JOG && (this._STATE == "STREAMING") ) {
 		this.sendBuffer(this._COMMAND_JOG);
 		this._COMMAND_JOG = null;
-	}
+	}*/
 
 	else {
 		//console.log('no buffer to send right now');
@@ -546,7 +540,7 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 
 		else if ( this._STATE == "STREAMING" ) {
 			this.next();
-
+			this._STATE = "WAITING";
 		}
 
 		else {
@@ -563,7 +557,7 @@ Dobot.prototype.updateCommandQueue = function () {	//updates next() if more comm
 	else {  //no file is loaded, currently in stream mode
 		if ( this._STATE == "STREAMING" ) {
 			this.next();
-
+			this._STATE = "WAITING";
 		}
 
 		//console.log("no file loaded, in stream mode awaiting command");
@@ -592,6 +586,8 @@ Dobot.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, n
 
 //CARTESIAN JOG MODE COMMAND PARSING AND GENERATING BUFFER FROM SERVER
 Dobot.prototype.jogMoveCartesian = function (args) {
+
+	this._STATE == "STREAMING";
 
 	var selection = args.axis;
 	var direction = parseInt(args.direction);
@@ -690,7 +686,7 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 	}
 
-	this.sendBuffer(this._COMMAND_JOG);
+	//this.sendBuffer(this._COMMAND_JOG);
 
 }	
 
