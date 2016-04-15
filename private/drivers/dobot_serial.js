@@ -273,6 +273,7 @@ Dobot.prototype.sendDobotState = function(command) {
 		var selected_state;							//create an object with the selected dobot command parameters
 
 		if(command.indexOf('JUMP') > -1) {			//for the hacked jump mode without turning off lazer
+			
 			selected_state 	= {
 				settings				: true,							//toggle the settings mode
 				state           		: 9,
@@ -283,9 +284,13 @@ Dobot.prototype.sendDobotState = function(command) {
 				max_servo_accel 		: 200,
 				max_linear_move_speed 	: 100,
 				max_linear_move_accel	: 200,
-				default_pause_time		: 1,		
+				default_pause_time		: 0,		
 				default_jump_height		: 0
 			};
+
+			this.jogMoveCartesian({axis: "LSR", direction: -1});			
+			command_buffer = this.generateCommandBuffer(selected_state);
+
 		}
 
 		else if(command.indexOf('WRITE') > -1) {
@@ -298,19 +303,21 @@ Dobot.prototype.sendDobotState = function(command) {
 				max_servo_speed 		: 2,
 				max_servo_accel 		: 2,
 				max_linear_move_speed 	: 8,
-				max_linear_move_accel	: 2,
+				max_linear_move_accel	: 8,
 				default_pause_time		: 0,		
 				default_jump_height		: 0
 			};
 
-		}
+			this.jogMoveCartesian({axis: "LSR", direction: 1});			
+			command_buffer = this.generateCommandBuffer(selected_state);
 
+		}
 
 		//extract selected configuration settings [implement later]
 
 
 		//call function to create command buffer
-		command_buffer = this.generateCommandBuffer(selected_state);
+		//command_buffer = this.generateCommandBuffer(selected_state);
 		console.log("sending gcode: " + command);	
 
 	}
@@ -686,6 +693,7 @@ Dobot.prototype.jogMoveCartesian = function (args) {
 
 	}
 
+	//return this._COMMAND_JOG;
 	//this.sendBuffer(this._COMMAND_JOG);
 
 }	
