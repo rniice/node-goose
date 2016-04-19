@@ -1,5 +1,5 @@
 {
-  "name": "scara-dobot-controller",
+  "name": "node-goose",
   "version": "0.1.0",
   "description": "nodeJS scara robot controller and gcode interpreter service",
   "main": "Gruntfile.js",
@@ -22,9 +22,9 @@
   "author": "Michael Crockett",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rniice/scara-dobot-controller/issues"
+    "url": "https://github.com/rniice/node-goose/issues"
   },
-  "homepage": "https://github.com/rniice/scara-dobot-controller",
+  "homepage": "https://github.com/rniice/node-goose",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-uglify": "^1.0.1"
