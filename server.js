@@ -65,12 +65,6 @@ app.get('/run/streamProgram', function(req, res) {
 
 //NEED TO CONVERT TO POST AND UPLOAD LATER
 app.get('/load/program', function(req, res) {
-	//dobotInstance.loadProgram('./test/cube_2in_simplify.gcode');
-	//dobotInstance.loadProgram('./test/test_move_jog.gcode');
-	//dobotInstance.loadProgram('./test/test_move_target.gcode');
-	//dobotInstance.loadProgram('./test/bernie_gcode_dobot.gcode');
-	//dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot.gcode');
-	//dobotInstance.loadProgram('./test/test_jump_write_targets.gcode');
 	dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot_targets.gcode');
 	res.send('Program Loaded');
 });
