@@ -1,5 +1,7 @@
 # node-goose
 
+![logo by https://thenounproject.com/creativestall/](/../screenshots/noun_394753_cc_square.png?raw=true "TEST")
+
 ## scara-dobot-controller
 Dobot SerialPort Driver and Gcode Interpreter Service 
 
