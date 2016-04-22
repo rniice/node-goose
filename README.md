@@ -1,6 +1,6 @@
 # node-goose
 
-![logo by https://thenounproject.com/creativestall/](/../screenshots/screenshots/noun_394753_cc_square.png?raw=true)
+![logo by https://thenounproject.com/creativestall/](/../screenshots/screenshots/noun_394753_cc_square.png?raw=true "Logo By: Creative Stall TheNounProject")
 	 
 ## scara-dobot-controller
 Dobot SerialPort Driver and Gcode Interpreter Service 
