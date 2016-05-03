@@ -1,8 +1,8 @@
 var fs = require('fs');
 
 
-var input_gcode = "bernie_outline_print.gcode";
-var output_gcode = "bernie_outline_gcode_dobot_targets.gcode"
+var input_gcode = "node_goose.gcode";
+var output_gcode = "node_goose_targets.gcode"
 var output_string = "";
 
 var relative = false;			//if true, all x y z for "write" processing are additive (relative moves)
@@ -21,7 +21,11 @@ var prev_y = 0;
 var prev_z = 0;
 
 for (var i = 0; i < stripped_gcode_array.length; i++) {
-
+	/*
+	if(stripped_gcode_array[i].indexOf('C9') > -1){
+		break;
+	}
+	*/
 	//remove existing F values
 	stripped_gcode_array[i] = stripped_gcode_array[i].replace(/( F[+-]?[\d]+[\.]?[\d]+]?)/i, "");
 
