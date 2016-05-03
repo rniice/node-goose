@@ -16,7 +16,9 @@
 
 ## demo laser cutting
 
-https://vimeo.com/album/3902621/video/162934513
+- https://vimeo.com/album/3902621/video/164880605
+
+- https://vimeo.com/album/3902621/video/162934513
 
 ## GUI v0.1
 
