@@ -65,7 +65,8 @@ app.get('/run/streamProgram', function(req, res) {
 
 //NEED TO CONVERT TO POST AND UPLOAD LATER
 app.get('/load/program', function(req, res) {
-	dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot_targets.gcode');
+	//dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot_targets.gcode');
+	dobotInstance.loadProgram('./test/node_goose_targets.gcode');
 	res.send('Program Loaded');
 });
 

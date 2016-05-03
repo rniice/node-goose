@@ -233,6 +233,8 @@ Dobot.prototype.sendDobotState = function(command) {
 			}
 			//console.log("lsr_power is: " + lsr_power);
 
+		//need to add PUMP for pump setting
+
 		var pen_state		= null;		//put a condition here that checks for writing, but not laser
 			if (pen_state) { 
 				pen_state = parseFloat(pen_state[1]); 
@@ -300,10 +302,10 @@ Dobot.prototype.sendDobotState = function(command) {
 				playback_config			: 1,
 				max_joint_move_speed	: 1,
 				max_joint_move_accel 	: 1,
-				max_servo_speed 		: 2,
-				max_servo_accel 		: 2,
-				max_linear_move_speed 	: 8,
-				max_linear_move_accel	: 8,
+				max_servo_speed 		: 1,
+				max_servo_accel 		: 1,
+				max_linear_move_speed 	: 1,
+				max_linear_move_accel	: 1,
 				default_pause_time		: 0,		
 				default_jump_height		: 0
 			};
