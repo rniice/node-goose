@@ -4,15 +4,15 @@
 	 
 ## installation: 
 
-git clone https://github.com/rniice/node-goose.git 
-install nodeJS: https://nodejs.org/en/ 
-cd node-goose
-npm install
+- git clone https://github.com/rniice/node-goose.git 
+- install nodeJS: https://nodejs.org/en/ 
+- cd node-goose
+- npm install
 
 ## usage:
 
-node server.js
-access controls at localhost:8080 via web browser
+- node server.js
+- access controls at localhost:8080 via web browser
 
 ## demo laser cutting
 
