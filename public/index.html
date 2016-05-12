@@ -77,24 +77,25 @@
 
             <table class="processing-parameters" style="width:100%">
               <tr>
-                <td ng-mousedown="jogZpos()" ng-mouseup="jogStop()"><strong>Z+</strong></td>
+              <!--<INPUT TYPE=BUTTON OnClick="Circle_calc(this.form);" VALUE="calculate"></TD>-->
+                <td> <input class="jog" type="button" ng-mousedown="jogZpos()" ng-mouseup="jogStop()" value="Z+"> </td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-mousedown="jogXneg()" ng-mouseup="jogStop()"><strong>X-</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogXneg()" ng-mouseup="jogStop()" value="Z-"> </td>
                 <td><strong></strong></td>
               </tr>
               <tr>
                 <td><strong></strong></td>
                 <td><strong></strong></td>    
-                <td ng-mousedown="jogYneg()" ng-mouseup="jogStop()"><strong>Y-</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogYneg()" ng-mouseup="jogStop()" value="Y-"> </td>
                 <td><strong></strong></td>
-                <td ng-mousedown="jogYpos()" ng-mouseup="jogStop()"><strong>Y+</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogYpos()" ng-mouseup="jogStop()" value="Y+"> </td>
               </tr>
               <tr>
-                <td ng-mousedown="jogZneg()" ng-mouseup="jogStop()"><strong>Z-</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogZneg()" ng-mouseup="jogStop()" value="Z-"> </td>
                 <td><strong></strong></td>    
                 <td><strong></strong></td>
-                <td ng-mousedown="jogXpos()" ng-mouseup="jogStop()"><strong>X+</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogXpos()" ng-mouseup="jogStop()" value="X+"> </td>
                 <td><strong></strong></td>
               </tr>
               
@@ -108,26 +109,26 @@
               <tr>
                 <td><strong>Rotation</strong></td>
                 <td><strong></strong></td>
-                <td ng-mousedown="jogRneg()" ng-mouseup="jogStop()"><strong>R-</strong></td>
-                <td ng-mousedown="jogRpos()" ng-mouseup="jogStop()"><strong>R+</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogRneg()" ng-mouseup="jogStop()" value="R-"> </td>
+                <td> <input class="jog" type="button" ng-mousedown="jogRpos()" ng-mouseup="jogStop()" value="R+"> </td>
               </tr>
               <tr>
                 <td><strong>Gripper</strong></td>
                 <td><strong></strong></td>
-                <td ng-mousedown="jogGRPopen()" ng-mouseup="jogStop()"><strong>OPEN</strong></td>
-                <td ng-mousedown="jogGRPclose()" ng-mouseup="jogStop()"><strong>CLOSE</strong></td>
+                <td> <input class="jog" type="button" ng-mousedown="jogGRPopen()" ng-mouseup="jogStop()" value="OPEN"> </td>
+                <td> <input class="jog" type="button" ng-mousedown="jogGRPclose()" ng-mouseup="jogStop()" value="CLOSE"> </td>
               </tr>
               <tr>
                 <td><strong>Pump</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogPUMPoff()"><strong>OFF</strong></td>
-                <td ng-click="jogPUMPon()"><strong>ON</strong></td>
+                <td> <input class="jog" type="button" ng-click="jogPUMPoff()" value="OFF"> </td>
+                <td> <input class="jog" type="button" ng-click="jogPUMPon()" value="ON"> </td>
               </tr>
               <tr>
                 <td><strong>Laser</strong></td>
                 <td><strong></strong></td>
-                <td ng-click="jogLSRoff()"><strong>OFF</strong></td>
-                <td ng-click="jogLSRon()"><strong>ON</strong></td>
+                <td> <input class="jog" type="button" ng-click="jogLSRoff()" value="OFF"> </td>
+                <td> <input class="jog" type="button" ng-click="jogLSRon()" value="ON"> </td>
               </tr>
 
             </table>
