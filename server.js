@@ -3,11 +3,11 @@ var http = require('http');
 var url = require('url');
 var app = express();
 var path = require('path');
-var fs = require('fs');
+//var fs = require('fs');
 
 
 
-var Dobot = require('./private/drivers/dobot_serial.js');
+var Dobot = require('./private/drivers/Dobot.js');
 
 var dobotInstance = null; //placeholder
 

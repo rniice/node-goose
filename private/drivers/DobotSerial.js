@@ -1,0 +1,217 @@
+/***************** LOAD DEPENDENCIES ****************/
+var SerialPort = null;
+
+try {										// loading serialport may fail on some systems
+    SerialPort = require('serialport');     // requires LIBUSB available to OS
+} catch (ex) {
+    console.log('cannot find serialport module');
+}
+
+/*****************************************************/
+
+var DobotSerial = function(COM, BAUD) {
+    var that = this;
+
+    var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
+
+    this._PORT = new SerialPort.SerialPort(COM, port_params, false);
+
+	this.start_command 		= new Buffer([0xA5,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+										  	0x11,0x11,0x22,0x22,0x33,0x33,
+										0x00,0x5A]);
+
+	this.disconnect_command = new Buffer([0xA5,
+											0x44,0x44,0x55,0x55,0x66,0x66,0x77,0x77,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+										 0x5A]);
+
+    this._STATE 				= "OPENED";   	//"WAITING" is ready for next command, "RUNNING" is a current program
+    this._PROGRAM_STATE			= "NONE";		//NONE, STARTED, PAUSED, STOPPED
+    this._WAIT 					= 2000;
+    this._RETRIES 				= 5;
+    this._HEART_BEAT_INTERVAL 	= 60;			//60ms is expected/default by controller
+
+    this._CURRENT_COMMAND_INDEX = 0;
+    this._NEXT_COMMAND			= null;
+    this._COMMAND_QUEUE			= null;
+
+    this._COMMAND_JOG			= null;			//used to handle jog type inputs, stores sampled one to send
+
+    this._FILE_LOADED			= false;   		//file containing gcode to run
+    this._GCODE_DATA			= null;	   		//currently no data loaded to run
+
+    this._MODE 					= null;			//MOVE, CUT, ETC. 				
+	this._dobot_state			= null;			//status/position response from dobot
+
+    // Open port and define event handlers
+    this._PORT.open(function(error) {
+        if (error) {
+			console.log("unable to open port: " + error);
+        } 
+        else {
+        	//after opened define all the callbacks and listeners
+            that.start();
+        }
+
+    });
+};
+
+
+DobotSerial.prototype.start = function() {
+	var that = this;
+
+	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
+	//this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
+
+
+    this._PORT.on('data', function (data) {
+
+		data = new Buffer(data);
+		//console.log("buffer rx length: " + data.length);
+				
+		if(data.length == 42) {
+			that._STATE = "WAITING";
+			that.receiveDobotState(data);
+		}
+		
+    });
+
+    this._PORT.on('close', function () {
+        that.disconnect();
+        that._STATE = "DISCONNECTED";
+
+       	that._heartbeater.stop();
+    });
+
+    this._PORT.on('error', function (error) {
+		console.log("port ended with error: " + error);
+		that._STATE = "ERROR";
+
+		that._heartbeater.stop();
+
+    });
+
+	this.sendBuffer(this.start_command);
+	//this._STATE = "CONNECTED";
+
+};
+
+
+DobotSerial.prototype.runProgram = function() {
+	if(this._FILE_LOADED) {
+		this._PROGRAM_STATE = "STARTED";
+		this.next();
+		//this._STATE	= "WAITING";
+	}
+	else {
+		console.log("there is no program loaded");
+	}
+
+};
+
+
+DobotSerial.prototype.streamProgram = function() {
+	this._PROGRAM_STATE = "STREAMING";
+	this._STATE 		= "STREAMING";   	//"WAITING" is ready for next command, "RUNNING" is a current program
+
+	this.next();
+	//this._STATE	= "WAITING";
+
+};
+
+	
+DobotSerial.prototype.next = function () {
+
+	if ( this._COMMAND_JOG ) {
+		this.sendBuffer(this._COMMAND_JOG);
+		this._COMMAND_JOG = null;
+	}
+
+	else if( this._NEXT_COMMAND && (this._STATE == "WAITING") ) {
+		var buffer = this.sendDobotState(this._NEXT_COMMAND);		//create buffer using gcode command
+		
+		this._NEXT_COMMAND = null;								//loaded command already, remove it
+		this.sendBuffer(buffer);
+		//this.sendBuffer(this.test_command);
+	}
+
+
+	/*else if ( this._COMMAND_JOG && (this._STATE == "STREAMING") ) {
+		this.sendBuffer(this._COMMAND_JOG);
+		this._COMMAND_JOG = null;
+	}*/
+
+	else {
+		//console.log('no buffer to send right now');
+		//console.log('STATE IS: ' + this._STATE);
+	}
+
+};
+
+
+DobotSerial.prototype.disconnect = function() {
+
+	this.sendBuffer(this.disconnect_command);
+    this._STATE = "DISCONNECTED";
+
+    this._heartbeater.stop();
+
+    console.log("disconnected.");
+
+};
+
+
+DobotSerial.prototype.close = function () {
+    this._PORT.close(function(err) {
+        if (err) {
+            console.log("error closing the port: " + error);
+        }
+    });
+
+	this._heartbeater.stop();
+
+	console.log("closed.");
+
+};
+
+
+DobotSerial.prototype.pause = function() {
+    this._STATE = "PAUSED";
+    this._heartbeater.pause();
+
+  	console.log("paused.");
+
+};
+
+
+DobotSerial.prototype.resume = function() {
+    this._STATE = "CONNECTED";
+    this._heartbeater.resume();
+
+  	console.log("paused.");
+};
+
+
+//send the command buffered command over the serialport
+DobotSerial.prototype.sendBuffer = function (buffer) {
+    
+    try {
+    	//console.log("sending: " + buffer.toString('hex'));
+        this._PORT.write(buffer);
+    } 
+    catch (error) {
+        console.log("error sending buffer: " + error);
+    }
+
+};
+
+
+
+module.exports = DobotSerial;
