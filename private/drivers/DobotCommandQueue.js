@@ -1,4 +1,26 @@
-var DobotCommandQueue = function( ) { };
+var DobotCommandQueue = function( ) { 
+    this._STATE 				= "OPENED";   	//"WAITING" is ready for next command, "RUNNING" is a current program
+    this._PROGRAM_STATE			= "NONE";		//NONE, STARTED, PAUSED, STOPPED
+    this._CURRENT_COMMAND_INDEX = 0;
+    this._NEXT_COMMAND			= null;
+    this._COMMAND_QUEUE			= null;
+};
+
+
+DobotCommandQueue.prototype.setState = function (state) {
+	this._STATE = state;
+};
+
+
+DobotCommandQueue.prototype.setProgramState = function(state) {
+	this._PROGRAM_STATE = state;
+
+};
+
+
+// .. add more setters and getters .. //
+
+
 
 
 DobotCommandQueue.prototype.updateCommandQueue = function () {	//updates next() if more commands to send

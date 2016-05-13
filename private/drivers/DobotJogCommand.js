@@ -1,4 +1,6 @@
-var DobotJogCommand = function( ) { };
+var DobotJogCommand = function( ) {
+    this._COMMAND_JOG			= null;			//used to handle jog type inputs, stores sampled one to send
+};
 
 
 //CARTESIAN JOG MODE COMMAND PARSING AND GENERATING BUFFER FROM SERVER

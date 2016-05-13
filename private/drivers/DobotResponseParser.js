@@ -1,5 +1,7 @@
 /**************** DOBOT RESPONSEPARSER CONSTRUCTOR ******************/
-var DobotResponseParser = function( ) { };
+var DobotResponseParser = function( ) {
+	this._dobot_state			= null;			//status/position response from dobot
+};
 
 
 DobotResponseParser.prototype.receiveDobotState = function(buffer) {

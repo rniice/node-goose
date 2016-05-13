@@ -2,7 +2,10 @@
 var fs 				= require('fs');			//fs for loading files to run
 
 /**************** DOBOT FILEMANAGER CONSTRUCTOR ******************/
-var DobotFileManager = function( ) { };
+var DobotFileManager = function( ) { 
+    this._FILE_LOADED			= false;   		//file containing gcode to run
+    this._GCODE_DATA			= null;	   		//currently no data loaded to run
+};
 
 
 DobotFileManager.prototype.loadProgram = function (path) {		//utf-8 encoded Gcode string, newline delimited

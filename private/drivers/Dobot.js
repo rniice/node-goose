@@ -7,12 +7,13 @@ var Dobot = function( ) { };
 
 
 /***************** LOAD COMPONENTS *****************/
-var DobotSerial 		= require('DobotSerial.js');
-var DobotFileManager 	= require('DobotFileManager.js');
-var DobotCommandBuffer 	= require('DobotCommandBuffer.js');
-var DobotCommandQueue 	= require('DobotCommandQueue.js');
-var DobotJogCommand 	= require('DobotJogCommand.js');
-
+var DobotSerial 			= require('DobotSerial.js');
+var DobotFileManager 		= require('DobotFileManager.js');
+var DobotCommandBuffer 		= require('DobotCommandBuffer.js');
+var DobotCommandQueue 		= require('DobotCommandQueue.js');
+var DobotJogCommand 		= require('DobotJogCommand.js');
+var DobotGcodeInterpreter	= require('DobotGcodeInterpreter.js');
+var DobotResponseParser		= require('DobotResponseParser.js');
 
 /************ EXTEND DOBOT BASE CLASS **************/
 util.inherits(Dobot, DobotSerial);

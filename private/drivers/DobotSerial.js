@@ -16,6 +16,10 @@ var DobotSerial = function(COM, BAUD) {
 
     this._PORT = new SerialPort.SerialPort(COM, port_params, false);
 
+	this._WAIT 					= 2000;
+    this._RETRIES 				= 5;
+    this._HEART_BEAT_INTERVAL 	= 60;			//60ms is expected/default by controller
+
 	this.start_command 		= new Buffer([0xA5,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -32,23 +36,8 @@ var DobotSerial = function(COM, BAUD) {
 											0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 										 0x5A]);
 
-    this._STATE 				= "OPENED";   	//"WAITING" is ready for next command, "RUNNING" is a current program
-    this._PROGRAM_STATE			= "NONE";		//NONE, STARTED, PAUSED, STOPPED
-    this._WAIT 					= 2000;
-    this._RETRIES 				= 5;
-    this._HEART_BEAT_INTERVAL 	= 60;			//60ms is expected/default by controller
 
-    this._CURRENT_COMMAND_INDEX = 0;
-    this._NEXT_COMMAND			= null;
-    this._COMMAND_QUEUE			= null;
-
-    this._COMMAND_JOG			= null;			//used to handle jog type inputs, stores sampled one to send
-
-    this._FILE_LOADED			= false;   		//file containing gcode to run
-    this._GCODE_DATA			= null;	   		//currently no data loaded to run
-
-    this._MODE 					= null;			//MOVE, CUT, ETC. 				
-	this._dobot_state			= null;			//status/position response from dobot
+    //this._MODE 					= null;			//MOVE, CUT, ETC. 				
 
     // Open port and define event handlers
     this._PORT.open(function(error) {
