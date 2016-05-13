@@ -59,23 +59,28 @@
 
         <div class="col-lg-2" id="#sidebar">
           <h4>System Control:</h4>
-            <button ng-click="connectDobot()">Connect</button>
-            <br><br>
-            <button ng-click="disconnectDobot()">Disconnect</button>
-            <br><br>
-            <button ng-click="pauseDobot()">Pause</button>
-            <br><br>
-            <button ng-click="resumeDobot()">Resume</button>
-            <br><br>
-            <button ng-click="runStreamDobot()">Stream Data</button>
-            <br><br>
+
+            <table class="system-control" style="width:100%">
+
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="connectDobot()" value="Connect"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="disconnectDobot()" value="Disconnect"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="pauseDobot()" value="Pause"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="resumeDobot()" value="Resume"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="runStreamDobot()" value="Stream Data"> </td> </tr>
+
+            </table>
 
         </div>
 
         <div class="col-lg-3">
           <h4>Motion Control:</h4>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="jog-controls" style="width:100%">
               <tr>
               <!--<INPUT TYPE=BUTTON OnClick="Circle_calc(this.form);" VALUE="calculate"></TD>-->
                 <td> <input class="jog" type="button" ng-mousedown="jogZpos()" ng-mouseup="jogStop()" value="Z+"> </td>
@@ -104,7 +109,7 @@
           <br>
           <h4>Effector Control:</h4>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="jog-controls" style="width:100%">
 
               <tr>
                 <td><strong>Rotation</strong></td>
@@ -171,7 +176,7 @@
           <h4>Dobot State: </h4>
             <br>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="dobot-state" style="width:100%">
               <tr>
                 <td><strong>x_pos</strong></td>
                 <td><strong>{{state_x_pos}}</strong></td> 
