@@ -1,19 +1,34 @@
 /*************** LOAD DEPENDENCIES *****************/
 var util		= require('util');
 
+/***************** LOAD COMPONENTS *****************/
+var DobotSerial 			= require('./DobotSerial');
+var DobotFileManager 		= require('./DobotFileManager');
+var DobotCommandBuffer 		= require('./DobotCommandBuffer');
+var DobotCommandQueue 		= require('./DobotCommandQueue');
+var DobotJogCommand 		= require('./DobotJogCommand');
+var DobotGcodeInterpreter	= require('./DobotGcodeInterpreter');
+var DobotResponseParser		= require('./DobotResponseParser');
+
+
 
 /************** DOBOT CONSTRUCTOR ******************/
-var Dobot = function( ) { };
+var Dobot = function(connection) {
+	//var that = this;
 
+	//generic connection, for Dobot of form: {COM: XY, BAUD: XYZ}
+	this._CONNECTION = connection;
 
-/***************** LOAD COMPONENTS *****************/
-var DobotSerial 			= require('DobotSerial.js');
-var DobotFileManager 		= require('DobotFileManager.js');
-var DobotCommandBuffer 		= require('DobotCommandBuffer.js');
-var DobotCommandQueue 		= require('DobotCommandQueue.js');
-var DobotJogCommand 		= require('DobotJogCommand.js');
-var DobotGcodeInterpreter	= require('DobotGcodeInterpreter.js');
-var DobotResponseParser		= require('DobotResponseParser.js');
+	DobotSerial.call(this);
+	DobotFileManager.call(this);
+	DobotCommandBuffer.call(this);
+	DobotCommandQueue.call(this);
+	DobotJogCommand.call(this);
+	DobotGcodeInterpreter.call(this);
+	DobotResponseParser.call(this);
+
+};
+
 
 /************ EXTEND DOBOT BASE CLASS **************/
 util.inherits(Dobot, DobotSerial);
@@ -23,6 +38,9 @@ util.inherits(Dobot, DobotCommandQueue);
 util.inherits(Dobot, DobotJogCommand);
 util.inherits(Dobot, DobotGcodeInterpreter);
 util.inherits(Dobot, DobotResponseParser);
+
+
+//Dobot.open();
 
 
 /*************** EXPORT DOBOT CLASS ****************/

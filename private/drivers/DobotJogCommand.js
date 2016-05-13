@@ -108,4 +108,4 @@ DobotJogCommand.prototype.jogMoveCartesian = function (args) {
 };
 
 
-module.exports = Dobot;
+module.exports = DobotJogCommand;

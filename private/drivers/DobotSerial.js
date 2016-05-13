@@ -9,8 +9,11 @@ try {										// loading serialport may fail on some systems
 
 /*****************************************************/
 
-var DobotSerial = function(COM, BAUD) {
-    var that = this;
+var DobotSerial = function(connection) {
+    var that	= this;
+
+    var COM 	= this._CONNECTION.COM;
+    var BAUD 	= this._CONNECTION.BAUD;
 
     var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
 
@@ -38,21 +41,50 @@ var DobotSerial = function(COM, BAUD) {
 
     //this._MODE 					= null;			//MOVE, CUT, ETC. 				
 
+    /*
+    this._PORT.open(function(error) {
+    	console.log("made it to DobotSerial.open()");
+
+        if (error) {
+			console.log("unable to open port: " + error);
+        } 
+        else {
+        	console.log("port opened");
+        	//after opened define all the callbacks and listeners
+            that.start();
+        }
+
+    });
+    */
+
+};
+
+
+DobotSerial.prototype.test = function() {
+	console.log("test works!");
+};
+
+
+DobotSerial.prototype.open = function() {
     // Open port and define event handlers
     this._PORT.open(function(error) {
         if (error) {
 			console.log("unable to open port: " + error);
         } 
         else {
+        	console.log("port opened");
         	//after opened define all the callbacks and listeners
             that.start();
         }
 
     });
+
 };
 
 
 DobotSerial.prototype.start = function() {
+	console.log("made it to DobotSerial.start()");
+
 	var that = this;
 
 	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);

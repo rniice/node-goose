@@ -7,7 +7,7 @@ var path = require('path');
 
 
 
-var Dobot = require('./private/drivers/Dobot.js');
+var Dobot = require('./private/drivers/Dobot');
 
 var dobotInstance = null; //placeholder
 
@@ -29,9 +29,17 @@ app.get('/', function(req, res) {
 
 
 app.get('/run/connect', function(req, res) {
+	console.log("made it to server connect");
+
 	//open the connection and take control of the machine
-	//dobotInstance = new Dobot('COM11', 256000); 	//V1.0 Firmware
-	dobotInstance = new Dobot('COM11', 9600); 		//V1.1 Firmware
+	dobotInstance = new Dobot( {COM:'COM11', BAUD:9600} ); 		//V1.1 Firmware
+	//console.log(dobotInstance._CONNECTION); 
+	//console.log(dobotInstance._WAIT);
+
+	//console.log(dobotInstance.test);
+	//dobotInstance.open();
+	//dobotInstance.populateClass();
+
 	res.send('Connected to Dobot');
 });
 
