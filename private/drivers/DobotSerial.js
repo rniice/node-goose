@@ -41,7 +41,7 @@ var DobotSerial = function(connection) {
 
     //this._MODE 					= null;			//MOVE, CUT, ETC. 				
 
-    /*
+    
     this._PORT.open(function(error) {
     	console.log("made it to DobotSerial.open()");
 
@@ -55,7 +55,7 @@ var DobotSerial = function(connection) {
         }
 
     });
-    */
+    
 
 };
 

@@ -1,5 +1,7 @@
 /*************** LOAD DEPENDENCIES *****************/
-var util		= require('util');
+//var util		= require('util');
+var modelo		= require('modelo'); //to support multiple inheritance
+
 
 /***************** LOAD COMPONENTS *****************/
 var DobotSerial 			= require('./DobotSerial');
@@ -19,28 +21,22 @@ var Dobot = function(connection) {
 	//generic connection, for Dobot of form: {COM: XY, BAUD: XYZ}
 	this._CONNECTION = connection;
 
-	DobotSerial.call(this);
-	DobotFileManager.call(this);
-	DobotCommandBuffer.call(this);
-	DobotCommandQueue.call(this);
-	DobotJogCommand.call(this);
-	DobotGcodeInterpreter.call(this);
-	DobotResponseParser.call(this);
+	DobotSerial.call(this);				//superclass constructor
+	DobotFileManager.call(this);		//superclass constructor
+	DobotCommandBuffer.call(this);		//superclass constructor
+	DobotCommandQueue.call(this);		//superclass constructor
+	DobotJogCommand.call(this);			//superclass constructor
+	DobotGcodeInterpreter.call(this);	//superclass constructor
+	DobotResponseParser.call(this);		//superclass constructor
 
 };
 
 
-/************ EXTEND DOBOT BASE CLASS **************/
-util.inherits(Dobot, DobotSerial);
-util.inherits(Dobot, DobotFileManager);
-util.inherits(Dobot, DobotCommandBuffer);
-util.inherits(Dobot, DobotCommandQueue);
-util.inherits(Dobot, DobotJogCommand);
-util.inherits(Dobot, DobotGcodeInterpreter);
-util.inherits(Dobot, DobotResponseParser);
-
-
-//Dobot.open();
+/**** EXTEND DOBOT BASE CLASS WITH MULTIPLE INHERITANCE*******/
+modelo.inherits(Dobot,DobotSerial, DobotFileManager,
+				DobotCommandBuffer, DobotCommandQueue,
+				DobotJogCommand, DobotGcodeInterpreter,
+				DobotResponseParser);
 
 
 /*************** EXPORT DOBOT CLASS ****************/
