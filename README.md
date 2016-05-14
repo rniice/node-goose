@@ -5,8 +5,8 @@
 ## installation: 
 
 ### install core modules
-- git clone https://github.com/rniice/node-goose.git 
 - install nodeJS: https://nodejs.org/en/ 
+- git clone https://github.com/rniice/node-goose.git 
 - cd node-goose
 - npm install
 
