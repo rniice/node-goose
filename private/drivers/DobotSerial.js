@@ -98,14 +98,16 @@ DobotSerial.prototype.start = function() {
         that.disconnect();
         that._STATE = "DISCONNECTED";
 
-       	that._heartbeater.stop();
+       	//that._heartbeater.stop();
+       	clearInterval(that._heartbeater_update);
     });
 
     this._PORT.on('error', function (error) {
 		console.log("port ended with error: " + error);
 		that._STATE = "ERROR";
 
-		that._heartbeater.stop();
+		//that._heartbeater.stop();
+       	clearInterval(that._heartbeater_update);
 
     });
 
@@ -171,40 +173,37 @@ DobotSerial.prototype.disconnect = function() {
 
 	this.sendBuffer(this.disconnect_command);
     this._STATE = "DISCONNECTED";
+   	clearInterval(this._heartbeater_update);
 
-    this._heartbeater.stop();
-
-    console.log("disconnected.");
+    this.close();
+    console.log("disconnected dobot.");
 
 };
 
 
 DobotSerial.prototype.close = function () {
-    this._PORT.close(function(err) {
-        if (err) {
+    this._PORT.close(function(error) {
+        if (error) {
             console.log("error closing the port: " + error);
         }
     });
 
-	this._heartbeater.stop();
-
-	console.log("closed.");
-
+   	clearInterval(this._heartbeater_update);
+	console.log("closed serialport.");
 };
 
 
 DobotSerial.prototype.pause = function() {
     this._STATE = "PAUSED";
-    this._heartbeater.pause();
+   	clearInterval(this._heartbeater_update);
 
   	console.log("paused.");
-
 };
 
 
 DobotSerial.prototype.resume = function() {
     this._STATE = "CONNECTED";
-    this._heartbeater.resume();
+	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
 
   	console.log("paused.");
 };
