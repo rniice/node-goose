@@ -8,6 +8,8 @@
 - install nodeJS: https://nodejs.org/en/ 
 - cd node-goose
 - npm install
+- cd private/node-opencv //navigate to opencv bindings submodule
+- npm install //install opencv dependencies
 
 ## usage:
 
