@@ -6,11 +6,16 @@ html, body {
 }
 
 h1, h2, h3, h4 {
-	color: red;
+	color: #00b300;
+	text-align: center;
 
 }
 
 p {
+	color: white;
+}
+
+.text-muted {
 	color: white;
 }
 
@@ -28,14 +33,16 @@ span.pull-down-heading {
 select {
 	float: right;
     text-align:right;
-    width: 160px;
+    /*width: 160px;*/
+    width: 100%;
     direction: rtl;
 }
 
 option {
 	float: right;
     text-align:right;
-    width: 160px;
+    /*width: 160px;*/
+    width: 100%;
     direction: rtl;
 }
 
@@ -46,26 +53,38 @@ h4.configure-title {
 }
 */
 
+table.table-system-control {
+	/*border: 1px solid white;*/
+	border: none;
+	text-align: center;
+	table-layout: fixed;
+	width: 100%;
+
+}
+
 table.jog-controls {
-	border: 2px solid white;
+	border: 1px solid white;
 	text-align: center;
 	table-layout: fixed;
+	width: 100%;
+
+}
+
+table.table-camera-feedback {
+	/*border: 1px solid white;*/
+	border: none;
+	text-align: center;
+	table-layout: fixed;
+	width: 100%;
 
 }
 
 
 table.dobot-state {
-	border: 2px solid white;
+	border: 1px solid white;
 	text-align: center;
 	table-layout: fixed;
-
-}
-
-table.dobot-state {
-	border: 2px solid white;
-	text-align: center;
-	table-layout: fixed;
-
+	width: 100px;
 }
 
 
@@ -78,14 +97,16 @@ td {
 	width: 56px;
 	height: 15px;
 	overflow: hidden;
+	color: white;
 }
 
+/*
 td.processing-data {
 	width: 56px;
 	height: 50px;
 	overflow: hidden;
 }
-
+*/
 
 
 /*#threeJSCanvas { */
@@ -97,17 +118,18 @@ canvas {
     display: block;
 }
 
-.jog {
-	width:  100%;
-	color: red;
-	background-color: blue;
-	border: 2px solid yellow;
-
-}
 
 .system-control {
 	width: 100%;
-	color: red;
-	background-color: blue;
-	border: 2px solid yellow;
+	color: lime;
+	background-color: gray;
+	/*border: 1px solid gray;*/
+}
+
+.jog {
+	width:  100%;
+	color: lime;
+	background-color: gray;
+	/*border: 1px solid gray;*/
+
 }
