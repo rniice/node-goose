@@ -43,7 +43,6 @@ var DobotSerial = function(connection) {
 
     
     this._PORT.open(function(error) {
-    	console.log("made it to DobotSerial.open()");
 
         if (error) {
 			console.log("unable to open port: " + error);
@@ -57,11 +56,6 @@ var DobotSerial = function(connection) {
     });
     
 
-};
-
-
-DobotSerial.prototype.test = function() {
-	console.log("test works!");
 };
 
 
@@ -83,8 +77,6 @@ DobotSerial.prototype.open = function() {
 
 
 DobotSerial.prototype.start = function() {
-	console.log("made it to DobotSerial.start()");
-
 	var that = this;
 
 	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
@@ -94,7 +86,6 @@ DobotSerial.prototype.start = function() {
     this._PORT.on('data', function (data) {
 
 		data = new Buffer(data);
-		//console.log("buffer rx length: " + data.length);
 				
 		if(data.length == 42) {
 			that._STATE = "WAITING";
