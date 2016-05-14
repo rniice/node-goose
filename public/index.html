@@ -17,7 +17,7 @@
     <meta property="og:image" content="./img/og_image.jpg" />   
 
     <link rel="icon" href="./favicon.ico">
-    <link rel="canonical" href="http://filafind.com" itemprop="url">
+    <link rel="canonical" href="blog.michael-crockett.com" itemprop="url">
 
     <title>NodeGoose - Dobot JavaScript Control - SCARA Robot</title>
 
@@ -59,23 +59,45 @@
 
         <div class="col-lg-2" id="#sidebar">
           <h4>System Control:</h4>
-            <button ng-click="connectDobot()">Connect</button>
-            <br><br>
-            <button ng-click="disconnectDobot()">Disconnect</button>
-            <br><br>
-            <button ng-click="pauseDobot()">Pause</button>
-            <br><br>
-            <button ng-click="resumeDobot()">Resume</button>
-            <br><br>
-            <button ng-click="runStreamDobot()">Stream Data</button>
-            <br><br>
+
+            <table class="table-system-control">
+
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="connectDobot()" value="Connect"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="disconnectDobot()" value="Disconnect"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="pauseDobot()" value="Pause"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="resumeDobot()" value="Resume"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="runStreamDobot()" value="Stream Data"> </td> </tr>
+
+            </table>
+
+          <br>
+
+          <!--<h4>Change Mode:</h4>-->
+
+            <table class="table-system-control">
+
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="loadProgramDobot()" value="Load Program"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="runProgramDobot()" value="Run Program"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="checkDobotState()" value="Get State"> </td> </tr>
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="runVisualTracking()" value="Visual Tracking"> </td> </tr>
+
+            </table>
 
         </div>
 
-        <div class="col-lg-3">
+        <div class="col-lg-4">
           <h4>Motion Control:</h4>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="jog-controls">
               <tr>
               <!--<INPUT TYPE=BUTTON OnClick="Circle_calc(this.form);" VALUE="calculate"></TD>-->
                 <td> <input class="jog" type="button" ng-mousedown="jogZpos()" ng-mouseup="jogStop()" value="Z+"> </td>
@@ -104,7 +126,7 @@
           <br>
           <h4>Effector Control:</h4>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="jog-controls">
 
               <tr>
                 <td><strong>Rotation</strong></td>
@@ -135,17 +157,8 @@
 
           <br>
 
-          <h4>Upload Program:</h4>
-
-            <button ng-click="loadProgramDobot()">Load Program</button>
-            <button ng-click="runProgramDobot()">Run Program</button>
-            <br><br>
-            <button ng-click="checkDobotState()">Get State</button>
-            <button ng-click="runVisualTracking()">Visual Tracking</button>
-            <br><br>
-
             <!--
-            
+
             <span class="slider-heading" aria-hidden="true"><strong>Ideal Nozzle Temp [C]:</strong>
               <rzslider class="nozzle-temp-slider" rz-slider-model="slider_nozzle_temp.value"
                 rz-slider-options="slider_nozzle_temp.options"></rzslider>
@@ -159,19 +172,28 @@
         <div class="col-lg-3">
 
 
-          <h4>Absolute Position Controls:</h4>
+          <h4>Camera FeedBack:</h4>
 
-          <br><p>///Not Yet Implemented</p>
+            <table class="table-camera-feedback" style="width:100%">
+
+              <tr> 
+                <td> <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="100%"></td>
+              </tr>
+              <tr> 
+                <td>Video Camera Output Here</td>
+              </tr>
+
+            </table>
+
 
 
         </div>
 
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
           <h4>Dobot State: </h4>
-            <br>
 
-            <table class="processing-parameters" style="width:100%">
+            <table class="dobot-state" style="width:100%">
               <tr>
                 <td><strong>x_pos</strong></td>
                 <td><strong>{{state_x_pos}}</strong></td> 
@@ -215,7 +237,7 @@
             </table>
 
             <br><br>
-            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="80%">
+            <!--<img src="/img/dobot_coordinate_system_cartesian.jpeg" width="80%">-->
             <!--<img src="/img/dobot_coordinate_system_angular.jpeg" width="49%">-->
 
             <br><br>

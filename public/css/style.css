@@ -2,6 +2,21 @@ html, body {
     margin: 0 !important;
     padding: 0 !important;
     width: 100%;
+    background-color: #3A3A3A;
+}
+
+h1, h2, h3, h4 {
+	color: #00b300;
+	text-align: center;
+
+}
+
+p {
+	color: white;
+}
+
+.text-muted {
+	color: white;
 }
 
 textarea {
@@ -9,34 +24,7 @@ textarea {
 
 }
 
-.field-log {
-	height: 800;
-	/*max-height: 400px;*/
-	display: inline-block;
-	float: right;
 
-	overflow:hidden;
-}
-
-.available-filament {
-	color: black;
-	-webkit-text-fill-color: white;
-	-webkit-text-stroke-width: 1px;
-	-webkit-text-stroke-color: black;
-	font-weight: bold;
-	font-size: 20px;
-	border-radius: 16px;
-	width: 170px;
-	height: 100px;
-}
-
-
-.centered-buttons {
-	float: right;
-	position: relative;
-	left: -15%; /* or right 50% */
-	/*text-align: left;*/
-}
 
 span.pull-down-heading {
 	/*font-weight: bold; */
@@ -45,14 +33,16 @@ span.pull-down-heading {
 select {
 	float: right;
     text-align:right;
-    width: 160px;
+    /*width: 160px;*/
+    width: 100%;
     direction: rtl;
 }
 
 option {
 	float: right;
     text-align:right;
-    width: 160px;
+    /*width: 160px;*/
+    width: 100%;
     direction: rtl;
 }
 
@@ -63,37 +53,60 @@ h4.configure-title {
 }
 */
 
-table.processing-parameters {
-	border: 2px solid black;
+table.table-system-control {
+	/*border: 1px solid white;*/
+	border: none;
 	text-align: center;
 	table-layout: fixed;
+	width: 100%;
 
 }
 
+table.jog-controls {
+	border: 1px solid white;
+	text-align: center;
+	table-layout: fixed;
+	width: 100%;
+
+}
+
+table.table-camera-feedback {
+	/*border: 1px solid white;*/
+	border: none;
+	text-align: center;
+	table-layout: fixed;
+	width: 100%;
+
+}
+
+
+table.dobot-state {
+	border: 1px solid white;
+	text-align: center;
+	table-layout: fixed;
+	width: 100px;
+}
+
+
 th.processing-parameters {
-	border: 1px solid gray;
+	border: 1px solid white;
 }
 
 td {
-	border: 1px solid gray;
+	border: 1px solid white;
 	width: 56px;
 	height: 15px;
 	overflow: hidden;
+	color: white;
 }
 
+/*
 td.processing-data {
 	width: 56px;
 	height: 50px;
 	overflow: hidden;
 }
-
-
-.filtering-elements {
-	border-radius: 25px;
-    border: 2px solid #73AD21;
-    height: auto;
-    /*padding: 20px; */
-}
+*/
 
 
 /*#threeJSCanvas { */
@@ -105,6 +118,18 @@ canvas {
     display: block;
 }
 
+
+.system-control {
+	width: 100%;
+	color: lime;
+	background-color: gray;
+	/*border: 1px solid gray;*/
+}
+
 .jog {
 	width:  100%;
+	color: lime;
+	background-color: gray;
+	/*border: 1px solid gray;*/
+
 }
