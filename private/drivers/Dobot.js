@@ -11,6 +11,7 @@ var DobotCommandQueue 		= require('./DobotCommandQueue');
 var DobotJogCommand 		= require('./DobotJogCommand');
 var DobotGcodeInterpreter	= require('./DobotGcodeInterpreter');
 var DobotResponseParser		= require('./DobotResponseParser');
+var DobotComputerVision		= require('./DobotComputerVision');
 
 
 
@@ -28,6 +29,7 @@ var Dobot = function(connection) {
 	DobotJogCommand.call(this);			//superclass constructor
 	DobotGcodeInterpreter.call(this);	//superclass constructor
 	DobotResponseParser.call(this);		//superclass constructor
+	DobotComputerVision.call(this);		//superclass constructor
 
 };
 
@@ -36,7 +38,7 @@ var Dobot = function(connection) {
 modelo.inherits(Dobot,DobotSerial, DobotFileManager,
 				DobotCommandBuffer, DobotCommandQueue,
 				DobotJogCommand, DobotGcodeInterpreter,
-				DobotResponseParser);
+				DobotResponseParser, DobotComputerVision);
 
 
 /*************** EXPORT DOBOT CLASS ****************/
