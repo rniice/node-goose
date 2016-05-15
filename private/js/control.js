@@ -42,6 +42,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
     getState(base_query + "/status/state");
   };
 
+
+  $scope.startCamera = function(){
+    getQuery(base_query + "/run/startCamera");
+  };
+
   /*********************************************/
 
   

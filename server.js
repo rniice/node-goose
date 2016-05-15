@@ -84,7 +84,10 @@ app.get('/run/runProgram', function(req, res) {
 	res.send('Connected to Dobot');
 });
 
-
+app.get('/run/startCamera', function(req, res) {
+	dobotInstance.startCamera(); 
+	res.send('Enabling Camera ...');
+});
 
 app.get('/run/jog', function(req, res) {
 	
