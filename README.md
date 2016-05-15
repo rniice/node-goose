@@ -4,12 +4,17 @@
 	 
 ## installation: 
 
-- git clone https://github.com/rniice/node-goose.git 
+### install core modules
 - install nodeJS: https://nodejs.org/en/ 
+- git clone https://github.com/rniice/node-goose.git 
 - cd node-goose
 - npm install
-- cd private/node-opencv //navigate to opencv bindings submodule
-- npm install //install opencv dependencies
+
+### install node-opencv
+- git submodule init
+- git submodule update
+- cd private/node-opencv
+- npm install
 
 ## usage:
 
