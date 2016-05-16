@@ -1,11 +1,7 @@
-//var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap', 'ngSanitize']);
 var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap']);
-
 var base_query = "http://localhost:8080";
-//var base_query = "https://stark-tundra-XXYYZZ.herokuapp.com/";
 
-//myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$window', '$sanitize', function($scope,$http,$interval,$window,$sanitize) {
-myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$window', function($scope,$http,$interval,$window) {
+myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$window', function($scope,$http,$interval,$timeout,$window) {
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
   var cameraImageSourceURL = "http://localhost:8080/status/camera";
   var cameraInterval       =  null;
@@ -49,17 +45,19 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$window', functio
   $scope.startCamera = function(){
     getQuery(base_query + "/run/startCamera");
 
-    var c=0;
-    cameraInterval=$interval(function(){
-        //$scope.message="This DIV is refreshed "+c+" time.";
-        $scope.cameraImageSource = cameraImageSourceURL + '?' + "c=" + c;
+    $timeout(function(){        //delay before accessing the camera api
+      var c=0;
+      cameraInterval=$interval(function(){
+          //$scope.message="This DIV is refreshed "+c+" time.";
+          $scope.cameraImageSource = cameraImageSourceURL + '?' + "c=" + c;
 
-        if(c===100){
-            c=0;
-        } else {
-          c++;
-        }
-      },100);
+          if(c===100){
+              c=0;
+          } else {
+            c++;
+          }
+        },500);
+    },2000);
 
   };
 

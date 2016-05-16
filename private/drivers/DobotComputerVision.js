@@ -27,22 +27,19 @@ DobotComputerVision.prototype.startCamera = function (params) {
 		setInterval(function() {
 			var ref = that;		//another reference variable...ugh callbacks= /
 
-		that._camera.read(function(err, im) {
-			if (err) {
-				throw err;
-			}
-			//console.log(im.size())
-			else if (im.size()[0] > 0 && im.size()[1] > 0){
-				ref._cameraImage = im;
-				//ref._cameraWindow.show(im);
-				ref.trackFace();
-			}
-			//ref._cameraWindow.blockingWaitKey(0, 100);
-		});
-		
-		//that._cameraWindow.show(that._cameraImage);
-		//that._cameraWindow.show(that._cameraImage);
-
+			that._camera.read(function(err, im) {
+				if (err) {
+					throw err;
+				}
+				//console.log(im.size())
+				else if (im.size()[0] > 0 && im.size()[1] > 0){
+					ref._cameraImage = im;
+					//ref._cameraWindow.show(im);
+					ref.trackFace();
+				}
+				//ref._cameraWindow.blockingWaitKey(0, 100);
+			});
+			
 		}, 200);
 	  
 	} catch (e){
@@ -88,19 +85,15 @@ DobotComputerVision.prototype.trackFace = function () {
 	var COLOR = [0, 255, 0];  // draw green rectangle
 	var thickness = 2;      // default 1
 
-  //this._cameraImageTracked = null;  //reset for new frame
-
   this._cameraImage.detectObject('../node-opencv/data/haarcascade_frontalface_alt2.xml', {}, function(err, faces) {
       try {
         for (var i = 0; i < faces.length; i++) {
 	        //TO DO: need to include some time averaging for consistency
 	        face = faces[i];
-	        console.log("face: " + i + " is at x = " + face.x + " and y = " + face.y);
+	        //console.log("face: " + i + " is at x = " + face.x + " and y = " + face.y);
 
 			that._cameraImageTracked = that._cameraImage;             //set cameraImageTracked to base image
 	        that._cameraImageTracked.rectangle([face.x, face.y], [face.width, face.height], COLOR, 2);  //draw a rectangle around face	        
-
-	        //that._cameraWindow.show(that._cameraImageTracked);
         }   
       }
 

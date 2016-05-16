@@ -133,3 +133,7 @@ canvas {
 	/*border: 1px solid gray;*/
 
 }
+
+.img-video-from-camera{
+	max-width: 100%;
+}
