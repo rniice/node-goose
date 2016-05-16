@@ -17,7 +17,7 @@ var DobotComputerVision = function( ) {
 	this._cameraTrackingState		= false;
 	this._cameraTrackingPrimary		= null;
 
-	this._cameraTrackingTolerance	= 50;		//number of pixels to consider point same
+	this._cameraTrackingTolerance	= 40;		//number of pixels to consider point same
 	this._cameraTrackingSamples		= 5;		//number of tracked samples for average object position
 	this._cameraTrackingObjectX		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectY		= [];		//array to hold last 10 results
@@ -154,8 +154,8 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 			this._cameraTrackingObjectY.shift();
 
 			//remove anything in the trackedobjects that is outside of the tolerance from average
-			this._cameraTrackingObjectAVG_Y	= averageArray(this._cameraTrackingObjectY).toFixed(0);
-			this._cameraTrackingObjectAVG_Z	= averageArray(this._cameraTrackingObjectZ).toFixed(0);
+			this._cameraTrackingObjectAVG_Y	= blockedAverageArray(this._cameraTrackingObjectY, this._cameraTrackingTolerance).toFixed(0);
+			this._cameraTrackingObjectAVG_Z	= blockedAverageArray(this._cameraTrackingObjectZ, this._cameraTrackingTolerance).toFixed(0);
 
 		}
 
@@ -173,21 +173,29 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 
 
 
-function averageArray (array, tolerance) {
+function blockedAverageArray (array, tolerance) {
 	var array_length = array.length;
 
-	var sum = array.reduce(function(previousVal, currentVal) {
+	//find the average of the whole array
+	var average = array.reduce(function(previousVal, currentVal) {
 		return previousVal + currentVal;
-	});
+	})/array_length;
 
-	var average = sum/array_length;
-	//exlude anything that is outside of tolerance.
+	//exlude anything that is outside of tolerance.	
+	var blocked_average = array.reduce(function(previousVal, currentVal) {
+		if( Math.abs(currentVal - average) < tolerance ){
+			return previousVal + currentVal;
+		}
+		else {
+			//console.log("discarding datapoint");
+			array_length --;	//reduce count of average
+			return previousVal;
+		}
+	})/array_length;
 
-	return average;
+	return blocked_average;
 
 }
-
-
 
 
 /*************** EXPORT DOBOT COMPUTER VISION CLASS ****************/
