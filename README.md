@@ -10,6 +10,10 @@
 - cd node-goose
 - npm install
 
+### install openCV binaries
+- install OpenCV 2.3.1 or newer: http://opencv.org/downloads.html
+- make OpenCV_DIR\bin available on system path
+
 ### install node-opencv
 - git submodule init
 - git submodule update
