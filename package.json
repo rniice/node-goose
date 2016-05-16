@@ -35,6 +35,7 @@
     "http": "0.0.0",
     "modelo": "^4.2.0",
     "path": "^0.12.7",
+    "request": "^2.72.0",
     "serialport": "^3.0.1",
     "underscore": "^1.8.3",
     "url": "^0.11.0",

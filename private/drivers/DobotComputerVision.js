@@ -1,4 +1,6 @@
 /*************** LOAD DEPENDENCIES *****************/
+var request = require('request');
+
 try{
 	var cv = require('../node-opencv/lib/opencv');
 	} 
@@ -9,16 +11,21 @@ catch (e){
 /**************** DOBOT COMPUTER VISION CONSTRUCTOR ******************/
 var DobotComputerVision = function( ) { 
 
+	this._base_query 				= "http://localhost:8080";
+
 	this._camera 					= null;
 	this._cameraWindow 				= null;
 	this._cameraImage				= null;
 	this._cameraImageTracked		= null;
 
+	this._cameraImageWidthCenter	= 640/2;	//pixels
+	this._cameraImageHeightCenter	= 480/2;	//pixels
+
 	this._cameraTrackingState		= false;
 	this._cameraTrackingPrimary		= null;
 
 	this._cameraTrackingTolerance	= 40;		//number of pixels to consider point same
-	this._cameraTrackingSamples		= 5;		//number of tracked samples for average object position
+	this._cameraTrackingSamples		= 3;		//number of tracked samples for average object position
 	this._cameraTrackingObjectX		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectY		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectZ		= [];		//array to hold last 10 results
@@ -159,11 +166,31 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 
 		}
 
-
 	}
 
 	console.log("y_average is: " + this._cameraTrackingObjectAVG_Y);
 	console.log("z_average is: " + this._cameraTrackingObjectAVG_Z);
+
+	//jog move the robot until y and z approach center
+
+	if (this._cameraTrackingObjectAVG_Y !== null) {
+		//check if object is to the right of center, and move left if it is:
+		if( Math.abs(this._cameraTrackingObjectAVG_Y - this._cameraImageWidthCenter) < this._cameraTrackingTolerance * 2 ) {
+	    	getQuery(this._base_query + "/run/jog?axis=STOP" );
+		}
+		else if (this._cameraTrackingObjectAVG_Y > this._cameraImageWidthCenter) {
+	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=-1" );
+		}
+		else {
+	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=1" );
+		}
+	}
+	else {	//emergency stop if object dissapears
+		getQuery(this._base_query + "/run/jog?axis=STOP" );
+	}
+
+	//check Z:
+
 
 	//this.jogMoveCartesian();
 
@@ -197,6 +224,15 @@ function blockedAverageArray (array, tolerance) {
 
 }
 
+
+function getQuery(address){
+	//simple GET request
+	request(address, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			console.log(response.data); 
+		}
+	});
+}
 
 /*************** EXPORT DOBOT COMPUTER VISION CLASS ****************/
 module.exports = DobotComputerVision;
