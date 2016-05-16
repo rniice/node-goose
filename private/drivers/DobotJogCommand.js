@@ -11,7 +11,7 @@ DobotJogCommand.prototype.jogMoveCartesian = function (args) {
 	var selection = args.axis;
 	var direction = parseInt(args.direction);
 
-	console.log("jog query received by server:\n" + "selection: " + selection + "\n" + "direction: " + direction);
+	//console.log("jog query received by server:\n" + "selection: " + selection + "\n" + "direction: " + direction);
 
 	switch(selection) {
 		case "STOP":    //when button click is ended

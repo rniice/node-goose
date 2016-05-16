@@ -85,30 +85,33 @@
                 <td> <input class="system-control" type="button" ng-click="loadProgramDobot()" value="Load Program"> </td> </tr>
               <tr> 
                 <td> <input class="system-control" type="button" ng-click="runProgramDobot()" value="Run Program"> </td> </tr>
-              <tr> 
-                <td> <input class="system-control" type="button" ng-click="checkDobotState()" value="Get State"> </td> </tr>
-              <tr> 
-                <td> <input class="system-control" type="button" ng-click="startCamera()" value="Start Camera"> </td> </tr>                
-              <tr> 
-                <td> <input class="system-control" type="button" ng-click="runVisualTracking()" value="Visual Tracking"> </td> </tr>
 
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="startCamera()" value="Start Camera"> </td> </tr>
+
+              <tr> 
+                <td> <input class="system-control" type="button" ng-click="startTrackFace()" value="Track Face"> </td> </tr>
+
+              <!--<tr> 
+                <td> <input class="system-control" type="button" ng-click="runVisualTracking()" value="Visual Tracking"> </td> </tr>-->
+
+              <!--<tr> 
+                <td> <input class="system-control" type="button" ng-click="checkDobotState()" value="Get State"> </td> </tr> -->
             </table>
 
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
           <h4>Motion Control:</h4>
 
             <table class="jog-controls">
               <tr>
                 <td> <input class="jog" type="button" ng-mousedown="jogZpos()" ng-mouseup="jogStop()" value="Z+"> </td>
                 <td><strong></strong></td>    
-                <td><strong></strong></td>
                 <td> <input class="jog" type="button" ng-mousedown="jogXneg()" ng-mouseup="jogStop()" value="X-"> </td>
                 <td><strong></strong></td>
               </tr>
               <tr>
-                <td><strong></strong></td>
                 <td><strong></strong></td>    
                 <td> <input class="jog" type="button" ng-mousedown="jogYneg()" ng-mouseup="jogStop()" value="Y-"> </td>
                 <td><strong></strong></td>
@@ -117,7 +120,6 @@
               <tr>
                 <td> <input class="jog" type="button" ng-mousedown="jogZneg()" ng-mouseup="jogStop()" value="Z-"> </td>
                 <td><strong></strong></td>    
-                <td><strong></strong></td>
                 <td> <input class="jog" type="button" ng-mousedown="jogXpos()" ng-mouseup="jogStop()" value="X+"> </td>
                 <td><strong></strong></td>
               </tr>
@@ -170,16 +172,13 @@
         </div>
 
 
-        <div class="col-lg-3">
+        <div class="col-lg-4">
 
 
           <h4>Camera FeedBack:</h4>
 
             <table class="table-camera-feedback" style="width:100%">
 
-              <tr> 
-                <td> <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="100%"></td>
-              </tr>
               <tr> 
                 <td>Video Camera Output Here
                   <!--<p>{{message}}</p>-->
@@ -190,14 +189,14 @@
 
             </table>
 
-
-
         </div>
 
 
         <div class="col-lg-3">
           <h4>Dobot State: </h4>
 
+            <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="100%">
+            <br><br>
             <table class="dobot-state" style="width:100%">
               <tr>
                 <td><strong>x_pos</strong></td>
@@ -253,9 +252,6 @@
       </div> -->
 
       <div class="row col-lg-12">
-
-        <br>
-        <br>
 
         <p><strong>DISCLAIMER:</strong><br>THIS WORK IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE SOFTWARE OR DOCUMENT WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
         COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE SOFTWARE OR DOCUMENT.</p>

@@ -90,6 +90,7 @@ DobotSerial.prototype.start = function() {
 		if(data.length == 42) {
 			that._STATE = "WAITING";
 			that.receiveDobotState(data);
+			//console.log(data.toString('hex'));
 		}
 		
     });
@@ -98,7 +99,6 @@ DobotSerial.prototype.start = function() {
         that.disconnect();
         that._STATE = "DISCONNECTED";
 
-       	//that._heartbeater.stop();
        	clearInterval(that._heartbeater_update);
     });
 
@@ -106,7 +106,6 @@ DobotSerial.prototype.start = function() {
 		console.log("port ended with error: " + error);
 		that._STATE = "ERROR";
 
-		//that._heartbeater.stop();
        	clearInterval(that._heartbeater_update);
 
     });

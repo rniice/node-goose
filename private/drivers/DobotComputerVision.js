@@ -14,6 +14,8 @@ var DobotComputerVision = function( ) {
 	this._cameraImage			= null;
 	this._cameraImageTracked	= null;
 
+	this._cameraTrackingState	= false;
+
 };
 
 
@@ -34,10 +36,13 @@ DobotComputerVision.prototype.startCamera = function (params) {
 				//console.log(im.size())
 				else if (im.size()[0] > 0 && im.size()[1] > 0){
 					ref._cameraImage = im;
+
+					if(ref._cameraTrackingState === false) {
+						ref._cameraImageTracked	= im;		
+					}
 					//ref._cameraWindow.show(im);
-					ref.trackFace();
+					//ref.trackFace();
 				}
-				//ref._cameraWindow.blockingWaitKey(0, 100);
 			});
 			
 		}, 200);
@@ -45,6 +50,19 @@ DobotComputerVision.prototype.startCamera = function (params) {
 	} catch (e){
 	  console.log("Couldn't start camera:", e)
 	}
+
+};
+
+
+DobotComputerVision.prototype.startTrackFace = function (params) {
+
+	var that 			= this;
+	//var tracking_rate 	= params.tracking_rate | 200;
+	var tracking_rate = 200;
+
+	setInterval(function() {
+		that.trackFace();
+	}, tracking_rate);
 
 };
 
@@ -82,26 +100,30 @@ DobotComputerVision.prototype.trackFace = function () {
 
 	var that = this;
 
+	this._cameraTrackingState = true;
+
 	var COLOR = [0, 255, 0];  // draw green rectangle
 	var thickness = 2;      // default 1
 
-  this._cameraImage.detectObject('../node-opencv/data/haarcascade_frontalface_alt2.xml', {}, function(err, faces) {
-      try {
-        for (var i = 0; i < faces.length; i++) {
-	        //TO DO: need to include some time averaging for consistency
-	        face = faces[i];
-	        //console.log("face: " + i + " is at x = " + face.x + " and y = " + face.y);
+	try{
+	  	this._cameraImage.detectObject('../node-opencv/data/haarcascade_frontalface_alt2.xml', {}, function(err, faces) {
+		    if(faces.length > 0) {
+			    for (var i = 0; i < faces.length; i++) {
+			        face = faces[i];			        //TO DO: need to include some time averaging for consistency
+			        //console.log("face: " + i + " is at x = " + face.x + " and y = " + face.y);
 
-			that._cameraImageTracked = that._cameraImage;             //set cameraImageTracked to base image
-	        that._cameraImageTracked.rectangle([face.x, face.y], [face.width, face.height], COLOR, 2);  //draw a rectangle around face	        
-        }   
-      }
+					that._cameraImageTracked = that._cameraImage;             //set cameraImageTracked to base image
+			        that._cameraImageTracked.rectangle([face.x, face.y], [face.width, face.height], COLOR, 2);  //draw a rectangle around face	        
+			    }
+		    }
+		    else {
+		    	that._cameraImageTracked = that._cameraImage;             //set cameraImageTracked to base image
 
-    catch (error){
-        console.log("error tracking face: ", error)
-    }
-
-  });
+		    }
+	  	});
+	} catch (error) {
+		console.log(error);
+	}
 
 }
 

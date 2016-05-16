@@ -33,12 +33,6 @@ app.get('/run/connect', function(req, res) {
 
 	//open the connection and take control of the machine
 	dobotInstance = new Dobot( {COM:'COM11', BAUD:9600} ); 		//V1.1 Firmware
-	//console.log(dobotInstance._CONNECTION); 
-	//console.log(dobotInstance._WAIT);
-
-	//console.log(dobotInstance.test);
-	//dobotInstance.open();
-	//dobotInstance.populateClass();
 
 	res.send('Connected to Dobot');
 });
@@ -87,6 +81,11 @@ app.get('/run/runProgram', function(req, res) {
 app.get('/run/startCamera', function(req, res) {
 	dobotInstance.startCamera(); 
 	res.send('Enabling Camera ...');
+});
+
+app.get('/run/startFaceTracking', function(req, res) {
+	dobotInstance.startTrackFace(); 
+	res.send('Enabling Face Tracking ...');
 });
 
 

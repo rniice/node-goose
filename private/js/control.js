@@ -56,7 +56,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
           } else {
             c++;
           }
-        },500);
+        },200);
     },2000);
 
   };
@@ -69,6 +69,10 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
       //$scope.message="Timer is killed :-(";
     }
 
+  };
+
+  $scope.startTrackFace = function(){
+    getQuery(base_query + "/run/startFaceTracking");
   };
 
 
