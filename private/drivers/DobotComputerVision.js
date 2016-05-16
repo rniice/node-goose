@@ -25,7 +25,7 @@ var DobotComputerVision = function( ) {
 	this._cameraTrackingPrimary		= null;
 
 	this._cameraTrackingTolerance	= 40;		//number of pixels to consider point same
-	this._cameraTrackingSamples		= 3;		//number of tracked samples for average object position
+	this._cameraTrackingSamples		= 5;		//number of tracked samples for average object position
 	this._cameraTrackingObjectX		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectY		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectZ		= [];		//array to hold last 10 results
@@ -76,7 +76,7 @@ DobotComputerVision.prototype.startTrackFace = function (params) {
 
 	var that 			= this;
 	//var tracking_rate 	= params.tracking_rate | 200;
-	var tracking_rate = 500;
+	var tracking_rate = 400;
 
 	setInterval(function() {
 		that.trackFace();
@@ -168,8 +168,8 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 
 	}
 
-	console.log("y_average is: " + this._cameraTrackingObjectAVG_Y);
-	console.log("z_average is: " + this._cameraTrackingObjectAVG_Z);
+	//console.log("y_average is: " + this._cameraTrackingObjectAVG_Y);
+	//console.log("z_average is: " + this._cameraTrackingObjectAVG_Z);
 
 	//jog move the robot until y and z approach center
 
@@ -180,9 +180,19 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 		}
 		else if (this._cameraTrackingObjectAVG_Y > this._cameraImageWidthCenter) {
 	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=-1" );
+
+	    	/*setTimeout(function(){
+	    		getQuery(this._base_query + "/run/jog?axis=STOP" );
+	    	},200);	//cancel the move after a moment
+			*/
 		}
 		else {
 	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=1" );
+
+	    	/*setTimeout(function(){
+	    		getQuery(this._base_query + "/run/jog?axis=STOP" );
+	    	},200);	//cancel the move after a moment
+	    	*/
 		}
 	}
 	else {	//emergency stop if object dissapears
@@ -229,7 +239,7 @@ function getQuery(address){
 	//simple GET request
 	request(address, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
-			console.log(response.data); 
+			//console.log(response); 
 		}
 	});
 }

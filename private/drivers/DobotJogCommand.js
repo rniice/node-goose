@@ -15,17 +15,17 @@ DobotJogCommand.prototype.jogMoveCartesian = function (args) {
 
 	switch(selection) {
 		case "STOP":    //when button click is ended
-			var jog_command = this.generateCommandBuffer({"jog": true, "axis": 0, "speed": 40});
+			var jog_command = this.generateCommandBuffer({"jog": true, "axis": 0, "speed": 20});
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			break;
 
 		case "X":
 
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 1, "speed": 40});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 1, "speed": 20});
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 2, "speed": 40});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 2, "speed": 20});
 			}
 
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
@@ -33,10 +33,10 @@ DobotJogCommand.prototype.jogMoveCartesian = function (args) {
 
 		case "Y":
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 3, "speed": 40});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 3, "speed": 20});
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 4, "speed": 40});
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 4, "speed": 20});
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 			
@@ -44,10 +44,10 @@ DobotJogCommand.prototype.jogMoveCartesian = function (args) {
 
 		case "Z":
 			if(direction>0) {   //positive direction
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 40});  	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 5, "speed": 20});  	//currently 1.1 firmware has this inverted
 			}
 			else {
-				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 40});	//currently 1.1 firmware has this inverted
+				var jog_command = this.generateCommandBuffer({"jog": true, "axis": 6, "speed": 20});	//currently 1.1 firmware has this inverted
 			}
 			this._COMMAND_JOG = jog_command; 	//loaded to be sent when next() is called
 
