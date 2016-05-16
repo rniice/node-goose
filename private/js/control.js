@@ -1,17 +1,20 @@
+//var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap', 'ngSanitize']);
 var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap']);
 
 var base_query = "http://localhost:8080";
 //var base_query = "https://stark-tundra-XXYYZZ.herokuapp.com/";
 
-myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$http,$window) {
+//myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$window', '$sanitize', function($scope,$http,$interval,$window,$sanitize) {
+myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$window', function($scope,$http,$interval,$window) {
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
+  var cameraImageSourceURL = "http://localhost:8080/status/camera";
+  var cameraInterval       =  null;
 
-	$scope.server_response = null;
-  $scope.dobot_state     = null;
+	$scope.server_response     = null;
+  $scope.dobot_state         = null;
 
 
   /*********LEFT COLUMN CONTROL BUTTONS********/
-
   $scope.connectDobot = function(){
     getQuery(base_query + "/run/connect");
 
@@ -45,7 +48,31 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
   $scope.startCamera = function(){
     getQuery(base_query + "/run/startCamera");
+
+    var c=0;
+    cameraInterval=$interval(function(){
+        //$scope.message="This DIV is refreshed "+c+" time.";
+        $scope.cameraImageSource = cameraImageSourceURL + '?' + "c=" + c;
+
+        if(c===100){
+            c=0;
+        } else {
+          c++;
+        }
+      },100);
+
   };
+
+  $scope.stopCamera = function() {
+
+    if(angular.isDefined(cameraInterval)) {
+      $interval.cancel(cameraInterval);
+      cameraInterval=undefined;
+      //$scope.message="Timer is killed :-(";
+    }
+
+  };
+
 
   /*********************************************/
 
@@ -78,6 +105,11 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
   $scope.jogZneg = function(){
     getQuery(base_query + "/run/jog?axis=Z&direction=-1" );
   };
+
+
+  //put in rotation of each axis in table too
+
+
 
   /*********************************************/
 
@@ -160,22 +192,38 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
 
 */
 
-	function getQuery(address){
+  function getQuery(address){
 
-		// Simple GET request example:
-		$http({
-		  method: 'GET',
-		  url: address,
-		  config: "",
-			}).then(function success(response) {
+    // Simple GET request example:
+    $http({
+      method: 'GET',
+      url: address,
+      config: "",
+      }).then(function success(response) {
 
         $scope.server_response = response;
 
-			  }, function error(response) {
-			    alert("there was an error with your request");
-			});
-		}
+        }, function error(response) {
+          alert("there was an error with your request");
+      });
+  }
 
+
+  function getCamera(address){
+
+    // Simple GET request example:
+    $http({
+      method: 'GET',
+      url: address,
+      config: "",
+      }).then(function success(response) {
+        //alert(JSON.stringify(response,null,2));
+        $scope.cameraImage  = response.data;
+
+        }, function error(response) {
+          alert("there was an error with your request");
+      });
+  }
 
   function getState(address){
 
@@ -202,10 +250,4 @@ myApp.controller('userCtrl', ['$scope', '$http', '$window', function($scope,$htt
     }
 
 }]);
-
-
-
-
-
-
 

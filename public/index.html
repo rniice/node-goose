@@ -30,7 +30,7 @@
     <script src= "./js/angular.min.js"></script>
     <script src= "./js/rzslider.min.js"></script>
     <script src= "./js/angular-touch.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.js"></script>
     <script src= "./js/control.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -181,7 +181,11 @@
                 <td> <img src="/img/dobot_coordinate_system_cartesian.jpeg" width="100%"></td>
               </tr>
               <tr> 
-                <td>Video Camera Output Here</td>
+                <td>Video Camera Output Here
+                  <!--<p>{{message}}</p>-->
+                  <img ng-src="{{cameraImageSource}}">
+                  
+                </td>
               </tr>
 
             </table>

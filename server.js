@@ -89,6 +89,7 @@ app.get('/run/startCamera', function(req, res) {
 	res.send('Enabling Camera ...');
 });
 
+
 app.get('/run/jog', function(req, res) {
 	
 	var query = url.parse(req.url,true).query;  
@@ -103,6 +104,10 @@ app.get('/status/state', function(req, res) {
 
 });
 
+app.get('/status/camera', function(req, res) {
+	var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
+	res.send(img);
+});
 
 
 //starts the server listening

@@ -21,26 +21,29 @@ DobotComputerVision.prototype.startCamera = function (params) {
 	var that = this;		//shallow reference
 
 	try {
-	  	this._camera 		= new cv.VideoCapture(0);
-	  	this._cameraWindow 	= new cv.NamedWindow('Video', 0);
+	  	this._camera 			= new cv.VideoCapture(0);
+	  	//this._cameraWindow 	= new cv.NamedWindow('Video', 0);
 	  
-	  setInterval(function() {
-	  	var ref = that;		//another reference variable...ugh callbacks= /
+		setInterval(function() {
+			var ref = that;		//another reference variable...ugh callbacks= /
 
-	    that._camera.read(function(err, im) {
-	      if (err) throw err;
-	      //console.log(im.size())
-	      if (im.size()[0] > 0 && im.size()[1] > 0){
-	        ref._cameraImage = im;
-	        //ref._cameraWindow.show(im);
-	        ref.trackFace();
-	      }
-	      ref._cameraWindow.blockingWaitKey(0, 100);
-	    });
+		that._camera.read(function(err, im) {
+			if (err) {
+				throw err;
+			}
+			//console.log(im.size())
+			else if (im.size()[0] > 0 && im.size()[1] > 0){
+				ref._cameraImage = im;
+				//ref._cameraWindow.show(im);
+				ref.trackFace();
+			}
+			//ref._cameraWindow.blockingWaitKey(0, 100);
+		});
+		
 		//that._cameraWindow.show(that._cameraImage);
-	  	//that._cameraWindow.show(that._cameraImage);
+		//that._cameraWindow.show(that._cameraImage);
 
-	  }, 40);
+		}, 200);
 	  
 	} catch (e){
 	  console.log("Couldn't start camera:", e)
@@ -97,7 +100,7 @@ DobotComputerVision.prototype.trackFace = function () {
 			that._cameraImageTracked = that._cameraImage;             //set cameraImageTracked to base image
 	        that._cameraImageTracked.rectangle([face.x, face.y], [face.width, face.height], COLOR, 2);  //draw a rectangle around face	        
 
-	        that._cameraWindow.show(that._cameraImageTracked);
+	        //that._cameraWindow.show(that._cameraImageTracked);
         }   
       }
 
