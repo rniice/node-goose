@@ -31,9 +31,9 @@
 
 - https://vimeo.com/album/3902621/video/162934513
 
-## GUI v0.1
+## GUI v0.2
 
-![GUI V0.1](/../screenshots/screenshots/dobot-control-v0.1.jpg?raw=true "GUI V0.1")
+![GUI V0.2](/../screenshots/screenshots/dobot-control-v0.2.jpg?raw=true "GUI V0.2")
 
 ## System Architecture
 
