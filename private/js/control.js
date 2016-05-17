@@ -56,7 +56,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
           } else {
             c++;
           }
-        },200);
+        },1000);
     },2000);
 
   };

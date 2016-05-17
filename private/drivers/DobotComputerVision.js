@@ -24,7 +24,7 @@ var DobotComputerVision = function( ) {
 	this._cameraTrackingState		= false;
 	this._cameraTrackingPrimary		= null;
 
-	this._cameraTrackingTolerance	= 40;		//number of pixels to consider point same
+	this._cameraTrackingTolerance	= 20;		//number of pixels to consider point same
 	this._cameraTrackingSamples		= 5;		//number of tracked samples for average object position
 	this._cameraTrackingObjectX		= [];		//array to hold last 10 results
 	this._cameraTrackingObjectY		= [];		//array to hold last 10 results
@@ -34,6 +34,9 @@ var DobotComputerVision = function( ) {
 	this._cameraTrackingObjectAVG_Y	= null;
 	this._cameraTrackingObjectAVG_Z	= null;
 
+	this._cameraTrackingObject_X_done = false;
+	this._cameraTrackingObject_Y_done = false;	
+	this._cameraTrackingObject_Z_done = false;
 };
 
 
@@ -115,6 +118,7 @@ DobotComputerVision.prototype.trackFace = function () {
 	try{
 
 	  	this._cameraImage.detectObject('../node-opencv/data/haarcascade_frontalface_alt2.xml', {}, function(err, faces) {
+	  	//this._cameraImage.detectObject('../node-opencv/data/haarcascade_frontalface_default.xml', {}, function(err, faces) {
 
 		    if(faces.length > 0) {
 			    for (var i = 0; i < faces.length; i++) {
@@ -140,29 +144,32 @@ DobotComputerVision.prototype.trackFace = function () {
 		that._cameraTrackingPrimary = null;
 	}
 
-}
+};
 
 
 //do some averaging of the discovered faces
 
 
-//follow in YZ Plane
+//follow in YZ Plane ( transform: x'-->y y'-->z )
 DobotComputerVision.prototype.trackObjectYZPlane = function() {
 	
 	if(this._cameraTrackingPrimary !== null) {
-		var current_y = this._cameraTrackingPrimary.primaryX;
-		var current_z = this._cameraTrackingPrimary.primaryY;
+		var current_y = this._cameraTrackingPrimary.primaryX;	//map X to Y
+		var current_z = this._cameraTrackingPrimary.primaryY;	//map Y to Z
 
 		this._cameraTrackingObjectY.push(current_y);	//add new data point
 		this._cameraTrackingObjectZ.push(current_z);	//add new data point
 
 		if(this._cameraTrackingObjectY.length > this._cameraTrackingSamples) {
 			this._cameraTrackingObjectY.shift();
-			this._cameraTrackingObjectY.shift();
+			this._cameraTrackingObjectZ.shift();
 
 			//remove anything in the trackedobjects that is outside of the tolerance from average
 			this._cameraTrackingObjectAVG_Y	= blockedAverageArray(this._cameraTrackingObjectY, this._cameraTrackingTolerance).toFixed(0);
 			this._cameraTrackingObjectAVG_Z	= blockedAverageArray(this._cameraTrackingObjectZ, this._cameraTrackingTolerance).toFixed(0);
+		
+			//console.log("object Y = " + this._cameraTrackingObjectAVG_Y);
+			//console.log("object Z = " + this._cameraTrackingObjectAVG_Z);
 
 		}
 
@@ -172,42 +179,71 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 	//console.log("z_average is: " + this._cameraTrackingObjectAVG_Z);
 
 	//jog move the robot until y and z approach center
+	if ( (this._cameraTrackingObjectAVG_Y !== null) && (this._cameraTrackingObjectAVG_Z !== null) ) {
+		
+		//track on y first:
+		if(!this._cameraTrackingObject_Y_done) {
+			//check if object is to the right of center, and move right if it is:
+			if( Math.abs(this._cameraTrackingObjectAVG_Y - this._cameraImageWidthCenter) < this._cameraTrackingTolerance ) {
+		    	//getQuery(this._base_query + "/run/jog?axis=STOP" );
+		    	this.jogMoveCartesian({axis: "STOP"});
+		    	this._cameraTrackingObject_Y_done = true;
+			}
 
-	if (this._cameraTrackingObjectAVG_Y !== null) {
-		//check if object is to the right of center, and move left if it is:
-		if( Math.abs(this._cameraTrackingObjectAVG_Y - this._cameraImageWidthCenter) < this._cameraTrackingTolerance * 2 ) {
-	    	getQuery(this._base_query + "/run/jog?axis=STOP" );
+			else if (this._cameraTrackingObjectAVG_Y > this._cameraImageWidthCenter) {
+		    	//getQuery(this._base_query + "/run/jog?axis=Y&direction=-1" );
+		    	this.jogMoveCartesian({axis: "Y", direction: -1});
+		    	this._cameraTrackingObject_Y_done = false;
+
+			}
+			else {
+		    	//getQuery(this._base_query + "/run/jog?axis=Y&direction=1" );
+		    	this.jogMoveCartesian({axis: "Y", direction: 1});
+		    	this._cameraTrackingObject_Y_done = false;
+			}
 		}
-		else if (this._cameraTrackingObjectAVG_Y > this._cameraImageWidthCenter) {
-	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=-1" );
+		//track on z second:
+		else if (!this._cameraTrackingObject_Z_done) {
+			//check if object is below of center, and move down if it is:
+			if( Math.abs(this._cameraTrackingObjectAVG_Z - this._cameraImageHeightCenter) < this._cameraTrackingTolerance ) {
+		    	//getQuery(this._base_query + "/run/jog?axis=STOP" );
+		    	this.jogMoveCartesian({axis: "STOP"});
+		    	this._cameraTrackingObject_Z_done = true;
+			}
+			else if (this._cameraTrackingObjectAVG_Z > this._cameraImageHeightCenter) {
+		    	//getQuery(this._base_query + "/run/jog?axis=Z&direction=-1" );
+		    	this.jogMoveCartesian({axis: "Z", direction: -1});
+		    	this._cameraTrackingObject_Z_done = false;
+			}
+			else {
+		    	//getQuery(this._base_query + "/run/jog?axis=Z&direction=1" );
+		    	this.jogMoveCartesian({axis: "Z", direction: 1});
+		    	this._cameraTrackingObject_Z_done = false;
 
-	    	/*setTimeout(function(){
-	    		getQuery(this._base_query + "/run/jog?axis=STOP" );
-	    	},200);	//cancel the move after a moment
-			*/
+			}
 		}
-		else {
-	    	getQuery(this._base_query + "/run/jog?axis=Y&direction=1" );
+		//double check to make sure object didn't move out of either range after tracking done previously
+		else {  
+			if( Math.abs(this._cameraTrackingObjectAVG_Y - this._cameraImageWidthCenter) < this._cameraTrackingTolerance ) {
+		    	this._cameraTrackingObject_Y_done = false;
+			}
 
-	    	/*setTimeout(function(){
-	    		getQuery(this._base_query + "/run/jog?axis=STOP" );
-	    	},200);	//cancel the move after a moment
-	    	*/
+			if( Math.abs(this._cameraTrackingObjectAVG_Z- this._cameraImageHeightCenter) < this._cameraTrackingTolerance ) {
+		    	this._cameraTrackingObject_Z_done = false;
+
+			}
 		}
-	}
-	else {	//emergency stop if object dissapears
-		getQuery(this._base_query + "/run/jog?axis=STOP" );
-	}
 
-	//check Z:
+	} 
 
-
-	//this.jogMoveCartesian();
-
-}
+	//emergency stop if object dissapears
+	/*else {
+		//getQuery(this._base_query + "/run/jog?axis=STOP" );
+		this.jogMoveCartesian({axis: "STOP"});
+	} */
+};
 
 //follow in XY Plane
-
 
 
 function blockedAverageArray (array, tolerance) {
@@ -230,13 +266,14 @@ function blockedAverageArray (array, tolerance) {
 		}
 	})/array_length;
 
-	return blocked_average;
-
+	//return blocked_average;
+	return average;
 }
 
 
 function getQuery(address){
 	//simple GET request
+	console.log("get: " + address);
 	request(address, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			//console.log(response); 

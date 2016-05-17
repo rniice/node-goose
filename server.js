@@ -29,7 +29,7 @@ app.get('/', function(req, res) {
 
 
 app.get('/run/connect', function(req, res) {
-	console.log("made it to server connect");
+	console.log("Received request to connect: connecting Dobot ...");
 
 	//open the connection and take control of the machine
 	dobotInstance = new Dobot( {COM:'COM11', BAUD:9600} ); 		//V1.1 Firmware
