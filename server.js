@@ -1,20 +1,22 @@
-var express = require('express');
-var http = require('http');
-var url = require('url');
-var app = express();
-var path = require('path');
-//var fs = require('fs');
+/* LOAD NPM DEPENDENCIES */
+var app 	= require('express')();
+var server 	= require('http').Server(app);
+var io 		= require('socket.io')(server);
+var path 	= require('path');
+var url 	= require('url');
 
-
-
+/* LOAD DOBOT CLASS DEPENDENCIES */
 var Dobot = require('./private/drivers/Dobot');
-
 var dobotInstance = null; //placeholder
 
+/* START UP THE SERVER */
+var port 	= process.env.PORT || 80;
 
-// set the port of our application
-// process.env.PORT lets the port be set by Heroku
-var port = process.env.PORT || 8080;
+server.listen(port, function() {
+	console.log('Our app is running on http://localhost:' + port);
+});
+
+
 
 // make express look in the public directory for assets (css/js/img)
 var public_directory = path.join(__dirname, "public")
@@ -28,90 +30,95 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/run/connect', function(req, res) {
-	console.log("Received request to connect: connecting Dobot ...");
+//Socket IO events
+io.on('connection', function (socket) {
 
-	//open the connection and take control of the machine
-	dobotInstance = new Dobot( {COM:'COM11', BAUD:9600} ); 		//V1.1 Firmware
+	//server sends "dobot server" data packets
+  socket.emit('dobot server', { data: 'socket connected' });
 
-	res.send('Connected to Dobot');
-});
+  //server receives "dobot client" data packets
+  socket.on('dobot client', function (data) {
+		/*if(data.login == true) {
+			//parse out data.username
+			//parse out data.password
+			//set authenticated true
+		} */
 
-app.get('/run/disconnect', function(req, res) {
-	//open the connection and take control of the machine
-	dobotInstance.disconnect();
-	res.send('Disconnected Dobot');
-});
+		if(data.connect === true) {
+			console.log('received request to connect dobot serialport ...');
+			dobotInstance = new Dobot( {COM:'COM11', BAUD:9600} ); 		//V1.1 Firmware
+			socket.emit('server response', { message: 'Connected to Dobot' });
+		}
+		else if(data.disconnect === true) {
+			console.log('received request to disconnect dobot serialport ...');
+			dobotInstance.disconnect();
+			socket.emit('server response', { message: 'Disconnected from Dobot' });
+		}
+		else if(data.pause === true) {
+			console.log('received request to pause Dobot ...');
+			dobotInstance.pause();
+			socket.emit('server response', { message: 'Paused Dobot' });
+		}
+		else if(data.resume === true) {
+			console.log('received request to resume Dobot ...');
+			dobotInstance.resume();
+			socket.emit('server response', { message: 'Resumed Dobot' });
+		}
+		else if(data.streamProgram === true) {
+			console.log('received request to stream mode Dobot ...');
+			dobotInstance.streamProgram(); 
+			socket.emit('server response', { message: 'Streaming Dobot Mode' });
+		}
+		else if(data.loadProgram === true) {
+			console.log('received request to load gcode program ...');
+			dobotInstance.loadProgram('./test/node_goose_targets.gcode');
+			socket.emit('server response', { message: 'Program Loaded' });
+		}
+		else if(data.runProgram === true) {
+			console.log('received request to run gcode program ...');
+			dobotInstance.runProgram(); 
+			socket.emit('server response', { message: 'Running Program' });
+		}
+		else if(data.startCamera === true) {
+			console.log('received request to start dobot camera ...');
+			dobotInstance.startCamera(); 
+			socket.emit('server response', { message: 'Enabling Dobot Camera' });
+		}
+		else if(data.startFaceTracking === true) {
+			console.log('received request to stream mode Dobot ...');
+			dobotInstance.startTrackFace(); 
+			socket.emit('server response', { message: 'Enabling Dobot Face Tracking' });
+		}		
 
-app.get('/run/pause', function(req, res) {
-	//open the connection and take control of the machine
-	dobotInstance.pause();
-	res.send('Pausing Dobot');
-});
+		else if(data.jog === true) {
+			var query = url.parse(data.url,true).query;  
+			dobotInstance.jogMoveCartesian( query );
+			res.send('Jog Command Sent');
+			socket.emit('server response', { message: 'Jog Command Sent' });
+		}	
 
+		else if(data.getState === true) {
+			var dobot_state = dobotInstance._dobot_state;
+			//socket.emit('server response', { message: dobot_state });
+			socket.emit('server response', dobot_state);
+		}	
 
-app.get('/run/resume', function(req, res) {
-	//open the connection and take control of the machine
-	dobotInstance.resume();
-	res.send('Resuming Dobot');
-});
-
-
-app.get('/run/streamProgram', function(req, res) {
-	//dobotInstance._STATE = "WAITING";
-	console.log("triggering stream Mode"); 
-	dobotInstance.streamProgram(); 
-	res.send('Streaming to Dobot');
-});
-
-
-//NEED TO CONVERT TO POST AND UPLOAD LATER
-app.get('/load/program', function(req, res) {
-	//dobotInstance.loadProgram('./test/bernie_outline_gcode_dobot_targets.gcode');
-	dobotInstance.loadProgram('./test/node_goose_targets.gcode');
-	res.send('Program Loaded');
-});
-
-
-app.get('/run/runProgram', function(req, res) {
-	dobotInstance.runProgram(); 
-	res.send('Connected to Dobot');
-});
-
-app.get('/run/startCamera', function(req, res) {
-	dobotInstance.startCamera(); 
-	res.send('Enabling Camera ...');
-});
-
-app.get('/run/startFaceTracking', function(req, res) {
-	dobotInstance.startTrackFace(); 
-	res.send('Enabling Face Tracking ...');
-});
-
-
-app.get('/run/jog', function(req, res) {
-	
-	var query = url.parse(req.url,true).query;  
-
-	dobotInstance.jogMoveCartesian( query );
-	res.send('Jog Command Sent');
-});
-
-
-app.get('/status/state', function(req, res) {
-	res.send(dobotInstance._dobot_state);
-
-});
-
-app.get('/status/camera', function(req, res) {
-	var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
-	res.send(img);
-});
+		else if(data.getCamera === true) {
+			var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
+			//socket.emit('server response', { message: img });
+			socket.emit('server response', img);
+		}			
 
 
-//starts the server listening
-app.listen(port, function() {
-    console.log('Our app is running on http://localhost:' + port);
+		else{
+			console.log('did not receive foobar!!! = (');
+		}
+  });
+
+  socket.on('disconnect', function(data){
+		console.log('client disconnected');
+  });
+
 });
 
 
