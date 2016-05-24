@@ -1,6 +1,8 @@
 # node-goose | Dobot SerialPort Driver and Gcode Interpreter Service
 
 ![logo by https://thenounproject.com/creativestall/](/../screenshots/screenshots/noun_394753_cc_square.png?raw=true "Logo By: Creative Stall TheNounProject")
+
+## updates: refactor from http to socket.io up next to reduce payload overhead and i/o stability
 	 
 ## installation: 
 
