@@ -1,78 +1,76 @@
-var myApp = angular.module('myApp', ['ngTouch', 'rzModule', 'ui.bootstrap']);
-var base_query = "http://localhost:8080";
+var myApp = angular.module('myApp', ['btford.socket-io','ngTouch', 'rzModule', 'ui.bootstrap']);
 
-myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$window', function($scope,$http,$interval,$timeout,$window) {
+myApp.factory('mySocket', function (socketFactory){
+  return socketFactory();
+});
+
+
+//var base_query = "http://localhost:8080";
+var base_query = "http://localhost:80";
+
+myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$window', 'mySocket', function($scope,$http,$interval,$timeout,$window,mySocket) {
+
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
+  
   var cameraImageSourceURL = "http://localhost:8080/status/camera";
-  var cameraInterval       =  null;
+  var cameraInterval       = null;
 
-	$scope.server_response     = null;
-  $scope.dobot_state         = null;
+	$scope.server_response   = null;
+  $scope.dobot_state       = null;
 
 
   /*********LEFT COLUMN CONTROL BUTTONS********/
   $scope.connectDobot = function(){
-    getQuery(base_query + "/run/connect");
-
+    mySocket.emit('dobot client', { connect: true });
     $window.updateStateResponseInterval = setInterval(function(){
-      getState(base_query + "/status/state");
-      },2000);
-
-  };
-
-  $scope.disconnectDobot = function(){
-    getQuery(base_query + "/run/disconnect");
-    clearInterval($window.updateStateResponseInterval);
-  };
-
-  $scope.pauseDobot = function(){
-    getQuery(base_query + "/run/pause");
-  };
-
-  $scope.resumeDobot = function(){
-    getQuery(base_query + "/run/resume");
-  };
-
-  $scope.runStreamDobot = function(){
-    getQuery(base_query + "/run/streamProgram");
-  };
-
-  $scope.checkDobotState = function(){
-    getState(base_query + "/status/state");
-  };
-
-
-  $scope.startCamera = function(){
-    getQuery(base_query + "/run/startCamera");
-
-    $timeout(function(){        //delay before accessing the camera api
-      var c=0;
-      cameraInterval=$interval(function(){
-          //$scope.message="This DIV is refreshed "+c+" time.";
-          $scope.cameraImageSource = cameraImageSourceURL + '?' + "c=" + c;
-
-          if(c===100){
-              c=0;
-          } else {
-            c++;
-          }
-        },1000);
+      mySocket.emit({getState: true});
     },2000);
 
   };
 
-  $scope.stopCamera = function() {
+  $scope.disconnectDobot = function(){
+    mySocket.emit('dobot client', {disconnect: true});
+    clearInterval($window.updateStateResponseInterval);
+  };
 
+  $scope.pauseDobot = function(){
+    mySocket.emit('dobot client', {pause: true});
+  };
+
+  $scope.resumeDobot = function(){
+    mySocket.emit('dobot client', {resume: true});
+  };
+
+  $scope.runStreamDobot = function(){
+    mySocket.emit('dobot client', {streamProgram: true});
+  };
+
+  $scope.checkDobotState = function(){
+    mySocket.emit({getState: true});
+  };
+
+  $scope.startCamera = function(){
+    mySocket.emit({startCamera: true});
+
+    //delay before accessing the camera api
+    $timeout(function(){
+      var c=0;
+      cameraInterval=$interval(function(){
+        mySocket.emit({getCamera: true});
+        },1000);
+    },2000);
+  };
+
+  $scope.stopCamera = function() {
     if(angular.isDefined(cameraInterval)) {
       $interval.cancel(cameraInterval);
       cameraInterval=undefined;
       //$scope.message="Timer is killed :-(";
     }
-
   };
 
   $scope.startTrackFace = function(){
-    getQuery(base_query + "/run/startFaceTracking");
+    mySocket.emit({startFaceTracking: true});
   };
 
 
@@ -81,31 +79,31 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   
   /*********JOG MOVEMENT CONTROL BUTTONS********/
   $scope.jogStop = function(){
-    getQuery(base_query + "/run/jog?axis=STOP" );
+    mySocket.emit({jog: true, axis: "STOP", direction: null});
   }; 
 
   $scope.jogXpos = function(){
-    getQuery(base_query + "/run/jog?axis=X&direction=1" );
+    mySocket.emit({jog: true, axis: "X", direction: 1});
   };
 
   $scope.jogXneg = function(){
-    getQuery(base_query + "/run/jog?axis=X&direction=-1" );
+    mySocket.emit({jog: true, axis: "X", direction: -1});
   };
 
   $scope.jogYpos = function(){
-    getQuery(base_query + "/run/jog?axis=Y&direction=1" );
+    mySocket.emit({jog: true, axis: "Y", direction: 1});
   };
 
   $scope.jogYneg = function(){
-    getQuery(base_query + "/run/jog?axis=Y&direction=-1" );
+    mySocket.emit({jog: true, axis: "Y", direction: -1});
   };
 
   $scope.jogZpos = function(){
-    getQuery(base_query + "/run/jog?axis=Z&direction=1" );
+    mySocket.emit({jog: true, axis: "Z", direction: 1});
   };
 
   $scope.jogZneg = function(){
-    getQuery(base_query + "/run/jog?axis=Z&direction=-1" );
+    mySocket.emit({jog: true, axis: "Z", direction: -1});
   };
 
 
@@ -118,35 +116,35 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   /*********EFFECTOR CONTROL BUTTONS********/
   
   $scope.jogRpos = function(){
-    getQuery(base_query + "/run/jog?axis=R&direction=1" );
+    mySocket.emit({jog: true, axis: "R", direction: 1});
   };
 
   $scope.jogRneg = function(){
-    getQuery(base_query + "/run/jog?axis=R&direction=-1" );
+    mySocket.emit({jog: true, axis: "R", direction: -1});
   };
 
   $scope.jogGRPopen = function(){
-    getQuery(base_query + "/run/jog?axis=GRP&direction=1" );
+    mySocket.emit({jog: true, axis: "GRP", direction: 1});
   };
 
   $scope.jogGRPclose = function(){
-    getQuery(base_query + "/run/jog?axis=GRP&direction=-1" );
+    mySocket.emit({jog: true, axis: "GRP", direction: -1});
   };
 
   $scope.jogPUMPon = function(){
-    getQuery(base_query + "/run/jog?axis=P&direction=1" );
+    mySocket.emit({jog: true, axis: "P", direction: 1});
   };
 
   $scope.jogPUMPoff = function(){
-    getQuery(base_query + "/run/jog?axis=P&direction=-1" );
+    mySocket.emit({jog: true, axis: "P", direction: -1});
   };
 
   $scope.jogLSRon = function(){
-    getQuery(base_query + "/run/jog?axis=LSR&direction=1" );
+    mySocket.emit({jog: true, axis: "LSR", direction: 1});
   };
 
   $scope.jogLSRoff = function(){
-    getQuery(base_query + "/run/jog?axis=LSR&direction=-1" );
+    mySocket.emit({jog: true, axis: "LSR", direction: -1});
   };
 
   /*********************************************/
@@ -155,27 +153,44 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   /************** UPLOAD PROGRAM ***************/
 
   $scope.loadProgramDobot = function(){
-    getQuery(base_query + "/load/program");
+    mySocket.emit({loadProgram: true});
   };
 
   $scope.runProgramDobot = function(){
-    getQuery(base_query + "/run/runProgram");
+    mySocket.emit({runProgram: true});
   };
 
   /*********************************************/
 
+  /* CLIENT SOCKET LISTENERS */
+  mySocket.on('server response', function(data) {
+
+    if(data.message) {
+      console.log("message from server: " + data.message);
+    }
+    else if(data.dobotState) {
+      $scope.state_x_pos            = data.dobotState.x_pos.toFixed(1);
+      $scope.state_y_pos            = data.dobotState.y_pos.toFixed(1);
+      $scope.state_z_pos            = data.dobotState.z_pos.toFixed(1);
+      $scope.state_head_rot         = data.dobotState.head_rot.toFixed(1);
+      $scope.state_base_angle       = data.dobotState.base_angle.toFixed(1);
+      $scope.state_long_arm_angle   = data.dobotState.long_arm_angle.toFixed(1);
+      $scope.state_short_arm_angle  = data.dobotState.short_arm_angle.toFixed(1);
+      $scope.state_paw_arm_angle    = data.dobotState.paw_arm_angle.toFixed(1);
+      $scope.state_is_grab          = data.dobotState.is_grab;
+      $scope.state_gripper_angle    = data.dobotState.gripper_angle.toFixed(1);
+
+      mySocket.emit('dobot client', { message: 'Client Received Dobot State' });
+    }
+    else if(data.cameraImage) {
+      $scope.cameraImage  = data.cameraImage;
+    }
+
+  });
+
 
   //USER CONFIGURATION CHANGE DETECTION
-
-/*
-  $scope.changeJogMode = function(manufacturer) {
-    $scope.manufacturer = manufacturer;
-    scope_struct.manufacturer = manufacturer; //update the scope_struct
-    generateFullQuery(scope_struct);
-  };
-*/
-
-/*
+  /*
   $scope.slider_nozzle_temp = {
     value: 220,
     options: {
@@ -191,65 +206,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
       }
     }
   };
-
-*/
-
-  function getQuery(address){
-
-    // Simple GET request example:
-    $http({
-      method: 'GET',
-      url: address,
-      config: "",
-      }).then(function success(response) {
-
-        $scope.server_response = response;
-
-        }, function error(response) {
-          alert("there was an error with your request");
-      });
-  }
-
-
-  function getCamera(address){
-
-    // Simple GET request example:
-    $http({
-      method: 'GET',
-      url: address,
-      config: "",
-      }).then(function success(response) {
-        //alert(JSON.stringify(response,null,2));
-        $scope.cameraImage  = response.data;
-
-        }, function error(response) {
-          alert("there was an error with your request");
-      });
-  }
-
-  function getState(address){
-
-    $http({
-      method: 'GET',
-      url: address,
-      config: "",
-      }).then(function success(response) {
-        //alert(JSON.stringify(response,null,2));
-        $scope.state_x_pos            = response.data.x_pos.toFixed(1);
-        $scope.state_y_pos            = response.data.y_pos.toFixed(1);
-        $scope.state_z_pos            = response.data.z_pos.toFixed(1);
-        $scope.state_head_rot         = response.data.head_rot.toFixed(1);
-        $scope.state_base_angle       = response.data.base_angle.toFixed(1);
-        $scope.state_long_arm_angle   = response.data.long_arm_angle.toFixed(1);
-        $scope.state_short_arm_angle  = response.data.short_arm_angle.toFixed(1);
-        $scope.state_paw_arm_angle    = response.data.paw_arm_angle.toFixed(1);
-        $scope.state_is_grab          = response.data.is_grab;
-        $scope.state_gripper_angle    = response.data.gripper_angle.toFixed(1);
-
-        }, function error(response) {
-          alert("there was an error with your request");
-      });
-    }
+  */
 
 }]);
 

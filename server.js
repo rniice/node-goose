@@ -1,9 +1,10 @@
 /* LOAD NPM DEPENDENCIES */
-var app 	= require('express')();
+var express = require('express');
+var app 		= express();
 var server 	= require('http').Server(app);
-var io 		= require('socket.io')(server);
-var path 	= require('path');
-var url 	= require('url');
+var io 			= require('socket.io')(server);
+var path 		= require('path');
+var url 		= require('url');
 
 /* LOAD DOBOT CLASS DEPENDENCIES */
 var Dobot = require('./private/drivers/Dobot');
@@ -25,7 +26,7 @@ app.use(express.static(public_directory));
 
 //MAIN landing URL
 app.get('/', function(req, res) {
-	//console.log("operating in dirname: " + __dirname);
+	console.log("operating in dirname: " + __dirname);
 	res.sendFile(path.join(public_directory + '/index.html'));
 });
 
@@ -91,22 +92,19 @@ io.on('connection', function (socket) {
 		}		
 
 		else if(data.jog === true) {
-			var query = url.parse(data.url,true).query;  
-			dobotInstance.jogMoveCartesian( query );
-			res.send('Jog Command Sent');
+			dobotInstance.jogMoveCartesian( {axis: data.axis, direction: data.direction} );
 			socket.emit('server response', { message: 'Jog Command Sent' });
 		}	
 
 		else if(data.getState === true) {
 			var dobot_state = dobotInstance._dobot_state;
-			//socket.emit('server response', { message: dobot_state });
-			socket.emit('server response', dobot_state);
+			socket.emit('server response', {dobotState: dobot_state});
 		}	
 
 		else if(data.getCamera === true) {
 			var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
 			//socket.emit('server response', { message: img });
-			socket.emit('server response', img);
+			socket.emit('server response', {cameraImage: img});
 		}			
 
 
