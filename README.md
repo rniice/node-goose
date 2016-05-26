@@ -41,7 +41,7 @@
 
 ## System Architecture
 
-![System Architecture V0.1](/../screenshots/screenshots/node-goose-app-architecture.jpg?raw=true "System Architecture V0.1")
+![System Architecture V0.2](/../screenshots/screenshots/node-goose-app-architecture.jpg?raw=true "System Architecture V0.2")
 
 ## driver details (/private/drivers)
 
@@ -49,21 +49,14 @@
 | ------------------------- |-------------------------------------------------------------------------------|
 | Dobot.js                  | top level dobot class                                                         |
 | DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
-| DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
-| DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
+| DobotCommandQueue.js      | state management and queueing of gcode program commands                       |
+| DobotComputerVision.js    | camera and vision tracking methods using opencv                               |
+| DobotFileManager.js       | file management for gcode programs                                            |
+| DobotGcodeInterpreter.js  | parses gcode command string and dispatches object to send to commandbuffer    |
+| DobotJogCommand.js        | parses request for jog move and dispatches object to send to commandbuffer    |
+| DobotResponseParser.js    | parses response from dobot into state values (position, rotation, etc).       |
+| DobotSerial.js            | creates, maintains, and controls serialport connection to dobot               |
 
-
-
-
-- Dobot.js                 //top level dobot class
-- DobotCommandBuffer.js    //writes buffer dobot can understand for each command
-- DobotCommandQueue.js     //state management and queueing of gcode program commands
-- DobotComputerVision.js   //camera and vision tracking methods using opencv
-- DobotFileManager.js      //file management for gcode programs
-- DobotGcodeInterpreter.js //parses gcode command string and dispatches object to send to commandbuffer 
-- DobotJogCommand.js	     //parses request for jog move and dispatches object to send to commandbuffer
-- DobotResponseParser.js   //parses response from dobot into state values (position, rotation, etc).
-- DobotSerial.js		       //creates, maintains, and controls serialport connection to dobot
 
 ## check back for updates soon
 
