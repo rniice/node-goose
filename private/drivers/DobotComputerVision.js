@@ -11,7 +11,7 @@ catch (e){
 /**************** DOBOT COMPUTER VISION CONSTRUCTOR ******************/
 var DobotComputerVision = function( ) { 
 
-	this._base_query 				= "http://localhost:8080";
+	this._base_query 				= "http://localhost:80";
 
 	this._camera 					= null;
 	this._cameraWindow 				= null;
@@ -85,8 +85,6 @@ DobotComputerVision.prototype.startTrackFace = function (params) {
 		that.trackFace();
 		that.trackObjectYZPlane();
 		//console.log(that._cameraTrackingPrimary);
-
-
 	}, tracking_rate);
 
 };
@@ -168,7 +166,7 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 			this._cameraTrackingObjectAVG_Y	= blockedAverageArray(this._cameraTrackingObjectY, this._cameraTrackingTolerance).toFixed(0);
 			this._cameraTrackingObjectAVG_Z	= blockedAverageArray(this._cameraTrackingObjectZ, this._cameraTrackingTolerance).toFixed(0);
 		
-			//console.log("object Y = " + this._cameraTrackingObjectAVG_Y);
+			console.log("object Y = " + this._cameraTrackingObjectAVG_Y);
 			//console.log("object Z = " + this._cameraTrackingObjectAVG_Z);
 
 		}
@@ -222,6 +220,7 @@ DobotComputerVision.prototype.trackObjectYZPlane = function() {
 
 			}
 		}
+
 		//double check to make sure object didn't move out of either range after tracking done previously
 		else {  
 			if( Math.abs(this._cameraTrackingObjectAVG_Y - this._cameraImageWidthCenter) < this._cameraTrackingTolerance ) {

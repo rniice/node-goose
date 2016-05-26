@@ -12,7 +12,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
 
   //var cameraImageSourceURL = "http://localhost:8080/status/camera";
 
-  var cameraImageSourceURL = "localhost";
+  var cameraImageSourceURL = "http://localhost:80/status/camera";
   var cameraInterval       = null;
 
 	$scope.server_response   = null;
@@ -54,9 +54,20 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
 
     //delay before accessing the camera api
     $timeout(function(){
+      var c=0;
       cameraInterval=$interval(function(){
         mySocket.emit('dobot client', {getCamera: true});
-        },1000);
+
+        $scope.cameraImageSource = cameraImageSourceURL + '?' + "c=" + c;
+
+        if(c===100){
+          c=0; 
+        } 
+        else {
+          c++;
+        }
+
+      },1000);
     },2000);
   };
 
@@ -181,7 +192,8 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
       mySocket.emit('dobot client', { message: 'Client Received Dobot State' });
     }
     else if(data.cameraImage) {
-      $scope.cameraImage  = data.cameraImage;
+      //console.log("received updated camera image");
+      //$scope.cameraImage  = data.cameraImage;
     }
     else {
       console.log(data);

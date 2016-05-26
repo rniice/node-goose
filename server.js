@@ -1,7 +1,7 @@
 /* LOAD NPM DEPENDENCIES */
-var express = require('express');
+var express 	= require('express');
 var app 		= express();
-var server 	= require('http').Server(app);
+var server 		= require('http').Server(app);
 var io 			= require('socket.io')(server);
 var path 		= require('path');
 var url 		= require('url');
@@ -28,6 +28,12 @@ app.use(express.static(public_directory));
 app.get('/', function(req, res) {
 	console.log("operating in dirname: " + __dirname);
 	res.sendFile(path.join(public_directory + '/index.html'));
+});
+
+
+app.get('/status/camera', function(req, res) {
+	var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
+	res.send(img);
 });
 
 
@@ -102,12 +108,13 @@ io.on('connection', function (socket) {
 		}	
 
 		else if(data.getCamera === true) {
-			var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
-			socket.emit('server response', {cameraImage: img});
+			//var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
+			//var img = dobotInstance._cameraImageTracked;			
+			//socket.emit('server response', {cameraImage: img});
 		}			
 
 	    else if(data.message) {
-	      console.log("message from client: " + data.message);
+	      //console.log("message from client: " + data.message);
 	    }
 
 		else{
