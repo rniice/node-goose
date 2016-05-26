@@ -43,7 +43,17 @@
 
 ![System Architecture V0.1](/../screenshots/screenshots/node-goose-app-architecture.jpg?raw=true "System Architecture V0.1")
 
-## driver details
+## driver details (/private/drivers)
+
+| Component                 | Description                                                                   |
+| ------------------------- |-------------------------------------------------------------------------------|
+| Dobot.js                  | top level dobot class                                                         |
+| DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
+| DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
+| DobotCommandBuffer.js     | writes buffer dobot can understand for each command                           |
+
+
+
 
 - Dobot.js                 //top level dobot class
 - DobotCommandBuffer.js    //writes buffer dobot can understand for each command
