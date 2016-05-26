@@ -103,13 +103,15 @@ io.on('connection', function (socket) {
 
 		else if(data.getCamera === true) {
 			var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
-			//socket.emit('server response', { message: img });
 			socket.emit('server response', {cameraImage: img});
 		}			
 
+	    else if(data.message) {
+	      console.log("message from client: " + data.message);
+	    }
 
 		else{
-			console.log('did not receive foobar!!! = (');
+			console.log(data);
 		}
   });
 

@@ -5,12 +5,14 @@ myApp.factory('mySocket', function (socketFactory) {
 });
 
 //var base_query = "http://localhost:8080";
-var base_query = "http://localhost:80";
+var base_query = "localhost";
 
 myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$window', 'mySocket', function($scope,$http,$interval,$timeout,$window,mySocket) {
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
 
-  var cameraImageSourceURL = "http://localhost:8080/status/camera";
+  //var cameraImageSourceURL = "http://localhost:8080/status/camera";
+
+  var cameraImageSourceURL = "localhost";
   var cameraInterval       = null;
 
 	$scope.server_response   = null;
@@ -21,7 +23,7 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   $scope.connectDobot = function(){
     mySocket.emit('dobot client', { connect: true });
     $window.updateStateResponseInterval = setInterval(function(){
-      mySocket.emit({getState: true});
+      mySocket.emit('dobot client', {getState: true});
     },2000);
 
   };
@@ -52,7 +54,6 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
 
     //delay before accessing the camera api
     $timeout(function(){
-      var c=0;
       cameraInterval=$interval(function(){
         mySocket.emit('dobot client', {getCamera: true});
         },1000);
@@ -63,7 +64,6 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
     if(angular.isDefined(cameraInterval)) {
       $interval.cancel(cameraInterval);
       cameraInterval=undefined;
-      //$scope.message="Timer is killed :-(";
     }
   };
 
@@ -182,6 +182,9 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
     }
     else if(data.cameraImage) {
       $scope.cameraImage  = data.cameraImage;
+    }
+    else {
+      console.log(data);
     }
 
   });
