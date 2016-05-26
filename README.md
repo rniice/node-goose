@@ -1,7 +1,8 @@
 # node-goose | Dobot SerialPort Driver and Gcode Interpreter Service
 
 ## update: 
-- refactor from http to socket.io up next to reduce payload overhead and i/o stability
+- complete: refactor to socket.io complete to reduce i/o overhead
+- pending: change camera service from periodic http:GET to stream
 
 ![logo by https://thenounproject.com/creativestall/](/../screenshots/screenshots/noun_394753_cc_square.png?raw=true "Logo By: Creative Stall TheNounProject")
 
@@ -42,6 +43,17 @@
 
 ![System Architecture V0.1](/../screenshots/screenshots/node-goose-app-architecture.jpg?raw=true "System Architecture V0.1")
 
+## driver details
+
+- Dobot.js                 //top level dobot class
+- DobotCommandBuffer.js    //writes buffer dobot can understand for each command
+- DobotCommandQueue.js     //state management and queueing of gcode program commands
+- DobotComputerVision.js   //camera and vision tracking methods using opencv
+- DobotFileManager.js      //file management for gcode programs
+- DobotGcodeInterpreter.js //parses gcode command string and dispatches object to send to commandbuffer 
+- DobotJogCommand.js	     //parses request for jog move and dispatches object to send to commandbuffer
+- DobotResponseParser.js   //parses response from dobot into state values (position, rotation, etc).
+- DobotSerial.js		       //creates, maintains, and controls serialport connection to dobot
 
 ## check back for updates soon
 
