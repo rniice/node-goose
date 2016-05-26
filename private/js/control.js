@@ -1,25 +1,23 @@
-var myApp = angular.module('myApp', ['btford.socket-io','ngTouch', 'rzModule', 'ui.bootstrap']);
+var myApp = angular.module('myApp', ['btford.socket-io', 'ngTouch', 'rzModule', 'ui.bootstrap']);
 
-myApp.factory('mySocket', function (socketFactory){
+myApp.factory('mySocket', function (socketFactory) {
   return socketFactory();
 });
-
 
 //var base_query = "http://localhost:8080";
 var base_query = "http://localhost:80";
 
 myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$window', 'mySocket', function($scope,$http,$interval,$timeout,$window,mySocket) {
-
   //$TouchProvider.ngClickOverrideEnabled(true);  //override onClick using angular with the touch provider library for mobile devices
-  
+
   var cameraImageSourceURL = "http://localhost:8080/status/camera";
   var cameraInterval       = null;
 
-	$scope.server_response   = null;
+  $scope.server_response   = null;
   $scope.dobot_state       = null;
 
-
   /*********LEFT COLUMN CONTROL BUTTONS********/
+
   $scope.connectDobot = function(){
     mySocket.emit('dobot client', { connect: true });
     $window.updateStateResponseInterval = setInterval(function(){
@@ -46,17 +44,17 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   };
 
   $scope.checkDobotState = function(){
-    mySocket.emit({getState: true});
+    mySocket.emit('dobot client', {getState: true});
   };
 
   $scope.startCamera = function(){
-    mySocket.emit({startCamera: true});
+    mySocket.emit('dobot client', {startCamera: true});
 
     //delay before accessing the camera api
     $timeout(function(){
       var c=0;
       cameraInterval=$interval(function(){
-        mySocket.emit({getCamera: true});
+        mySocket.emit('dobot client', {getCamera: true});
         },1000);
     },2000);
   };
@@ -70,42 +68,41 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   };
 
   $scope.startTrackFace = function(){
-    mySocket.emit({startFaceTracking: true});
+    mySocket.emit('dobot client', {startFaceTracking: true});
   };
-
 
   /*********************************************/
 
   
   /*********JOG MOVEMENT CONTROL BUTTONS********/
+
   $scope.jogStop = function(){
-    mySocket.emit({jog: true, axis: "STOP", direction: null});
+    mySocket.emit('dobot client', {jog: true, axis: "STOP", direction: null});
   }; 
 
   $scope.jogXpos = function(){
-    mySocket.emit({jog: true, axis: "X", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "X", direction: 1});
   };
 
   $scope.jogXneg = function(){
-    mySocket.emit({jog: true, axis: "X", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "X", direction: -1});
   };
 
   $scope.jogYpos = function(){
-    mySocket.emit({jog: true, axis: "Y", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "Y", direction: 1});
   };
 
   $scope.jogYneg = function(){
-    mySocket.emit({jog: true, axis: "Y", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "Y", direction: -1});
   };
 
   $scope.jogZpos = function(){
-    mySocket.emit({jog: true, axis: "Z", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "Z", direction: 1});
   };
 
   $scope.jogZneg = function(){
-    mySocket.emit({jog: true, axis: "Z", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "Z", direction: -1});
   };
-
 
   //put in rotation of each axis in table too
 
@@ -114,37 +111,37 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   /*********************************************/
 
   /*********EFFECTOR CONTROL BUTTONS********/
-  
+
   $scope.jogRpos = function(){
-    mySocket.emit({jog: true, axis: "R", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "R", direction: 1});
   };
 
   $scope.jogRneg = function(){
-    mySocket.emit({jog: true, axis: "R", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "R", direction: -1});
   };
 
   $scope.jogGRPopen = function(){
-    mySocket.emit({jog: true, axis: "GRP", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "GRP", direction: 1});
   };
 
   $scope.jogGRPclose = function(){
-    mySocket.emit({jog: true, axis: "GRP", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "GRP", direction: -1});
   };
 
   $scope.jogPUMPon = function(){
-    mySocket.emit({jog: true, axis: "P", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "P", direction: 1});
   };
 
   $scope.jogPUMPoff = function(){
-    mySocket.emit({jog: true, axis: "P", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "P", direction: -1});
   };
 
   $scope.jogLSRon = function(){
-    mySocket.emit({jog: true, axis: "LSR", direction: 1});
+    mySocket.emit('dobot client', {jog: true, axis: "LSR", direction: 1});
   };
 
   $scope.jogLSRoff = function(){
-    mySocket.emit({jog: true, axis: "LSR", direction: -1});
+    mySocket.emit('dobot client', {jog: true, axis: "LSR", direction: -1});
   };
 
   /*********************************************/
@@ -153,16 +150,17 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
   /************** UPLOAD PROGRAM ***************/
 
   $scope.loadProgramDobot = function(){
-    mySocket.emit({loadProgram: true});
+    mySocket.emit('dobot client', {loadProgram: true});
   };
 
   $scope.runProgramDobot = function(){
-    mySocket.emit({runProgram: true});
+    mySocket.emit('dobot client', {runProgram: true});
   };
 
   /*********************************************/
 
   /* CLIENT SOCKET LISTENERS */
+  
   mySocket.on('server response', function(data) {
 
     if(data.message) {
@@ -207,6 +205,5 @@ myApp.controller('userCtrl', ['$scope', '$http', '$interval', '$timeout', '$wind
     }
   };
   */
-
 }]);
 
