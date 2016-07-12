@@ -9,7 +9,7 @@
 ## installation: 
 
 ### install core modules
-- install nodeJS: https://nodejs.org/en/ 
+- install nodeJS: https://nodejs.org/en/ (currently tested only on v0.12.2, use nvm to change versions)
 - git clone https://github.com/rniice/node-goose.git 
 - cd node-goose
 - npm install
