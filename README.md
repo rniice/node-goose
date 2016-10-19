@@ -27,7 +27,7 @@
 ## usage:
 
 - node server.js
-- access controls at localhost:8080 via web browser
+- access controls at localhost:80 via web browser
 
 ## demo laser cutting
 
