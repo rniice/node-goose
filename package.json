@@ -1,6 +1,6 @@
 {
   "name": "node-goose",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "nodeJS scara robot controller and gcode interpreter service",
   "main": "Gruntfile.js",
   "directories": {
