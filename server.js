@@ -11,7 +11,7 @@ var Dobot = require('./private/drivers/Dobot');
 var dobotInstance = null; //placeholder
 
 /* START UP THE SERVER */
-var port 	= process.env.PORT || 80;
+var port 	= process.env.PORT || 5000;
 
 server.listen(port, function() {
 	console.log('Our app is running on http://localhost:' + port);
@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
 		}
 		else if(data.streamProgram === true) {
 			console.log('received request to stream mode Dobot ...');
-			dobotInstance.streamProgram(); 
+			dobotInstance.streamProgram();
 			socket.emit('server response', { message: 'Streaming Dobot Mode' });
 		}
 		else if(data.loadProgram === true) {
@@ -83,35 +83,35 @@ io.on('connection', function (socket) {
 		}
 		else if(data.runProgram === true) {
 			console.log('received request to run gcode program ...');
-			dobotInstance.runProgram(); 
+			dobotInstance.runProgram();
 			socket.emit('server response', { message: 'Running Program' });
 		}
 		else if(data.startCamera === true) {
 			console.log('received request to start dobot camera ...');
-			dobotInstance.startCamera(); 
+			dobotInstance.startCamera();
 			socket.emit('server response', { message: 'Enabling Dobot Camera' });
 		}
 		else if(data.startFaceTracking === true) {
 			console.log('received request to stream mode Dobot ...');
-			dobotInstance.startTrackFace(); 
+			dobotInstance.startTrackFace();
 			socket.emit('server response', { message: 'Enabling Dobot Face Tracking' });
-		}		
+		}
 
 		else if(data.jog === true) {
 			dobotInstance.jogMoveCartesian( {axis: data.axis, direction: data.direction} );
 			socket.emit('server response', { message: 'Jog Command Sent' });
-		}	
+		}
 
 		else if(data.getState === true) {
 			var dobot_state = dobotInstance._dobot_state;
 			socket.emit('server response', {dobotState: dobot_state});
-		}	
+		}
 
 		else if(data.getCamera === true) {
 			//var img = dobotInstance._cameraImageTracked.toBuffer(); 	//convert the matrix into an image buffer
-			//var img = dobotInstance._cameraImageTracked;			
+			//var img = dobotInstance._cameraImageTracked;
 			//socket.emit('server response', {cameraImage: img});
-		}			
+		}
 
 	    else if(data.message) {
 	      //console.log("message from client: " + data.message);
@@ -134,5 +134,3 @@ io.on('connection', function (socket) {
 //dobotInstance.computerVisionProgram();
 
 */
-
-

@@ -12,7 +12,7 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 	//verify it is a G code
 	if(command.indexOf('G') > -1 ) {
 		var g_command 			= command.match(/^G([\d]+)/i)[1];
-		var write_mode			= false;		
+		var write_mode			= false;
 	}
 	//see if it is a C configuration code
 	else if(command.indexOf('C') > -1){
@@ -45,19 +45,19 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 			//console.log("z_coordinate is: " + z_coordinate);
 
 		//extract rotation head
-		var rh_angle		= command.match(/RH([+-]?[\d]+[\.]?[\d]+]?)/i);	
+		var rh_angle		= command.match(/RH([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (rh_angle) { rh_angle = parseFloat(rh_angle[1]); }
 			//console.log("rh_angle is: " + rh_angle);
 
 		//extract grip head
-		var grp_angle		= command.match(/GRP([+-]?[\d]+[\.]?[\d]+]?)/i);		
+		var grp_angle		= command.match(/GRP([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (grp_angle) { grp_angle = parseFloat(grp_angle[1]); }
 			//console.log("grp_angle is: " + grp_angle);
 
 		//extract laser power
 		var lsr_power		= command.match(/LSR([+-]?[\d]+[\.]?[\d]+]?)/i);
-			if ( (lsr_power) || (lsr_power==0) ) { 
-				lsr_power = parseFloat(lsr_power[1]); 
+			if ( (lsr_power) || (lsr_power==0) ) {
+				lsr_power = parseFloat(lsr_power[1]);
 				write_mode = true;
 			}
 			//console.log("lsr_power is: " + lsr_power);
@@ -65,15 +65,15 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 		//need to add PUMP for pump setting
 
 		var pen_state		= null;		//put a condition here that checks for writing, but not laser
-			if (pen_state) { 
-				pen_state = parseFloat(pen_state[1]); 
+			if (pen_state) {
+				pen_state = parseFloat(pen_state[1]);
 				write_mode = true;
 			}
 			//console.log("lsr_power is: " + lsr_power);
 
 
 		//extract feed rate
-		var feed_rate		= command.match(/F([+-]?[\d]+[\.]?[\d]+]?)/i);		
+		var feed_rate		= command.match(/F([+-]?[\d]+[\.]?[\d]+]?)/i);
 			if (feed_rate) { feed_rate = parseFloat(feed_rate[1]); }
 			//console.log("feed_rate is: " + feed_rate);
 
@@ -104,42 +104,42 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 		var selected_state;							//create an object with the selected dobot command parameters
 
 		if(command.indexOf('JUMP') > -1) {			//for the hacked jump mode without turning off lazer
-			
+
 			selected_state 	= {
-				settings				: true,							//toggle the settings mode
-				state           		: 9,
-				playback_config			: 1,
+				settings							: true,							//toggle the settings mode
+				state           			: 9,
+				playback_config				: 1,
 				max_joint_move_speed	: 100,
 				max_joint_move_accel 	: 200,
-				max_servo_speed 		: 100,
-				max_servo_accel 		: 200,
-				max_linear_move_speed 	: 100,
+				max_servo_speed 			: 100,
+				max_servo_accel 			: 200,
+				max_linear_move_speed : 100,
 				max_linear_move_accel	: 200,
-				default_pause_time		: 0,		
+				default_pause_time		: 0,
 				default_jump_height		: 0
 			};
 
-			this.jogMoveCartesian({axis: "LSR", direction: -1});			
+			this.jogMoveCartesian({axis: "LSR", direction: -1});
 			command_buffer = this.generateCommandBuffer(selected_state);
 
 		}
 
 		else if(command.indexOf('WRITE') > -1) {
 			selected_state 	= {
-				settings				: true,							//toggle the settings mode
-				state           		: 9,
-				playback_config			: 1,
+				settings							: true,							//toggle the settings mode
+				state           			: 9,
+				playback_config				: 1,
 				max_joint_move_speed	: 1,
 				max_joint_move_accel 	: 1,
-				max_servo_speed 		: 1,
-				max_servo_accel 		: 1,
-				max_linear_move_speed 	: 1,
+				max_servo_speed 			: 1,
+				max_servo_accel 			: 1,
+				max_linear_move_speed : 1,
 				max_linear_move_accel	: 1,
-				default_pause_time		: 0,		
+				default_pause_time		: 0,
 				default_jump_height		: 0
 			};
 
-			this.jogMoveCartesian({axis: "LSR", direction: 1});			
+			this.jogMoveCartesian({axis: "LSR", direction: 1});
 			command_buffer = this.generateCommandBuffer(selected_state);
 
 		}
@@ -149,7 +149,7 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 
 		//call function to create command buffer
 		//command_buffer = this.generateCommandBuffer(selected_state);
-		console.log("sending gcode: " + command);	
+		console.log("sending gcode: " + command);
 
 	}
 
