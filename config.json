@@ -1,0 +1,34 @@
+{
+    "type"        : "serial",
+    "blackBox"    : false,
+    "description" : "Dobot SCARA Robot",
+    "VID"         : 10889,
+    "PID"         : 34953,
+    "COM_WIN"     : "COM11",
+    "COM_OSX"     : null,
+    "BAUD"        : 9600,
+    "driverPath"  : "./drivers/dobot",
+    "settings"    : {
+      "jump": {
+        "max_joint_move_speed"	: 100,
+        "max_joint_move_accel" 	: 200,
+        "max_servo_speed" 			: 100,
+        "max_servo_accel" 			: 200,
+        "max_linear_move_speed" : 100,
+        "max_linear_move_accel"	: 200,
+        "default_pause_time"		: 0,
+        "default_jump_height"		: 0
+      },
+      "write": {
+        "playback_config"				: 1,
+				"max_joint_move_speed"	: 1,
+				"max_joint_move_accel" 	: 1,
+				"max_servo_speed" 			: 1,
+				"max_servo_accel" 			: 1,
+				"max_linear_move_speed" : 1,
+				"max_linear_move_accel"	: 1,
+				"default_pause_time"		: 0,
+				"default_jump_height"		: 0
+      }
+    }
+}

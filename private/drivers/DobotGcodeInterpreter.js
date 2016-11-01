@@ -1,6 +1,7 @@
+var settings = require("../../config.json").settings;
+
 /**************** DOBOT GCODEINTERPRETER CONSTRUCTOR ******************/
 var DobotGcodeInterpreter = function( ) { };
-
 
 /*Take standard GCODE commands and convert into buffer structure per Dobot API
   G1 X[$FLOAT] Y[$FLOAT] Z[$FLOAT] RH[$FLOAT] GRP[$FLOAT] LSR[$FLOAT] F[$FLOAT]
@@ -79,13 +80,13 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 
 		//create an object with the selected dobot command parameters
 		var selected_state 	= {
-			write           : write_mode,
+			write       : write_mode,
 			x_pos 			: x_coordinate,
-			y_pos			: y_coordinate,
+			y_pos				: y_coordinate,
 			z_pos 			: z_coordinate,
 			head_rot 		: rh_angle,
 			is_grab 		: grp_angle,
-			laser_pwr 		: lsr_power,
+			laser_pwr 	: lsr_power,
 			feed_rate		: feed_rate,
 			settings		: false					//need to detect settings values from G code, break out of G1 loop
 		};
@@ -109,14 +110,14 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 				settings							: true,							//toggle the settings mode
 				state           			: 9,
 				playback_config				: 1,
-				max_joint_move_speed	: 100,
-				max_joint_move_accel 	: 200,
-				max_servo_speed 			: 100,
-				max_servo_accel 			: 200,
-				max_linear_move_speed : 100,
-				max_linear_move_accel	: 200,
-				default_pause_time		: 0,
-				default_jump_height		: 0
+				max_joint_move_speed	: settings.jump.max_joint_move_speed,
+				max_joint_move_accel 	: settings.jump.max_joint_move_accel,
+				max_servo_speed 			: settings.jump.max_servo_speed,
+				max_servo_accel 			: settings.jump.max_servo_accel,
+				max_linear_move_speed : settings.jump.max_linear_move_speed,
+				max_linear_move_accel	: settings.jump.max_linear_move_accel,
+				default_pause_time		: settings.jump.default_pause_time,
+				default_jump_height		: settings.jump.default_jump_height
 			};
 
 			this.jogMoveCartesian({axis: "LSR", direction: -1});
@@ -129,14 +130,14 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 				settings							: true,							//toggle the settings mode
 				state           			: 9,
 				playback_config				: 1,
-				max_joint_move_speed	: 1,
-				max_joint_move_accel 	: 1,
-				max_servo_speed 			: 1,
-				max_servo_accel 			: 1,
-				max_linear_move_speed : 1,
-				max_linear_move_accel	: 1,
-				default_pause_time		: 0,
-				default_jump_height		: 0
+				max_joint_move_speed	: settings.write.max_joint_move_speed,
+				max_joint_move_accel 	: settings.write.max_joint_move_accel,
+				max_servo_speed 			: settings.write.max_servo_speed,
+				max_servo_accel 			: settings.write.max_servo_accel,
+				max_linear_move_speed : settings.write.max_linear_move_speed,
+				max_linear_move_accel	: settings.write.max_linear_move_accel,
+				default_pause_time		: settings.write.default_pause_time,
+				default_jump_height		: settings.write.default_jump_height
 			};
 
 			this.jogMoveCartesian({axis: "LSR", direction: 1});
