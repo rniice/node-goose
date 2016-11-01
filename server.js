@@ -82,7 +82,8 @@ io.on('connection', function (socket) {
 		}
 		else if(data.loadProgram === true) {
 			console.log('received request to load gcode program ...');
-			dobotInstance.loadProgram('./test/node_goose_targets.gcode');
+			//dobotInstance.loadProgram('./test/node_goose_targets.gcode');
+			dobotInstance.loadProgram('./test/milan_gcode.gcode');
 			socket.emit('server response', { message: 'Program Loaded' });
 		}
 		else if(data.runProgram === true) {

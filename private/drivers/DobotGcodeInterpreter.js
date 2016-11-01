@@ -145,6 +145,26 @@ DobotGcodeInterpreter.prototype.sendDobotState = function(command) {
 
 		}
 
+		else if(command.indexOf('CUT') > -1) {
+			selected_state 	= {
+				settings							: true,							//toggle the settings mode
+				state           			: 9,
+				playback_config				: 1,
+				max_joint_move_speed	: settings.cut.max_joint_move_speed,
+				max_joint_move_accel 	: settings.cut.max_joint_move_accel,
+				max_servo_speed 			: settings.cut.max_servo_speed,
+				max_servo_accel 			: settings.cut.max_servo_accel,
+				max_linear_move_speed : settings.cut.max_linear_move_speed,
+				max_linear_move_accel	: settings.cut.max_linear_move_accel,
+				default_pause_time		: settings.cut.default_pause_time,
+				default_jump_height		: settings.cut.default_jump_height
+			};
+
+			this.jogMoveCartesian({axis: "LSR", direction: 1});
+			command_buffer = this.generateCommandBuffer(selected_state);
+
+		}
+
 		//extract selected configuration settings [implement later]
 
 
