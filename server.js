@@ -1,10 +1,12 @@
 /* LOAD NPM DEPENDENCIES */
 var express = require('express');
 var app 		= express();
-var server 	= require('http').Server(app);
+var server 		= require('http').Server(app);
 var io 			= require('socket.io')(server);
 var path 		= require('path');
 var url 		= require('url');
+const os		= require('os');
+
 
 /* LOAD DOBOT CLASS DEPENDENCIES */
 var Dobot 	= require('./private/drivers/Dobot');
@@ -55,10 +57,19 @@ io.on('connection', function (socket) {
 
 		if(data.connect === true) {
 			console.log('received request to connect dobot serialport ...');
-			dobotInstance = new Dobot( {COM: config.COM_WIN, BAUD: config.BAUD} ); 		//V1.1 Firmware
-			//check for OSX platform:
-			//dobotInstance = new Dobot( {COM: config.COM_OSX, BAUD: config.BAUD} ); 		//V1.1 Firmware
-			socket.emit('server response', { message: 'Connected to Dobot' });
+			
+			if(os.platform()=='win32'){
+				dobotInstance = new Dobot( {COM: config.COM_WIN, BAUD: config.BAUD} ); 		//V1.1 Firmware
+			} else if (os.platform()=='linux'){
+				dobotInstance = new Dobot( {COM: config.COM_LINUX, BAUD: config.BAUD} );          //V1.1 Firmware
+			} else if (os.platform()=='darwin'){
+                                dobotInstance = new Dobot( {COM: config.COM_OSX, BAUD: config.BAUD} );          //V1.1 Firmware
+                        } else {
+				console.log("unsupported platform: " + os.platform());
+				process.exit();
+			}
+
+             		socket.emit('server response', { message: 'Connected to Dobot' });
 		}
 		else if(data.disconnect === true) {
 			console.log('received request to disconnect dobot serialport ...');

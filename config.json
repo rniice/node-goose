@@ -6,6 +6,7 @@
     "PID"         : 34953,
     "COM_WIN"     : "COM11",
     "COM_OSX"     : null,
+    "COM_LINUX"   : "/dev/ttyACM0",
     "BAUD"        : 9600,
     "driverPath"  : "./drivers/dobot",
     "settings"    : {

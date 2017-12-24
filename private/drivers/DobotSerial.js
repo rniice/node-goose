@@ -10,15 +10,15 @@ try {										// loading serialport may fail on some systems
 /*****************************************************/
 
 var DobotSerial = function(connection) {
+    console.log("inside the dobotserial constructor");
     var that	= this;
 
     var COM 	= this._CONNECTION.COM;
     var BAUD 	= this._CONNECTION.BAUD;
 
-    var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A) };
-
-    this._PORT = new SerialPort.SerialPort(COM, port_params, false);
-
+    var port_params = { baudrate : BAUD, parser: SerialPort.parsers.byteDelimiter(0x5A), autoOpen: false };
+    this._PORT = new SerialPort(COM, port_params);
+    
 	this._WAIT 					= 2000;
     this._RETRIES 				= 5;
     this._HEART_BEAT_INTERVAL 	= 60;			//60ms is expected/default by controller
@@ -41,11 +41,11 @@ var DobotSerial = function(connection) {
 
     //this._MODE 					= null;			//MOVE, CUT, ETC. 				
 
-    
-    this._PORT.open(function(error) {
+    /*
+    this._PORT.open(function(err) {
 
-        if (error) {
-			console.log("unable to open port: " + error);
+        if (err) {
+			console.log("unable to open port: " + err.message);
         } 
         else {
         	console.log("port opened");
@@ -54,13 +54,18 @@ var DobotSerial = function(connection) {
         }
 
     });
-    
+    */
+   
+    this.open(); 
 
 };
 
 
 DobotSerial.prototype.open = function() {
     // Open port and define event handlers
+    console.log("DobotSerial open prototype method");
+    var that = this;    
+
     this._PORT.open(function(error) {
         if (error) {
 			console.log("unable to open port: " + error);
@@ -77,14 +82,20 @@ DobotSerial.prototype.open = function() {
 
 
 DobotSerial.prototype.start = function() {
+        console.log("DobotSerial start prototype method");
 	var that = this;
 
 	this._heartbeater_update = setInterval(this.updateCommandQueue.bind(this), this._HEART_BEAT_INTERVAL);
 	//this._heartbeater_next   = setInterval(this.next.bind(this), this._HEART_BEAT_INTERVAL);
-
-
+ 
+    /*
     this._PORT.on('data', function (data) {
+        console.log(data);
+    });
+    */    
 
+    //this.parser.on('data', function (data) {
+    this._PORT.on('data', function (data) {
 		data = new Buffer(data);
 				
 		if(data.length == 42) {
